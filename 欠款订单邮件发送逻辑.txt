@@ -1,0 +1,13 @@
+ 签约后出游前未收齐团款的订单发送监控实现逻辑：
+ 
+1 BI数据库的表：ol_itf_order_uncollection 中提供所有的欠款订单
+
+2 在OrderUncollectionMapper.xml中根据条件从ol_itf_order_uncollection选择性读出所有符合要求的订单数据，返回一个list列表。
+
+3 在OrderUncollectionServiceImpl.java中创建线程池，利用邮件发送服务类：MailTaskService，将所有要发送的邮件插入邮件表cm_mail_task中。
+
+4 创建监控监控类：orderMonitor
+
+5 在task.xml中注册该监控类 ： <bean id="orderMonitor" class="com.tuniu.qms.qs.monitor.OrderMonitor"/>
+   
+  系统调度中心创建定时任务：orderUncollectionMonitor（未收齐团款订单监控），定时执行该发送任务。
