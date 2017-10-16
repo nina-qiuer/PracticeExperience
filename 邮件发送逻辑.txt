@@ -1,0 +1,8 @@
+每日邮件发送逻辑：
+
+1 从quality数据库表：cm_mail_task 中抽取适合的数据:
+           List<MailTask> mtList = mailTaskService.list(new MailTaskDto());
+		   MailTask: 发送邮件的实体类
+		   
+2 调用TspService发送邮件，发送成功，则从表：cm_mail_task中删除该MailTask。
+           

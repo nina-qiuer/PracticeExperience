@@ -10,4 +10,4 @@
 
 5 在task.xml中注册该监控类 ： <bean id="orderMonitor" class="com.tuniu.qms.qs.monitor.OrderMonitor"/>
    
-  系统调度中心创建定时任务：orderUncollectionMonitor（未收齐团款订单监控），定时执行该发送任务。
+  系统调度中心创建定时任务：orderUncollectionMonitor（未收齐团款订单监控），定时执行该发送任务,执行第3步中的逻辑。
