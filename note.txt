@@ -2,3 +2,6 @@ http://jinnianshilongnian.iteye.com/blog/1631021
 
 
 http://blog.csdn.net/ioriogami/article/details/12782141/
+
+
+<<分布式系统概念与设计>> <<分布式系统原理与泛型>> 以及 Distributed Systems For System Architects 讲解分布式系统的书。
