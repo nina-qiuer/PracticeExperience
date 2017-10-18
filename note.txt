@@ -5,3 +5,6 @@ http://blog.csdn.net/ioriogami/article/details/12782141/
 
 
 <<分布式系统概念与设计>> <<分布式系统原理与泛型>> 以及 Distributed Systems For System Architects 讲解分布式系统的书。
+
+
+有空去githubs上多看看别人开发的相关开源项目。springMVC 等

@@ -1,2 +1,11 @@
 公司系统架构：
 spring springMVC mybatis
+
+
+接口：注册中心
+消费者配置
+
+
+
+
+定时任务注册
