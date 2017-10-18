@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.ITableFieldMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+       		<if test="tableId != null">
+       			table_id = #{tableId,javaType=Integer,jdbcType=VARCHAR}
+       		</if>
+       	</where>
+       	order by position asc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.frm.entity.TableFieldEntity">  
+		
+		<result property="dbComment" column="db_comment" />
+		
+		<result property="fieldAttr" column="field_attr" />
+		
+		<result property="defaultVal" column="default_val" />
+		
+		<result property="formTitle" column="form_title" />
+		
+		<result property="description" column="description" />
+		
+		<result property="listTitle" column="list_title" />
+		
+		<result property="formShow" column="form_show" />
+		
+		<result property="searchShowType" column="search_show_type" />
+		
+		<result property="listShow" column="list_show" />
+		
+		<result property="formShowType" column="form_show_type" />
+		
+		<result property="needFill" column="need_fill" />
+		
+		<result property="tableId" column="table_id" />
+		
+		<result property="position" column="position" />
+		
+		<result property="dataSource" column="data_source" />
+		
+		<result property="canCache" column="can_cache" />
+		
+		<result property="tableName" column="table_name" />
+		
+		<result property="fieldName" column="field_name" />
+		
+		<result property="fieldType" column="field_type" />
+		
+		<result property="fieldLength" column="field_length" />
+		
+		<result property="fieldDef" column="field_def" />
+		
+		<result property="canSearch" column="can_search" />
+		
+		<result property="indexType" column="index_type" />
+		
+		<result property="titleOrder" column="title_order" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="dbComment" column="db_comment"/>
+		
+		<result property="fieldAttr" column="field_attr"/>
+		
+		<result property="defaultVal" column="default_val"/>
+		
+		<result property="formTitle" column="form_title"/>
+		
+		<result property="description" column="description"/>
+		
+		<result property="listTitle" column="list_title"/>
+		
+		<result property="formShow" column="form_show"/>
+		
+		<result property="searchShowType" column="search_show_type"/>
+		
+		<result property="listShow" column="list_show"/>
+		
+		<result property="formShowType" column="form_show_type"/>
+		
+		<result property="needFill" column="need_fill"/>
+		
+		<result property="tableId" column="table_id"/>
+		
+		<result property="position" column="position"/>
+		
+		<result property="dataSource" column="data_source"/>
+		
+		<result property="canCache" column="can_cache"/>
+		
+		<result property="tableName" column="table_name"/>
+		
+		<result property="fieldName" column="field_name"/>
+		
+		<result property="fieldType" column="field_type"/>
+		
+		<result property="fieldLength" column="field_length"/>
+		
+		<result property="fieldDef" column="field_def"/>
+		
+		<result property="canSearch" column="can_search"/>
+		
+		<result property="indexType" column="index_type"/>
+		
+		<result property="titleOrder" column="title_order"/>
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  db_comment,
+		 
+		  field_attr,
+		 
+		  default_val,
+		 
+		  form_title,
+		 
+		  description,
+		 
+		  list_title,
+		 
+		  form_show,
+		 
+		  search_show_type,
+		 
+		  list_show,
+		 
+		  form_show_type,
+		 
+		  need_fill,
+		 
+		  table_id,
+		 
+		  position,
+		 
+		  data_source,
+		 
+		  can_cache,
+		 
+		  table_name,
+		 
+		  field_name,
+		 
+		  field_type,
+		 
+		  field_length,
+		 
+		  field_def,
+		 
+		  can_search,
+		 
+		  index_type
+		 
+		  title_order,
+		 
+		) values  (
+		
+		  #{e.dbComment}, 
+		 
+		  #{e.fieldAttr}, 
+		 
+		  #{e.defaultVal}, 
+		 
+		  #{e.formTitle}, 
+		 
+		  #{e.description}, 
+		 
+		  #{e.listTitle}, 
+		 
+		  #{e.formShow}, 
+		 
+		  #{e.searchShowType}, 
+		 
+		  #{e.listShow}, 
+		 
+		  #{e.formShowType}, 
+		 
+		  #{e.needFill}, 
+		 
+		  #{e.tableId}, 
+		 
+		  #{e.position}, 
+		 
+		  #{e.dataSource}, 
+		 
+		  #{e.canCache}, 
+		 
+		  #{e.tableName}, 
+		 
+		  #{e.fieldName}, 
+		 
+		  #{e.fieldType}, 
+		 
+		  #{e.fieldLength}, 
+		 
+		  #{e.fieldDef}, 
+		 
+		  #{e.canSearch}, 
+		 
+		  #{e.indexType} 
+		 
+		  #{e.titleOrder}, 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.dbComment != null">db_comment=#{e.dbComment},</if>
+			
+				<if test="e.fieldAttr != null">field_attr=#{e.fieldAttr},</if>
+			
+				<if test="e.defaultVal != null">default_val=#{e.defaultVal},</if>
+			
+				<if test="e.formTitle != null">form_title=#{e.formTitle},</if>
+			
+				<if test="e.description != null">description=#{e.description},</if>
+			
+				<if test="e.listTitle != null">list_title=#{e.listTitle},</if>
+			
+				
+				<choose>
+					<when test="e.formShow != null">
+						form_show=#{e.formShow},
+					</when>
+					<otherwise>
+						form_show=0,
+					</otherwise>
+				</choose>
+				
+			
+				<if test="e.searchShowType != null">search_show_type=#{e.searchShowType},</if>
+			
+				<choose>
+					<when test="e.listShow != null">
+						list_show=#{e.listShow},
+					</when>
+					<otherwise>
+						list_show=0,
+					</otherwise>
+				</choose>
+				
+			
+				<if test="e.formShowType != null">form_show_type=#{e.formShowType},</if>
+				
+				<choose>
+					<when test="e.needFill != null">
+						need_fill=#{e.needFill},
+					</when>
+					<otherwise>
+						need_fill=0,
+					</otherwise>
+				</choose>
+			
+				
+			
+				<if test="e.tableId != null">table_id=#{e.tableId},</if>
+			
+				<if test="e.position != null">position=#{e.position},</if>
+			
+				<if test="e.dataSource != null">data_source=#{e.dataSource},</if>
+				
+				
+			    
+				<choose>
+					<when test="e.canCache != null">
+						can_cache=#{e.canCache},
+					</when>
+					<otherwise>
+						can_cache=0,
+					</otherwise>
+				</choose>
+			
+				
+			
+				<if test="e.tableName != null">table_name=#{e.tableName},</if>
+			
+				<if test="e.fieldName != null">field_name=#{e.fieldName},</if>
+			
+				<if test="e.fieldType != null">field_type=#{e.fieldType},</if>
+			
+				<if test="e.fieldLength != null">field_length=#{e.fieldLength},</if>
+			
+				<if test="e.fieldDef != null">field_def=#{e.fieldDef},</if>
+			
+				<choose>
+					<when test="e.canSearch != null">
+						can_search=#{e.canSearch},
+					</when>
+					<otherwise>
+						can_search=0,
+					</otherwise>
+				</choose>
+			
+			
+			
+				<if test="e.indexType != null">index_type=#{e.indexType}</if>
+				
+				
+				<choose>
+					<when test="e.titleOrder != null">
+						title_order=#{e.titleOrder}
+					</when>
+					<otherwise>
+						title_order=0
+					</otherwise>
+				</choose>
+			
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+</mapper>

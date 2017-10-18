@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IQualityToolMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			del_flag=0
+			<if test="id != null and id != '' ">
+				and id = #{id}
+			</if>
+			<if test="useFlag != null">
+				and use_flag = #{useFlag}
+			</if>
+			<if test="name != null and name != '' ">
+				and name = #{name}
+			</if>
+			<if test="level != null">
+				and level = #{level}
+			</if>
+			<if test="type != null">
+				and type = #{type}
+			</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.QualityToolEntity">
+		
+		<result property="name" column="name"/>
+		<result property="level" column="level"/>
+		<result property="type" column="type"/>
+		<result property="remark" column="remark"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="useFlag" column="use_flag"/>
+		
+	</resultMap>
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="name" column="name"/>
+		<result property="level" column="level"/>
+		<result property="type" column="type"/>
+		<result property="remark" column="remark"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="useFlag" column="use_flag"/>
+		
+	</resultMap>
+	 
+	<select id="searchById" parameterType="Integer"  resultMap="searchResult">
+		SELECT *
+		FROM ct_quality_tool
+		WHERE id=#{id}
+	</select>
+	
+	<resultMap id="searchResult" type="Map">
+		
+		<result property="name" column="name"/>
+		<result property="level" column="level"/>
+		<result property="type" column="type"/>
+		<result property="remark" column="remark"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="useFlag" column="use_flag"/>
+		
+	</resultMap>
+
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  name,		 
+		  type,
+		  level,
+		  remark,
+		  del_flag,
+		  use_flag
+		 
+		) values  (
+		
+		  #{e.name}, 
+		  #{e.type},
+		  #{e.level},
+		  #{e.remark},
+		  #{e.delFlag},
+		  #{e.useFlag}
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+				<if test="e.name != null">name=#{e.name},</if>
+				<if test="e.type != null">type=#{e.type},</if>
+				<if test="e.level != null">level=#{e.level},</if>
+				<if test="e.remark != null">remark=#{e.remark},</if>
+				<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+				<if test="e.useFlag != null">use_flag=#{e.useFlag}</if>
+
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	
+</mapper>

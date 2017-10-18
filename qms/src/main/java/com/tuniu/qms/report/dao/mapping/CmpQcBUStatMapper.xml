@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.report.dao.CmpQcBUStatMapper">
+
+	<select id="list" parameterType="com.tuniu.qms.report.dto.CmpQcBUStatDto" resultType="com.tuniu.qms.report.model.CmpQcBUStat">
+		SELECT ta.name AS businessUnit,
+			IFNULL(tb.qcNum,0) AS qcNum,
+			IFNULL(tc.qcIngNum,0) AS qcIngNum,
+			IFNULL(td.qcDoneNum,0) AS qcDoneNum,
+			IFNULL(td.cancelNum,0) AS cancelNum,
+			IFNULL(te.comeFrom1,0) AS comeFrom1,
+		    IFNULL(te.comeFrom2,0) AS comeFrom2,
+		    IFNULL(te.comeFrom3,0) AS comeFrom3,
+		    IFNULL(te.comeFrom4,0) AS comeFrom4,
+		    IFNULL(te.comeFrom5,0) AS comeFrom5,
+		    IFNULL(te.comeFrom6,0) AS comeFrom6,
+		    IFNULL(te.comeFrom7,0) AS comeFrom7,
+		    IFNULL(te.comeFrom8,0) AS comeFrom8,
+		    IFNULL(te.comeFrom9,0) AS comeFrom9,
+		    IFNULL(te.comeFrom10,0) AS comeFrom10,
+		    IFNULL(te.comeFrom11,0) AS comeFrom11,
+		    IFNULL(te.comeFrom12,0) AS comeFrom12
+		FROM 
+		(SELECT DISTINCT t3.id,t3.name FROM qc_qc_bill t1 INNER JOIN cm_product t2 ON t1.prdId=t2.id
+		INNER JOIN uc_department t3 ON t2.businessUnitId=t3.id
+		<where>t1.groupFlag=1 AND t1.delFlag=0
+			<if test="statDateBgn != null and statDateBgn != ''">AND (
+				CONCAT(#{statDateBgn},' 00:00:00') &lt;= t1.addTime OR 
+				CONCAT(#{statDateBgn},' 00:00:00') &lt;= t1.finishTime)
+			</if>
+			<if test="statDateEnd != null and statDateEnd != ''">AND (
+				t1.addTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') OR 
+				t1.finishTime &lt;= CONCAT(#{statDateEnd},' 23:59:59'))
+			</if>
+		</where>ORDER BY t3.name) ta LEFT JOIN 
+		(SELECT t2.businessUnitId,
+				COUNT(1) AS qcNum 
+		FROM qc_qc_bill t1 INNER JOIN cm_product t2 ON t1.prdId=t2.id
+		<where>t1.groupFlag=1 AND t1.delFlag=0
+			<if test="statDateBgn != null and statDateBgn != ''">AND CONCAT(#{statDateBgn},' 00:00:00') &lt;= t1.addTime</if>
+			<if test="statDateEnd != null and statDateEnd != ''">AND t1.addTime &lt;= CONCAT(#{statDateEnd},' 23:59:59')</if>
+		</where>
+		GROUP BY t2.businessUnitId) tb ON ta.id=tb.businessUnitId LEFT JOIN 
+		(SELECT t2.businessUnitId,
+				COUNT(1) AS qcIngNum 
+		FROM qc_qc_bill t1 INNER JOIN cm_product t2 ON t1.prdId=t2.id
+		WHERE t1.groupFlag=1 AND t1.state=3 AND t1.delFlag=0 
+		GROUP BY t2.businessUnitId) tc ON ta.id=tc.businessUnitId LEFT JOIN 
+		(SELECT t2.businessUnitId,
+				COUNT(CASE WHEN t1.state=4 THEN 1 END) AS qcDoneNum,
+				COUNT(CASE WHEN t1.state=5 THEN 1 END) AS cancelNum
+		FROM qc_qc_bill t1 INNER JOIN cm_product t2 ON t1.prdId=t2.id
+		<where>t1.groupFlag=1 AND t1.delFlag=0
+			<if test="statDateBgn != null and statDateBgn != ''">AND CONCAT(#{statDateBgn},' 00:00:00') &lt;= t1.finishTime</if>
+			<if test="statDateEnd != null and statDateEnd != ''">AND t1.finishTime &lt;= CONCAT(#{statDateEnd},' 23:59:59')</if>
+		</where>
+		GROUP BY t2.businessUnitId) td ON ta.id=td.businessUnitId LEFT JOIN
+		(SELECT t.businessUnitId,
+		        SUM(t.comeFrom1) AS comeFrom1,
+				SUM(t.comeFrom2 ) AS comeFrom2,
+				SUM(t.comeFrom3 ) AS comeFrom3,
+			    SUM(t.comeFrom4) AS comeFrom4,
+				SUM(t.comeFrom5 ) AS comeFrom5,
+				SUM(t.comeFrom6 ) AS comeFrom6,
+				SUM(t.comeFrom7 ) AS comeFrom7,
+				SUM(t.comeFrom8 ) AS comeFrom8,
+				SUM(t.comeFrom9 ) AS comeFrom9,
+				SUM(t.comeFrom10) AS comeFrom10,
+				SUM(t.comeFrom11 ) AS comeFrom11,
+				SUM(t.comeFrom12 ) AS comeFrom12
+		FROM (SELECT   t3.businessUnitId,
+				COUNT(CASE WHEN t2.comeFrom='来电投诉' THEN 1 END ) AS comeFrom1,
+				COUNT(CASE WHEN t2.comeFrom='其他' THEN 1 END ) AS comeFrom2,
+				COUNT(CASE WHEN t2.comeFrom='回访' THEN 1 END ) AS comeFrom3,
+				COUNT(CASE WHEN t2.comeFrom='门市' THEN 1 END ) AS comeFrom4,
+				COUNT(CASE WHEN t2.comeFrom='旅游局' THEN 1 END ) AS comeFrom5,
+				COUNT(CASE WHEN t2.comeFrom='微博' THEN 1 END ) AS comeFrom6,
+				COUNT(CASE WHEN t2.comeFrom='CS邮箱' THEN 1 END ) AS comeFrom7,
+				COUNT(CASE WHEN t2.comeFrom='点评' THEN 1 END ) AS comeFrom8,
+				COUNT(CASE WHEN t2.comeFrom='网站' THEN 1 END ) AS comeFrom9,
+				COUNT(CASE WHEN t2.comeFrom='当地质检' THEN 1 END ) AS comeFrom10,
+				COUNT(CASE WHEN t2.comeFrom='变更' THEN 1 END ) AS comeFrom11,
+				COUNT(CASE WHEN t2.comeFrom='APP' THEN 1 END ) AS comeFrom12
+		FROM qc_qc_bill t1 INNER JOIN cm_complaint_bill t2 ON t1.cmpId=t2.id
+		INNER JOIN cm_product t3 ON t1.prdId=t3.id
+		<where>t1.groupFlag=1 AND t1.delFlag=0
+			<if test="statDateBgn != null and statDateBgn != ''">AND CONCAT(#{statDateBgn},' 00:00:00') &lt;= t1.finishTime</if>
+			<if test="statDateEnd != null and statDateEnd != ''">AND t1.finishTime &lt;= CONCAT(#{statDateEnd},' 23:59:59')</if>
+		</where>
+		GROUP BY t2.comeFrom, t3.businessUnitId )t GROUP BY t.businessUnitId) te ON ta.id =te.businessUnitId
+	</select>
+	
+</mapper>

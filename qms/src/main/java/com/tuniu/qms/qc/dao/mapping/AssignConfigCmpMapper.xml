@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qc.dao.AssignConfigCmpMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.AssignConfigCmp">
+		INSERT INTO qc_assign_config_cmp (
+			<if test="qcPersonId != null">qcPersonId,</if>
+			<if test="qcPersonName != null">qcPersonName,</if>
+			<if test="noOrderFlag != null">noOrderFlag,</if>
+			delFlag
+		) VALUES (
+			<if test="qcPersonId != null">#{qcPersonId},</if>
+			<if test="qcPersonName != null">#{qcPersonName},</if>
+			<if test="noOrderFlag != null">#{noOrderFlag},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_assign_config_cmp WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.AssignConfigCmp" flushCache="true" statementType="PREPARED">
+		UPDATE qc_assign_config_cmp 
+		<set>
+			<if test="qcPersonId != null">qcPersonId=#{qcPersonId},</if>
+			<if test="qcPersonName != null">qcPersonName=#{qcPersonName},</if>
+			<if test="noOrderFlag != null">noOrderFlag=#{noOrderFlag},</if>
+			<if test="nooAssignTime != null">nooAssignTime=#{nooAssignTime},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.AssignConfigCmp">
+		SELECT * FROM qc_assign_config_cmp WHERE id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.AssignConfigCmpDto" resultType="com.tuniu.qms.qc.model.AssignConfigCmp">
+		SELECT * FROM qc_assign_config_cmp 
+		<where>delFlag=0
+			<if test="qcPersonName != null">AND qcPersonName=#{qcPersonName}</if>
+		</where>
+	</select>
+	
+	<select id="getDockdepList" resultType="Map">
+		SELECT dockdepId,GROUP_CONCAT(qcPersonId) AS qcPersonIds,GROUP_CONCAT(qcPersonName) AS qcPersonNames 
+		FROM qc_person_dockdep_cmp WHERE delFlag=0 GROUP BY dockdepId
+	</select>
+	
+	<delete id="deleteDockdeps" parameterType="Integer">
+		DELETE FROM qc_person_dockdep_cmp WHERE qcPersonId=#{qcPersonId}
+	</delete>
+	
+	<insert id="addDockdeps" useGeneratedKeys="true" parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		INSERT INTO qc_person_dockdep_cmp (qcPersonId, qcPersonName, dockdepId) VALUES 
+		<foreach collection="list" item="e" index="index" separator=",">
+        (
+			#{e.qcPersonId},
+			#{e.qcPersonName},
+			#{e.dockdepId}
+        )
+        </foreach>
+    </insert>
+	
+	<select id="getDepDockQcPerson" parameterType="Integer" resultType="com.tuniu.qms.qc.model.AssignConfigCmp">
+	    SELECT * FROM qc_assign_config_cmp 
+	    WHERE qcPersonId=(SELECT qcPersonId FROM qc_person_dockdep_cmp WHERE dockdepId=#{prdTeamId} AND delFlag=0 LIMIT 1) 
+	    AND delFlag=0
+	</select>
+	
+	<select id="getNoOrderQcPerson" resultType="com.tuniu.qms.qc.model.AssignConfigCmp">
+	    SELECT * FROM qc_assign_config_cmp WHERE noOrderFlag=1 AND delFlag=0 ORDER BY nooAssignTime LIMIT 1
+	</select>
+	
+	<select id="getDock" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcPersonDockDepCmp">
+	
+	   select distinct dockdepId from qc_person_dockdep_cmp where dockdepId = #{id} and delFlag =0
+	   
+	</select>
+	
+	<!-- 根据 质检员姓名获得全部信息，如果姓名为空，去一个质检员-->
+	<select id="getQcPersonByName" parameterType="String" resultType="com.tuniu.qms.qc.model.AssignConfigCmp">
+		select * from qc_assign_config_cmp
+		where delFlag = 0
+			<if test="_parameter != null">AND qcPersonName = #{_parameter}</if>
+		limit 1
+	</select>
+	
+</mapper>

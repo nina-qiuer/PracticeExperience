@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.workorder.dao.sqlmap.imap.IWorkOrderOperationLogMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			delFlag = 0 and woId=#{woId}
+		</where>
+
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultType="com.tuniu.gt.workorder.entity.WorkOrderOperationLog">
+		<include refid="list"/>
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  woId,
+		  event,
+		  content,
+		 operatePerson
+		) values  (
+		  #{e.woId}, 
+		  #{e.event},
+		  #{e.content},
+		  #{e.operatePerson}
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.workorder.entity.WorkOrderConfig" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+</mapper>

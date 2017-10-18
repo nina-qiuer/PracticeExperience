@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.OrderBillMapper">
+	<insert id="addOrdSyncTask" parameterType="Integer">
+		INSERT INTO cm_order_sync_task (ordId) VALUES (#{ordId})
+	</insert>
+	
+	<insert id="addAttachOrdSyncTask"  parameterType="java.util.List" >
+		insert into cm_order_sync_task (
+			ordId
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.ordId}
+        )
+        </foreach>
+    </insert>
+	
+	
+	<select id="listOrdSyncTask" resultType="Integer">
+	<![CDATA[
+		SELECT DISTINCT ordId FROM cm_order_sync_task WHERE failTimes < 3
+	]]>
+	</select>
+	
+	<update id="increFailTimes" parameterType="Integer">
+		UPDATE cm_order_sync_task set failTimes=(failTimes+1) WHERE ordId=#{ordId} AND failTimes &lt; 3
+	</update>
+	
+	<delete id="deleteOrdSyncTask" parameterType="Integer">
+		DELETE FROM cm_order_sync_task WHERE ordId=#{ordId}
+	</delete>
+
+	<insert id="add" parameterType="com.tuniu.qms.common.model.OrderBill" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO cm_order_bill (
+			<if test="id != null">id,</if>
+			<if test="prdId != null">prdId,</if>
+			<if test="departCity != null">departCity,</if>
+			<if test="prdAdultPrice != null">prdAdultPrice,</if>
+			<if test="flightPrice != null">flightPrice,</if>
+			<if test="adultNum != null">adultNum,</if>
+			<if test="childNum != null">childNum,</if>
+			<if test="departDate != null">departDate,</if>
+			<if test="returnDate != null">returnDate,</if>
+			<if test="salerId != null">salerId,</if>
+			<if test="salerName != null">salerName,</if>
+			<if test="salerManagerId != null">salerManagerId,</if>
+			<if test="salerManagerName != null">salerManagerName,</if>
+			<if test="producterId != null">producterId,</if>
+			<if test="producter != null">producter,</if>
+			<if test="prdManagerId != null">prdManagerId,</if>
+			<if test="prdManager != null">prdManager,</if>
+			<if test="custId != null">custId,</if>
+			<if test="custLevel != null">custLevel,</if>
+			<if test="guideId != null">guideId,</if>
+			<if test="guideName != null">guideName,</if>
+			<if test="guideCall != null">guideCall,</if>
+			<if test="salerBusinessUnit != null">salerBusinessUnit,</if>
+			<if test="salerDep != null">salerDep,</if>
+			<if test="salerTeam != null">salerTeam,</if>
+			<if test="groundPrice != null">groundPrice,</if>
+			delFlag
+		) VALUES (
+			<if test="id != null">#{id},</if>
+			<if test="prdId != null">#{prdId},</if>
+			<if test="departCity != null">#{departCity},</if>
+			<if test="prdAdultPrice != null">#{prdAdultPrice},</if>
+			<if test="flightPrice != null">#{flightPrice},</if>
+			<if test="adultNum != null">#{adultNum},</if>
+			<if test="childNum != null">#{childNum},</if>
+			<if test="departDate != null">#{departDate},</if>
+			<if test="returnDate != null">#{returnDate},</if>
+			<if test="salerId != null">#{salerId},</if>
+			<if test="salerName != null">#{salerName},</if>
+			<if test="salerManagerId != null">#{salerManagerId},</if>
+			<if test="salerManagerName != null">#{salerManagerName},</if>
+			<if test="producterId != null">#{producterId},</if>
+			<if test="producter != null">#{producter},</if>
+			<if test="prdManagerId != null">#{prdManagerId},</if>
+			<if test="prdManager != null">#{prdManager},</if>
+			<if test="custId != null">#{custId},</if>
+			<if test="custLevel != null">#{custLevel},</if>
+			<if test="guideId != null">#{guideId},</if>
+			<if test="guideName != null">#{guideName},</if>
+			<if test="guideCall != null">#{guideCall},</if>
+			<if test="salerBusinessUnit != null">#{salerBusinessUnit},</if>
+			<if test="salerDep != null">#{salerDep},</if>
+			<if test="salerTeam != null">#{salerTeam},</if>
+			<if test="groundPrice != null">#{groundPrice},</if>
+			0
+		)ON DUPLICATE KEY UPDATE
+			<if test="prdId != null">prdId=VALUES(prdId),</if>
+			<if test="departCity != null">departCity=VALUES(departCity),</if>
+			<if test="prdAdultPrice != null">prdAdultPrice=VALUES(prdAdultPrice),</if>
+			<if test="flightPrice != null">flightPrice=VALUES(flightPrice),</if>
+			<if test="adultNum != null">adultNum=VALUES(adultNum),</if>
+			<if test="childNum != null">childNum=VALUES(childNum),</if>
+			<if test="departDate != null">departDate=VALUES(departDate),</if>
+			<if test="returnDate != null">returnDate=VALUES(returnDate),</if>
+			<if test="salerId != null">salerId=VALUES(salerId),</if>
+			<if test="salerName != null">salerName=VALUES(salerName),</if>
+			<if test="salerManagerId != null">salerManagerId=VALUES(salerManagerId),</if>
+			<if test="salerManagerName != null">salerManagerName=VALUES(salerManagerName),</if>
+			<if test="producterId != null">producterId=VALUES(producterId),</if>
+			<if test="producter != null">producter=VALUES(producter),</if>
+			<if test="prdManagerId != null">prdManagerId=VALUES(prdManagerId),</if>
+			<if test="prdManager != null">prdManager=VALUES(prdManager),</if>
+			<if test="custId != null">custId=VALUES(custId),</if>
+			<if test="custLevel != null">custLevel=VALUES(custLevel),</if>
+			<if test="guideId != null">guideId=VALUES(guideId),</if>
+			<if test="guideName != null">guideName=VALUES(guideName),</if>
+			<if test="guideCall != null">guideCall=VALUES(guideCall),</if>
+			<if test="salerBusinessUnit != null">salerBusinessUnit=VALUES(salerBusinessUnit),</if>
+			<if test="salerDep != null">salerDep=VALUES(salerDep),</if>
+			<if test="salerTeam != null">salerTeam=VALUES(salerTeam),</if>
+			<if test="groundPrice != null">groundPrice=VALUES(groundPrice),</if>
+			delFlag = VALUES(delFlag)   
+	</insert>
+	
+	<insert id="addOperators" parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		insert into cm_order_operator (
+			ordId,
+			operId,
+			operName,
+			managerId,
+			managerName,
+			delFlag
+		) values 
+        <foreach collection="list" item="e" index="index" separator="," >  
+        (
+            #{e.ordId},
+            #{e.operId},
+            #{e.operName},
+            #{e.managerId},
+            #{e.managerName},
+            0
+        )
+        </foreach>
+    </insert>
+    
+    <insert id="addAgencies" parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		insert into cm_order_agency (
+			ordId,
+			agencyId,
+			agencyName,
+			agencyAccessTime,
+			agencyOwner,
+			signCompany,
+			delFlag
+		) values 
+        <foreach collection="list" item="e" index="index" separator="," >  
+        (
+            #{e.ordId},
+            #{e.agencyId},
+            #{e.agencyName},
+            #{e.agencyAccessTime},
+			#{e.agencyOwner},
+			#{e.signCompany},
+            0
+        )
+        </foreach>
+    </insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM cm_order_bill WHERE id=#{id}
+	</delete>
+	
+	<delete id="deleteOperatorByOrdId" parameterType="Integer">
+		DELETE FROM cm_order_operator WHERE ordId=#{ordId}
+	</delete>
+	
+	<delete id="deleteAgencyByOrdId" parameterType="Integer">
+		DELETE FROM cm_order_agency WHERE ordId=#{ordId}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.OrderBill" flushCache="true" statementType="PREPARED">
+		UPDATE cm_order_bill 
+		<set>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			<if test="avlGroundPrice != null">avlGroundPrice=#{avlGroundPrice},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultMap="orderMap">
+		SELECT a.*,b.operId,b.operName,b.managerId,b.managerName,
+		 c.agencyId,c.agencyName,c.agencyAccessTime,c.agencyOwner,c.signCompany
+		 FROM cm_order_bill a
+		LEFT JOIN cm_order_operator b on a.id = b.ordId
+		LEFT JOIN cm_order_agency c on a.id = c.ordId
+		 WHERE a.id=#{id} 
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.OrderBillDto" resultType="com.tuniu.qms.common.model.OrderBill">
+		SELECT * FROM cm_order_bill 
+		WHERE id IN (${idStr})
+	</select>
+	
+	<resultMap type="com.tuniu.qms.common.model.OrderBill" id="orderMap">
+		<id column="id" property="id" />
+		<result column="prdId" property="prdId" />
+		<result column="departCity" property="departCity" />
+		<result column="prdAdultPrice" property="prdAdultPrice" />
+		<result column="flightPrice" property="flightPrice" />
+		<result column="adultNum" property="adultNum" />
+		<result column="childNum" property="childNum" />
+		<result column="departDate" property="departDate" />
+		<result column="returnDate" property="returnDate" />
+		<result column="salerId" property="salerId" />
+		<result column="salerName" property="salerName" />
+		<result column="salerManagerId" property="salerManagerId" />
+		<result column="salerManagerName" property="salerManagerName" />
+		<result column="producterId" property="producterId" />
+		<result column="producter" property="producter" />
+		<result column="prdManagerId" property="prdManagerId" />
+		<result column="prdManager" property="prdManager" />
+		<result column="custId" property="custId" />
+		<result column="custLevel" property="custLevel" />
+		<result column="guideId" property="guideId" />
+		<result column="guideName" property="guideName" />
+		<result column="guideCall" property="guideCall" />
+		<result column="salerBusinessUnit" property="salerBusinessUnit" />
+		<result column="salerDep" property="salerDep" />
+		<result column="salerTeam" property="salerTeam" />
+	    <result column="groundPrice" property="groundPrice" />
+	  	<result column="avlGroundPrice" property="avlGroundPrice" />   
+		<collection property="operators" javaType="ArrayList"  ofType="com.tuniu.qms.common.model.OrderBillOperator">
+			<result column="operId" property="operId" />
+			<result column="operName" property="operName" />
+			<result column="managerId" property="managerId" />
+			<result column="managerName" property="managerName" />
+		</collection>
+		<collection property="angencies" javaType="ArrayList"  ofType="com.tuniu.qms.common.model.OrderBillAgency">
+			<result column="agencyId" property="agencyId" />
+			<result column="agencyName" property="agencyName" />
+			<result column="agencyAccessTime" property="agencyAccessTime" />
+			<result column="agencyOwner" property="agencyOwner" />
+			<result column="signCompany" property="signCompany" />
+		</collection>
+	</resultMap>
+	
+</mapper>

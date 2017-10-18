@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.MailConfigMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.MailConfig"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into qc_mail_config (
+		<if test="cmpLevel != null and cmpLevel !=''">cmpLevel,</if>
+		<if test="respType != null and respType !=''">respType,</if>
+		<if test="reAddrs != null and reAddrs !=''">reAddrs,</if>
+		<if test="ccAddrs != null and ccAddrs !=''">ccAddrs,</if>
+		delFlag
+		) VALUES (
+		<if test="cmpLevel != null and cmpLevel !=''">#{cmpLevel},</if>
+		<if test="respType != null and respType !=''">#{respType},</if>
+		<if test="reAddrs != null and reAddrs !=''">#{reAddrs},</if>
+		<if test="ccAddrs != null and ccAddrs !=''">#{ccAddrs},</if>
+		0
+		)
+	</insert>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_mail_config WHERE id=#{id}
+	</delete>
+
+	<update id="update" parameterType="com.tuniu.qms.qc.model.MailConfig">
+		UPDATE qc_mail_config
+		<set>
+			<if test="cmpLevel != null and cmpLevel !=''">cmpLevel=#{cmpLevel},</if>
+			<if test="respType != null and respType !=''">respType=#{respType},</if>
+			reAddrs=#{reAddrs},
+			<if test="ccAddrs != null and ccAddrs !=''">ccAddrs=#{ccAddrs},</if>
+		</set>
+		WHERE id=#{id}
+	</update>
+
+	<select id="get" parameterType="Integer"
+		resultType="com.tuniu.qms.qc.model.MailConfig">
+		SELECT * FROM qc_mail_config WHERE id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.MailConfigDto"
+		resultType="com.tuniu.qms.qc.model.MailConfig">
+		SELECT * from qc_mail_config qmc
+		ORDER BY qmc.id
+	</select>
+
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.IFestivalMap">
+    <sql id="list">
+        SELECT t1.id,t1.fes_id,t2.festival_name,t1.festival_date,t1.date_type 
+	    FROM frm_festival_date t1 LEFT JOIN  frm_festival t2 ON t1.fes_id=t2.id 
+	    WHERE DATE_FORMAT(t1.festival_date,'%Y') = #{fYear} ORDER BY t1.festival_date ASC
+    </sql>
+    
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.frm.entity.FestivalEntity">
+		<result property="id" column="id" />
+		<result property="fesId" column="fes_id" />
+		<result property="festivalName" column="festival_name" />
+		<result property="festivalDate" column="festival_date" />
+		<result property="dateType" column="date_type" />
+	</resultMap>
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	
+	<resultMap id="listResultMap" type="Map">
+		<result property="id" column="id" />
+		<result property="fesId" column="fes_id" />
+		<result property="festivalName" column="festival_name" />
+		<result property="festivalDate" column="festival_date" />
+		<result property="dateType" column="date_type" />
+	</resultMap>
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<select id="getFestivalAfterToday" parameterType="Date" resultMap="listResultEntity">
+		SELECT festival_date,date_type FROM frm_festival_date WHERE festival_date >= #{today }
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  fes_id, 
+	      festival_date, 
+	      date_type
+		) values (
+		  #{e.fesId}, 
+		  #{e.festivalDate}, 
+		  #{e.dateType}
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" flushCache="true" statementType="PREPARED" > 
+		INSERT INTO frm_festival_date (fes_id,festival_date,date_type) values 
+		<foreach collection="list" item="e" index="index" separator="," >
+          (#{e.fesId},#{e.festivalDate},#{e.dateType})
+        </foreach>
+	</insert>
+	
+	<select id="getFYearList" resultType="String">
+	    SELECT DISTINCT DATE_FORMAT(festival_date,'%Y') AS fyear FROM frm_festival_date ORDER BY fyear DESC
+	</select>
+	
+	<select id="getFesNameList" resultMap="listResultEntity">
+	    SELECT id,festival_name FROM frm_festival
+	</select>
+	
+	<delete id="delFes" parameterType="Map">
+	    DELETE FROM frm_festival_date WHERE fes_id = #{fesId } AND DATE_FORMAT(festival_date,'%Y') = #{fYear }
+	</delete>
+	
+</mapper>

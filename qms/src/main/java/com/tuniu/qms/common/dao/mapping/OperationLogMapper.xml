@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.OperationLogMapper">
+	<insert id="add" parameterType="com.tuniu.qms.common.model.OperationLog">
+		INSERT INTO qc_operation_log (
+			<if test="qcId != null">qcId,</if>
+			<if test="dealPeople != null">dealPeople,</if>
+			<if test="dealPeopleName != null">dealPeopleName,</if>
+			<if test="flowName != null">flowName,</if>
+			<if test="dealDepart != null">dealDepart,</if>
+			<if test="content != null">content,</if>
+			<if test="updateTime != null">updateTime,</if>
+			delFlag
+		) VALUES (
+			<if test="qcId != null">#{qcId},</if>
+			<if test="dealPeople != null">#{dealPeople},</if>
+			<if test="dealPeopleName != null">#{dealPeopleName},</if>
+			<if test="flowName != null">#{flowName},</if>
+			<if test="dealDepart != null">#{dealDepart},</if>
+			<if test="content != null">#{content},</if>
+			<if test="updateTime != null">#{updateTime},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_operation_log WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.OperationLog" flushCache="true" statementType="PREPARED">
+		UPDATE qc_operation_log 
+		<set>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.common.model.OperationLog">
+		SELECT * FROM qc_operation_log WHERE id=#{id}
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.common.dto.OperationLogDto" resultType="Integer">
+		SELECT count(1) FROM qc_operation_log 
+		<where>
+			delFlag=0
+			<if test="qcId != null">AND qcId=#{qcId}</if>
+		</where>
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.OperationLogDto" resultType="com.tuniu.qms.common.model.OperationLog">
+		SELECT * FROM qc_operation_log 
+		<where>
+			delFlag=0
+			<if test="qcId != null">AND qcId=#{qcId}</if>
+		</where>
+		order by addTime 
+	</select>
+	
+	
+	
+</mapper>

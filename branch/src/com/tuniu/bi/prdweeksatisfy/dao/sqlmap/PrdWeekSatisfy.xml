@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.bi.prdweeksatisfy.dao.sqlmap.imap.IPrdWeekSatisfyMap">
+	<select id="getSatisfactionByRouteIdAndWeek" parameterType="map" resultType="double">
+		select remark_statisfaction from route_remark_satisfaction where route_key=#{routeId} and week=#{week} and year=#{year}
+	</select>
+	
+	<select id="listLowRouteIds" parameterType="map" resultType="long">
+		<choose>
+			<when test="curWeek==1">
+				<![CDATA[
+					SELECT DISTINCT
+					ro.route_key
+					FROM route_remark_satisfaction ro
+					JOIN route_remark_satisfaction rot 
+					ON ro.route_key = rot.route_key 
+					AND ro.week	= rot.week - 1 
+					AND rot.week=
+						(
+							select max(week) from route_remark_satisfaction 
+							where year=#{curYear}-1
+						) 
+					AND ro.year=rot.year  
+					AND 
+						(
+							(rot.niuren_flag='牛人专线' AND ro.remark_statisfaction<0.9 AND rot.remark_statisfaction<0.9)
+								 OR 
+							(rot.niuren_flag!='牛人专线' AND ro.remark_statisfaction<0.75 AND rot.remark_statisfaction<0.75)
+						)
+					WHERE ro.year=#{curYear}-1
+				]]>
+			</when>
+			<when test="curWeek==2">
+				<![CDATA[
+					SELECT DISTINCT
+					ro.route_key
+					FROM route_remark_satisfaction ro
+					JOIN route_remark_satisfaction rot 
+					ON ro.route_key = rot.route_key 
+					AND rot.week=1 
+					AND rot.year=#{curYear}
+					AND 
+						(
+							(rot.niuren_flag='牛人专线' AND ro.remark_statisfaction<0.9 AND rot.remark_statisfaction<0.9)
+								 OR 
+							(rot.niuren_flag!='牛人专线' AND ro.remark_statisfaction<0.75 AND rot.remark_statisfaction<0.75)
+						)
+					
+					WHERE ro.year=#{curYear}-1
+					AND ro.week=52
+						
+				]]>
+			</when>
+			<otherwise>
+				<![CDATA[
+					SELECT DISTINCT
+					ro.route_key
+					FROM route_remark_satisfaction ro
+					JOIN route_remark_satisfaction rot 
+					ON ro.route_key = rot.route_key 
+					AND ro.week	= rot.week - 1 
+					AND rot.year=#{curYear}
+					AND (
+						(rot.niuren_flag='牛人专线' AND ro.remark_statisfaction<0.9 AND rot.remark_statisfaction<0.9)
+							 OR 
+						(rot.niuren_flag!='牛人专线' AND ro.remark_statisfaction<0.75 AND rot.remark_statisfaction<0.75))
+						
+					WHERE ro.year=#{curYear}
+					AND ro.week=#{curWeek}-2
+					
+				]]>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="getNiuFlagByRouteId"  parameterType="long"  resultType="string">
+		SELECT niuren_flag FROM route_remark_satisfaction WHERE route_key=#{routeId} order by time_stamp desc LIMIT 1
+	</select>
+</mapper>

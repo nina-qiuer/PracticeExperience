@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.QcBillRelationMapper">
+
+    <insert id="add" parameterType="com.tuniu.qms.qc.model.QcBillRelation"  useGeneratedKeys="true" keyProperty="id"  keyColumn="id">
+		INSERT INTO qc_relation_bill (
+			<if test="qcId != null">qcId,</if>
+			<if test="devId != null">devId,</if>
+			<if test="cmpId != null">cmpId,</if>
+			<if test="qcPerson != null">qcPerson,</if>
+			<if test="cmpTime != null">cmpTime,</if>
+			<if test="indemnifyAmount != null">indemnifyAmount,</if>
+			<if test="claimAmount != null">claimAmount,</if>
+			<if test="flag != null">flag,</if>
+			addTime
+		) VALUES (
+			<if test="qcId != null">#{qcId},</if>
+			<if test="devId != null">#{devId},</if>
+			<if test="cmpId != null">#{cmpId},</if>
+			<if test="qcPerson != null">#{qcPerson},</if>
+			<if test="cmpTime != null">#{cmpTime},</if>
+			<if test="indemnifyAmount != null">#{indemnifyAmount},</if>
+			<if test="claimAmount != null">#{claimAmount},</if>
+			<if test="flag != null">#{flag},</if>
+			CURRENT_TIMESTAMP
+		)
+	</insert>
+ 
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_relation_bill WHERE id=#{id}
+	</delete>
+	
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcBillRelation" flushCache="true" statementType="PREPARED">
+		UPDATE qc_relation_bill 
+		<set>
+			<if test="qcId != null">qcId=#{qcId},</if>
+			<if test="devId != null">devId=#{devId},</if>
+			<if test="cmpId != null">cmpId=#{cmpId},</if>
+			<if test="qcPerson != null">qcPerson=#{qcPerson},</if>
+			<if test="cmpTime != null">cmpTime=#{cmpTime},</if>
+			<if test="indemnifyAmount != null">indemnifyAmount=#{indemnifyAmount},</if>
+			<if test="claimAmount != null">claimAmount=#{claimAmount},</if>
+			<if test="flag != null">flag=#{flag},</if>
+			<if test="delFlag != null">delFlag = #{delFlag},</if>
+			<if test="closeType != null">closeType = #{closeType},</if>
+			<if test="remark != null">remark = #{remark},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcBillRelation">
+		SELECT * FROM qc_relation_bill WHERE id=#{id} and delFlag = 0
+	</select>
+	
+	<sql id="listSql">
+		<where>
+			qrb.delFlag = 0
+			<if test="qcPerson != null and qcPerson !='' ">AND qrb.qcPerson=#{qcPerson}</if>
+			<if test="qcId != null and qcId !='' ">AND qrb.qcId=#{qcId}</if>
+			<if test="devId != null and devId !='' ">AND qrb.devId=#{devId}</if>
+		    <if test="cmpId != null and cmpId!=''">AND qrb.cmpId=#{cmpId}</if>
+		    <if test="flag !=null">AND qrb.flag=#{flag}</if>
+		    <if test="cmpStartTime != null and cmpStartTime!=''">AND qrb.cmpTime &gt;= #{cmpStartTime}</if>
+		    <if test="cmpEndTime != null and cmpEndTime!=''">AND qrb.cmpTime &lt;= concat(#{cmpEndTime},' 23:59:59')</if>
+		    <if test="ordId != null and ordId != ''"> AND qqb.ordId = #{ordId}</if>
+		    <if test="closeType != null and closeType != ''"> AND qrb.closeType = #{closeType}</if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QcBillRelationDto" resultType="com.tuniu.qms.qc.model.QcBillRelation">
+		SELECT qrb.*, qqb.ordId as ordId
+		FROM qc_relation_bill  qrb
+		LEFT JOIN qc_qc_bill qqb ON qqb.id = qrb.qcId
+		<include refid="listSql"/>
+		ORDER BY qrb.id desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.QcBillRelationDto" resultType="Integer">
+		SELECT COUNT(1) 
+		FROM qc_relation_bill qrb
+		LEFT JOIN qc_qc_bill qqb ON qqb.id = qrb.qcId
+		<include refid="listSql"></include>
+	</select>
+	
+	
+	<update id="updateRelation" parameterType="java.util.Map">
+	 
+	     update qc_relation_bill set devId =#{devId} , flag =#{flag},updateTime=CURRENT_TIMESTAMP
+		 where id in 
+		 <foreach collection="relationIds" item="relationId"
+	      open="(" close=")" separator=",">
+	  		 #{relationId}
+	  	 </foreach>
+	</update>
+	
+	
+	<select id="listRelation" parameterType="java.util.Map" resultType="com.tuniu.qms.qc.model.QcBillRelation">
+	   
+	   select * from  qc_relation_bill  where id in 
+		 <foreach collection="relationIds" item="relationId"
+	      open="(" close=")" separator=",">
+	  		 #{relationId}
+	  	 </foreach>
+	   order by id
+	</select>
+	
+	<select id="listByDevId" parameterType="com.tuniu.qms.qc.dto.QcBillRelationDto"  resultType="com.tuniu.qms.qc.model.QcBillRelation">
+	
+	        select * from  qc_relation_bill  where delFlag =0 
+	        	and flag = 1
+	          <if test="qcId !=null">
+		       AND  qcId =#{qcId}
+		    </if>
+			<if test="devId !=null">
+			   AND  devId =#{devId}
+			</if>
+	        
+	</select>
+	
+	<update id="updateByCmpAndDev" parameterType="com.tuniu.qms.qc.dto.QcBillRelationDto">
+	
+	   update qc_relation_bill set devId =0,flag=#{flag}
+	   where 
+	     <if test="qcId !=null and qcId!=''">
+		         qcId =#{qcId}
+		    </if>
+			<if test="devId !=null and devId!=''">
+			     devId =#{devId}
+			</if>
+			<if test="cmpId !=null and cmpId!=''">
+			     cmpId =#{cmpId}
+			</if>
+	</update>
+	
+	<select id="getQcIdByDevIdAndCmpId" parameterType="java.util.Map" resultType="Integer">
+		SELECT qcId
+		FROM qc_relation_bill
+		WHERE devId = #{devId}
+			AND cmpId = #{cmpId}
+			AND delFlag = 0
+		LIMIT 1
+	</select>
+</mapper>

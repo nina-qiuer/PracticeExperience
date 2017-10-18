@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.report.dao.DevQcWorkStatMapper">
+
+	<select id="list" parameterType="com.tuniu.qms.report.dto.DevQcWorkStatDto" resultType="com.tuniu.qms.report.model.DevQcWorkStat">
+		
+		SELECT  t.qcPerson ,
+				t.qcPersonId,
+				IFNULL(a.distribNum,0) AS distribNum,
+				IFNULL(b.doneNum,0) AS doneNum,
+				IFNULL(b.doneTotalNum,0) AS doneTotalNum,
+				IFNULL(b.cancelNum,0) AS cancelNum,
+				b.cancelRate,
+				IFNULL(b.problemTotalNum,0) AS problemTotalNum,
+				b.problemRate,
+				IFNULL(b.workDayNum,0) AS workDayNum,
+				b.avgDailyDoneNum,
+				b.avgDailyProblemNum,
+				IFNULL(b.sDevNum,0) AS sDevNum,
+				IFNULL(b.aDevNum,0) AS aDevNum,
+				IFNULL(b.bDevNum,0) AS bDevNum,
+				IFNULL(b.cDevNum,0) AS cDevNum,
+				IFNULL(b.noDevNum,0) AS noDevNum,
+				IFNULL(c.timelyDoneNum,0) AS timelyDoneNum,
+				IFNULL(c.expireNum,0) AS expireNum,
+				c.timelyRate,
+				a.doneRate 
+				FROM (
+					SELECT qcPerson,qcPersonId FROM qc_qc_bill WHERE delFlag = 0 AND groupFlag = 3 AND state IN (3,4,5) 
+					AND distribTime &gt;= #{statDateBgn} 
+					AND distribTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') 
+					UNION
+					SELECT qcPerson,qcPersonId FROM qc_qc_bill WHERE delFlag = 0 AND groupFlag = 3 AND state IN (4,5) 
+					AND finishTime &gt;= #{statDateBgn}   
+                    AND finishTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') 
+					UNION
+					SELECT qcPerson,qcPersonId FROM qc_qc_bill WHERE delFlag = 0 AND groupFlag = 3 AND state = 4 
+					AND qcPeriodEndTime &gt;= #{statDateBgn} 
+			        AND qcPeriodEndTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') 
+				 ) t
+				LEFT JOIN (
+				SELECT qcPersonId,
+				COUNT(1) AS distribNum,
+				SUM(CASE state WHEN 4 THEN 1 ELSE 0 END)/(COUNT(1)+0.0) AS doneRate
+				FROM qc_qc_bill
+				WHERE delFlag = 0 AND groupFlag = 3 AND state IN (3,4,5)
+				AND distribTime &gt;= #{statDateBgn} 
+				AND distribTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') 
+				GROUP BY qcPersonId ) a
+				ON t.qcPersonId = a.qcPersonId
+				LEFT JOIN (
+				SELECT qcPersonId,
+				SUM(CASE state WHEN 4 THEN 1 ELSE 0 END) AS doneNum,
+				COUNT(1) AS doneTotalNum,
+				SUM(CASE state WHEN 5 THEN 1 ELSE 0 END) AS cancelNum,
+				SUM(CASE state WHEN 5 THEN 1 ELSE 0 END)/(COUNT(1)+0.0) AS cancelRate,
+				SUM(CASE WHEN state = 4 AND qualityEventClass IN ('S','A','B','C') THEN 1 ELSE 0 END) AS problemTotalNum,
+				SUM(CASE WHEN state = 4 AND qualityEventClass IN ('S','A','B','C') THEN 1 ELSE 0 END)/(COUNT(1)+0.0) AS problemRate,
+				COUNT(DISTINCT DATE(finishTime)) AS workDayNum,
+				COUNT(1)/(COUNT(DISTINCT DATE(finishTime))+0.0) AS avgDailyDoneNum,
+				SUM(CASE WHEN state = 4 AND qualityEventClass IN ('S','A','B','C') THEN 1 ELSE 0 END)/(COUNT(DISTINCT DATE(finishTime))+0.0) AS avgDailyProblemNum,
+				SUM(CASE WHEN state = 4 AND qualityEventClass = 'S' THEN 1 ELSE 0 END) AS sDevNum,
+				SUM(CASE WHEN state = 4 AND qualityEventClass = 'A' THEN 1 ELSE 0 END) AS aDevNum,
+				SUM(CASE WHEN state = 4 AND qualityEventClass = 'B' THEN 1 ELSE 0 END) AS bDevNum,
+				SUM(CASE WHEN state = 4 AND qualityEventClass = 'C' THEN 1 ELSE 0 END) AS cDevNum,
+				SUM(CASE WHEN state = 4 AND qualityEventClass = '非研发故障' THEN 1 ELSE 0 END) AS noDevNum
+				FROM qc_qc_bill
+				WHERE delFlag = 0 AND groupFlag = 3 AND state IN (4,5) 
+				AND finishTime &gt;= #{statDateBgn}   
+                AND finishTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') 
+				GROUP BY qcPersonId ) b
+				ON t.qcPersonId= b.qcPersonId
+				LEFT JOIN (
+				SELECT qcPersonId,
+				SUM(CASE WHEN state=4 AND finishTime &lt;= qcPeriodEndTime THEN 1 ELSE 0 END) AS timelyDoneNum,
+				COUNT(1) AS expireNum,
+				SUM(CASE WHEN  state = 4 AND finishTime &lt;= qcPeriodEndTime THEN 1 ELSE 0 END)/(COUNT(1)+0.0) AS timelyRate
+				FROM qc_qc_bill
+				WHERE delFlag = 0 AND groupFlag = 3 AND  state IN (3,4)
+				AND qcPeriodEndTime &gt;= #{statDateBgn} 
+			    AND qcPeriodEndTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') 
+				GROUP BY qcPersonId ) c
+				ON t.qcPersonId = c.qcPersonId;
+	</select>
+	
+	<select id="getCombine" parameterType="com.tuniu.qms.report.dto.DevQcWorkStatDto" resultType="com.tuniu.qms.report.model.DevQcWorkStat">
+		
+		       SELECT   0 AS qcPersonId ,
+					    '【全组】' AS qcPerson,	
+						IFNULL(a.distribNum,0) AS distribNum,
+						IFNULL(b.doneNum,0) AS doneNum,
+						IFNULL(b.doneTotalNum,0) AS doneTotalNum,
+						IFNULL(b.cancelNum,0) AS cancelNum,
+						IFNULL(b.cancelRate,0) AS cancelRate,
+						IFNULL(b.problemTotalNum,0) AS problemTotalNum,
+						IFNULL(b.problemRate,0) AS problemRate,
+						IFNULL(b.workDayNum,0) AS workDayNum,
+						IFNULL(b.avgDailyDoneNum,0) AS avgDailyDoneNum,
+						IFNULL(b.avgDailyProblemNum,0) AS avgDailyProblemNum,
+						IFNULL(b.sDevNum,0) AS sDevNum,
+						IFNULL(b.aDevNum,0) AS aDevNum,
+						IFNULL(b.bDevNum,0) AS bDevNum,
+						IFNULL(b.cDevNum,0) AS cDevNum,
+						IFNULL(b.noDevNum,0) AS noDevNum,
+						IFNULL(c.timelyDoneNum,0) AS timelyDoneNum,
+						IFNULL(c.expireNum,0) AS expireNum,
+						IFNULL(c.timelyRate,0) AS timelyRate,
+						IFNULL(a.doneRate,0) AS doneRate
+					FROM (
+					SELECT 
+					COUNT(1) AS distribNum,
+					SUM(CASE state WHEN 4 THEN 1 ELSE 0 END)/(COUNT(1)+0.0) AS doneRate
+					FROM qc_qc_bill
+					WHERE delFlag = 0 AND groupFlag = 3 AND state IN (3,4,5)
+					AND distribTime &gt;= #{statDateBgn} 
+					AND distribTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') 
+					 ) a			
+				    JOIN (
+					SELECT 
+					SUM(CASE state WHEN 4 THEN 1 ELSE 0 END) AS doneNum,
+					COUNT(1) AS doneTotalNum,
+					SUM(CASE state WHEN 5 THEN 1 ELSE 0 END) AS cancelNum,
+					SUM(CASE state WHEN 5 THEN 1 ELSE 0 END)/(COUNT(1)+0.0) AS cancelRate,
+					SUM(CASE WHEN state = 4 AND qualityEventClass IN ('S','A','B','C') THEN 1 ELSE 0 END) AS problemTotalNum,
+					SUM(CASE WHEN state = 4 AND qualityEventClass IN ('S','A','B','C') THEN 1 ELSE 0 END)/(COUNT(1)+0.0) AS problemRate,
+					COUNT(DISTINCT DATE(finishTime)) AS workDayNum,
+					COUNT(1)/(COUNT(DISTINCT DATE(finishTime))+0.0) AS avgDailyDoneNum,
+					SUM(CASE WHEN state = 4 AND qualityEventClass IN ('S','A','B','C') THEN 1 ELSE 0 END)/(COUNT(DISTINCT DATE(finishTime))+0.0) AS avgDailyProblemNum,
+					SUM(CASE WHEN state = 4 AND qualityEventClass = 'S' THEN 1 ELSE 0 END) AS sDevNum,
+					SUM(CASE WHEN state = 4 AND qualityEventClass = 'A' THEN 1 ELSE 0 END) AS aDevNum,
+					SUM(CASE WHEN state = 4 AND qualityEventClass = 'B' THEN 1 ELSE 0 END) AS bDevNum,
+					SUM(CASE WHEN state = 4 AND qualityEventClass = 'C' THEN 1 ELSE 0 END) AS cDevNum,
+					SUM(CASE WHEN state = 4 AND qualityEventClass = '非研发故障' THEN 1 ELSE 0 END) AS noDevNum
+					FROM qc_qc_bill
+					WHERE delFlag = 0 AND groupFlag = 3 AND state IN (4,5) 
+					AND finishTime &gt;= #{statDateBgn}   
+					AND finishTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') 
+					 ) b
+				    JOIN (
+					SELECT 
+					SUM(CASE WHEN finishTime &lt;= qcPeriodEndTime THEN 1 ELSE 0 END) AS timelyDoneNum,
+					COUNT(1) AS expireNum,
+					SUM(CASE WHEN finishTime &lt;= qcPeriodEndTime THEN 1 ELSE 0 END)/(COUNT(1)+0.0) AS timelyRate
+					FROM qc_qc_bill
+					WHERE delFlag = 0 AND groupFlag = 3 AND state = 4 
+					AND qcPeriodEndTime &gt;= #{statDateBgn} 
+				    AND qcPeriodEndTime &lt;= CONCAT(#{statDateEnd},' 23:59:59') 
+	                ) c
+				
+		   
+	</select>
+	
+</mapper>

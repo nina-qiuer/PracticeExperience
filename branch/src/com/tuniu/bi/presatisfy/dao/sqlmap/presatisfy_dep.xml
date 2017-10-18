@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.bi.presatisfy.dao.sqlmap.imap.IPresatisfyDepMap">
+
+	<select id="getPresatisfyDep" parameterType="Map" resultMap="listResultEntity">
+		SELECT * FROM CallOrder_3T where DATE_FORMAT(StaticDate,'%Y%m%d')=DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 DAY),'%Y%m%d') 
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getPresatisfyDepCount" parameterType="Map" resultType="Integer">
+		SELECT count(1) FROM CallOrder_3T where DATE_FORMAT(StaticDate,'%Y%m%d')=DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 DAY),'%Y%m%d')
+	</select>
+	
+	<select id="getPresatisfyContactId" parameterType="Integer" resultType="Map">
+		SELECT new_user_id FROM CallOrder_3T where DATE_FORMAT(StaticDate,'%Y%m%d')=DATE_FORMAT(DATE_SUB(NOW(),INTERVAL 1 DAY),'%Y%m%d')
+	</select>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.bi.presatisfy.entity.PresatisfyEntity">
+
+		<result property="staticDate" column="StaticDate" />
+		
+		<result property="orderId" column="order_id" />
+
+		<result property="telCnt" column="tel_cnt" />
+		
+		<result property="routeName" column="route_name" />
+
+		<result property="salerName" column="saler_name" />
+
+		<result property="salermanagerName" column="salermanager_name" />
+
+		<result property="orderType" column="order_type" />
+		
+		<result property="startTime" column="start_time" />
+		
+		<result property="backTime" column="back_time" />
+		
+		<result property="contactId" column="new_user_id" />
+		
+	</resultMap>
+</mapper>

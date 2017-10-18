@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.report.dao.QualityCostReportMapper">
+
+
+	<sql id="timeSql">
+		 <if test="timeType == 1">
+			     	<if test="yearBgn != null and yearBgn !='' ">AND year &gt;=#{yearBgn}</if>
+					<if test="yearEnd != null and yearEnd !='' ">AND year &lt;=#{yearEnd}</if>	
+			     </if>
+			    <if test="timeType == 2">
+			     		
+			     		 AND yearQuarter &gt;=#{quarterStart} AND yearQuarter &lt;=#{quarterFinish}
+			     </if>
+			     <if test="timeType == 3">
+			          
+			          AND yearMonth &gt;=#{monthStart} AND yearMonth &lt;=#{monthFinish}
+			        
+			     </if>
+			     <if test="timeType ==4">
+			     
+			    	 AND yearWeek &gt;=#{weekStart} AND yearWeek &lt;=#{weekFinish}
+			     
+			     </if>
+			     <if test="timeType == 5">
+			     	<if test="addTimeBgn != null and addTimeBgn!='' ">AND addTime &gt;=#{addTimeBgn}</if>
+					<if test="addTimeEnd != null and addTimeEnd!='' ">AND addTime &lt;=concat(#{addTimeEnd},' 23:59:59')</if>	
+			     </if>
+	</sql>
+	
+	<select id="getGraphByQpType" parameterType="com.tuniu.qms.report.dto.QualityCostReportDto" resultType="Map">
+	   
+	   <if test="(firstCostAccount == null or firstCostAccount =='') and (twoCostAccount ==null or twoCostAccount =='') and (threeCostAccount ==null or threeCostAccount =='')">
+			
+		SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+					 SELECT firstCostAccount as qpTypeName ,SUM(qualityCost)  AS num 
+					FROM qs_quality_cost_ledger  
+					where 1=1  
+					AND qualityCost>0
+					 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+					 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+					 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+				    <include refid="timeSql"/>
+					   GROUP BY firstCostAccount
+					   ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				       ORDER BY t.num
+	   </if>
+	   
+	   <if test="(firstCostAccount !=null and firstCostAccount !='') and   (twoCostAccount ==null or twoCostAccount =='') and (threeCostAccount ==null or threeCostAccount =='')">
+			   
+			SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+			    SELECT twoCostAccount as qpTypeName,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			      <include refid="timeSql"/>
+			     AND twoCostAccount!=''
+			     AND firstCostAccount =#{firstCostAccount}  
+			     GROUP BY twoCostAccount
+			     ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				  ORDER BY t.num
+	   </if>
+	   <if test="(twoCostAccount !=null and twoCostAccount !='') and (threeCostAccount ==null or threeCostAccount =='')">
+	       
+	      	SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+			 	SELECT threeCostAccount as qpTypeName ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				 <include refid="timeSql"/>
+				   AND threeCostAccount!=''
+				   AND twoCostAccount = #{twoCostAccount}  
+				   GROUP BY threeCostAccount
+				  ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				  ORDER BY t.num
+			</if>
+			
+		<if test="threeCostAccount !=null and threeCostAccount !=''">
+			SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					( 
+			   SELECT threeCostAccount as qpTypeName,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				 <include refid="timeSql"/>
+				 AND  threeCostAccount ='测试'
+			     AND  threeCostAccount =#{threeCostAccount}  
+			     GROUP BY threeCostAccount
+			     ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				 ORDER BY t.num
+			</if>
+	
+	</select>
+	
+	
+	<select id="getGraphByDep" parameterType="com.tuniu.qms.report.dto.QualityCostReportDto" resultType="Map">
+	   
+	   <if test="(firstDepId == null or firstDepId =='') and (twoDepId ==null or twoDepId =='') and (threeDepId ==null or threeDepId =='')">
+			
+				SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(SELECT firstDepName AS qpTypeName ,SUM(qualityCost)  AS num 
+							FROM qs_quality_cost_ledger  
+							WHERE 1=1  
+								AND qualityCost>0	
+								<if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+							     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+								 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+							   	 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+							     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			  				    <include refid="timeSql"/>
+						       AND firstDepId>0
+							   GROUP BY firstDepName
+				   			ORDER BY num DESC)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				  		    ORDER BY t.num
+	   </if>
+	   <if test="firstDepId !=null and firstDepId !=''">
+			SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					( SELECT twoDepName as qpTypeName,SUM(qualityCost)  AS num 
+						FROM qs_quality_cost_ledger  
+						where 1=1  
+						AND qualityCost>0
+					 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+				     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+					 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+				   	 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+				      <include refid="timeSql"/>
+				     AND firstDepId =#{firstDepId}  
+				     AND twoDepId>0
+				     GROUP BY twoDepName
+				     ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+					 ORDER BY t.num
+	   </if>
+	   <if test="twoDepId !=null and twoDepId !=''">
+				SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM ( 
+					 	SELECT threeDepName as qpTypeName ,SUM(qualityCost)  AS num 
+						FROM qs_quality_cost_ledger  
+						where 1=1  
+						AND qualityCost>0
+						 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+					     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+						 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+					   	 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+						 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+						  <include refid="timeSql"/>
+						   AND twoDepId = #{twoDepId}  
+						   AND threeDepId>0
+						   GROUP BY threeDepName
+						   ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+						   ORDER BY t.num
+			</if>
+			
+		<if test="threeDepId !=null and threeDepId !=''">
+		SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM ( 
+					   SELECT threeDepName as qpTypeName,SUM(qualityCost)  AS num 
+						FROM qs_quality_cost_ledger  
+						where 1=1  
+						AND qualityCost>0
+						 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+					     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+						 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+					   	 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+						 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+					     <include refid="timeSql"/>
+						   AND  threeDepId >99999
+					       AND  threeDepId =#{threeDepId}  
+					       GROUP BY threeDepName
+					       ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+						   ORDER BY t.num
+			</if>
+	
+	</select>
+	
+	<select id="getGraphByJob" parameterType="com.tuniu.qms.report.dto.QualityCostReportDto" resultType="Map">
+	   
+	   <if test="jobId == null or jobId =='' ">
+			SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			 SELECT jobName as qpTypeName ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			 	 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+			     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+			     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			     <include refid="timeSql"/>
+			      AND jobId>0
+				   GROUP BY jobName
+				   ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+						   ORDER BY t.num
+	   </if>
+	   <if test="jobId !=null and jobId !='' ">
+		SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			 SELECT jobName as qpTypeName ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1 
+					AND qualityCost>0
+				<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+			     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+			     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			    <include refid="timeSql"/>
+			     AND jobId =#{jobId}
+				  ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			    ORDER BY t.num
+	   </if>
+	</select>
+	
+	<select id="getGraphByResp" parameterType="com.tuniu.qms.report.dto.QualityCostReportDto" resultType="Map">
+	   
+	   <if test="respPersonName == null or respPersonName =='' ">
+			SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			 SELECT respPersonName as qpTypeName ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+			     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    <include refid="timeSql"/>
+			     AND respPersonId>0
+				   GROUP BY respPersonName
+				   ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			     ORDER BY t.num
+	   </if>
+	   <if test="respPersonName !=null and  respPersonName !='' ">
+		SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			 SELECT respPersonName as qpTypeName ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1 
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				  <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+			     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			      <include refid="timeSql"/>
+			     AND respPersonName =#{respPersonName}
+				   ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			     ORDER BY t.num
+	   </if>
+	</select>
+	
+	<select id="getTrendGraph" parameterType="com.tuniu.qms.report.dto.QualityCostReportDto" resultType="Map">
+	   
+	   <if test="timeType == 1 ">
+			 SELECT year as statisticDate ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				  <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+			     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <if test="yearBgn != null and yearBgn !='' ">AND year &gt;=#{yearBgn}</if>
+				 <if test="yearEnd != null and yearEnd !='' ">AND year &lt;=#{yearEnd}</if>
+				  GROUP BY year
+				  ORDER BY statisticDate
+	   </if>
+	   <if test="timeType == 2 ">
+			 SELECT yearQuarter  as statisticDate ,SUM(qualityCost)  AS num  
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+			     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     AND yearQuarter &gt;=#{quarterStart} AND yearQuarter &lt;=#{quarterFinish}	
+				   GROUP BY  yearQuarter
+				   ORDER BY statisticDate
+	   </if>
+	   <if test="timeType == 3 ">
+			 SELECT yearMonth  as statisticDate ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				  <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+			     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			       AND yearMonth &gt;=#{monthStart} AND yearMonth &lt;=#{monthFinish}
+				   GROUP BY yearMonth
+				   ORDER BY statisticDate
+	   </if>
+	    <if test="timeType == 4 ">
+			 SELECT yearWeek  as statisticDate ,SUM(qualityCost)  AS num  
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+			     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     AND yearWeek &gt;=#{weekStart} AND yearWeek &lt;=#{weekFinish}
+				   GROUP BY yearWeek
+				   ORDER BY statisticDate
+	   </if>
+	    <if test="timeType == 5 ">
+			 SELECT DATE_FORMAT(addTime,'%Y-%m-%d') as statisticDate ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+			     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <if test="addTimeBgn != null and addTimeBgn!='' ">AND addTime &gt;=#{addTimeBgn}</if>
+				 <if test="addTimeEnd != null and addTimeEnd!='' ">AND addTime &lt;=concat(#{addTimeEnd},' 23:59:59')</if>	
+				   GROUP BY DATE_FORMAT(addTime,'%Y-%m-%d')
+				   ORDER BY statisticDate
+	   </if>
+	</select>
+	
+	<select id="getRankGraphImplementQp" parameterType="com.tuniu.qms.report.dto.QualityCostReportDto" resultType="Map">
+	   SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+	     		SELECT threeCostAccount  as qpTypeName ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <include refid="timeSql"/>
+			     AND twoCostAccount ='执行问题'
+			     AND threeCostAccount!=''
+			     GROUP BY threeCostAccount
+			     ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			     ORDER BY t.num
+	
+	</select>
+
+	<select id="getRankGraphDep" parameterType="com.tuniu.qms.report.dto.QualityCostReportDto" resultType="Map">
+	 
+	 
+	    <if test="(firstDepId == null or firstDepId =='') and (twoDepId ==null or twoDepId =='') and (threeDepId ==null or threeDepId =='')">
+				 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+					 SELECT firstDepName as qpTypeName ,SUM(qualityCost)  AS num 
+						FROM qs_quality_cost_ledger  
+						where 1=1  
+							AND qualityCost>0
+						AND firstDepId>0
+						 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+					     <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+						 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+						 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+					     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+					     <include refid="timeSql"/>
+						   GROUP BY firstDepName
+						    ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			     ORDER BY t.num
+	   </if>
+	   <if test="firstDepId !=null and firstDepId !=''">
+		 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			    SELECT twoDepName as qpTypeName,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				  <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+				 <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+				 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			      <include refid="timeSql"/>
+			     AND twoDepId>0
+			     AND firstDepId =#{firstDepId}  
+			     GROUP BY twoDepName
+			       ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			     ORDER BY t.num
+	   </if>
+	   <if test="twoDepId !=null and twoDepId !=''">
+			 
+		 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			 	SELECT threeDepName as qpTypeName ,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+				 <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+				 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				  <include refid="timeSql"/>
+				   AND threeDepId>0
+				   AND twoDepId = #{twoDepId}  
+				   GROUP BY threeDepName
+				   ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			     ORDER BY t.num
+			</if>
+			
+		<if test="threeDepId !=null and threeDepId !=''">
+			
+	      SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			   SELECT threeDepName as qpTypeName,SUM(qualityCost)  AS num 
+				FROM qs_quality_cost_ledger  
+				where 1=1  
+					AND qualityCost>0
+				  <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+				 <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+				 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+				 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				  <include refid="timeSql"/>
+				  AND  threeDepId >99999
+			      AND  threeDepId =#{threeDepId}  
+			      GROUP BY threeDepName
+			       ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			     ORDER BY t.num
+			</if>
+	    
+	</select>
+	
+	
+	<select id="getRankGraphResp" parameterType="com.tuniu.qms.report.dto.QualityCostReportDto" resultType="Map">
+	 
+	        <if test="respPersonName == null or respPersonName =='' ">
+				  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+					 SELECT respPersonName as qpTypeName ,SUM(qualityCost) AS num 
+						FROM qs_quality_cost_ledger  
+						where 1=1  
+						AND respPersonId>0
+						<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+						<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+						<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+						 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+						 <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+						 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+					    <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>			    
+					    <include refid="timeSql"/>
+					      AND qualityCost>0
+						   GROUP BY respPersonName
+						  ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			     ORDER BY t.num
+	   </if>
+	   <if test="respPersonName !=null and  respPersonName !='' ">
+				  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+					 SELECT respPersonName as qpTypeName ,SUM(qualityCost)  AS num 
+						FROM qs_quality_cost_ledger  
+						where 1=1 
+						 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+						<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+						<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+						 <if test="firstCostAccount != null and firstCostAccount!=''">AND firstCostAccount=#{firstCostAccount}</if>
+						 <if test="twoCostAccount != null and twoCostAccount!=''">AND twoCostAccount=#{twoCostAccount}</if>
+						 <if test="threeCostAccount != null and threeCostAccount!=''">AND threeCostAccount=#{threeCostAccount}</if>
+					    <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>			 
+					     <include refid="timeSql"/>
+					     AND respPersonName =#{respPersonName}
+					     AND qualityCost>0
+						  ORDER BY num desc	)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			 	   ORDER BY t.num
+	   </if>
+	</select>
+</mapper>

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.SubstdProductSnapshotMapper">
+	
+	<delete id="deleteAllPrdExts">
+		DELETE FROM qs_product_ext
+	</delete>
+	
+	<insert id="addPrdExts" parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		insert into qs_product_ext (
+			id, 
+			prdName, 
+			destCate, 
+			aloneGroupFlag, 
+			surplusGroupNum, 
+			furthestGroupDate, 
+			salesPeriodLength, 
+			stdSalesPeriodLength, 
+			businessUnit, 
+			prdDep, 
+			prdTeam, 
+			prdManagerId, 
+			prdManager, 
+			producterId, 
+			producter
+		) values 
+        <foreach collection="list" item="e" index="index" separator="," >
+        (
+            #{e.id},
+			#{e.prdName},
+			#{e.destCate},
+			#{e.aloneGroupFlag}, 
+			#{e.surplusGroupNum}, 
+			#{e.furthestGroupDate}, 
+			#{e.salesPeriodLength}, 
+			#{e.stdSalesPeriodLength}, 
+			#{e.businessUnit},
+			#{e.prdDep},
+			#{e.prdTeam},
+			#{e.prdManagerId},
+			#{e.prdManager},
+			#{e.producterId},
+			#{e.producter}
+        )
+        </foreach>
+    </insert>
+	
+	<select id="listFromProductExt" parameterType="Map" resultType="com.tuniu.qms.qs.model.SubstdProductSnapshot">
+		SELECT id AS prdId, prdName, destCate, businessUnit, prdDep, prdTeam, prdManagerId, prdManager, producterId, producter, 
+			furthestGroupDate, salesPeriodLength, stdSalesPeriodLength, surplusGroupNum, aloneGroupFlag
+		FROM qs_product_ext LIMIT #{dataLimitStart}, #{pageSize}
+	</select>
+	
+	<insert id="addBatch" parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		insert into qs_substd_product_snapshot (
+			prdId, 
+			prdName, 
+			destCate, 
+			businessUnit, 
+			prdDep, 
+			prdTeam, 
+			prdManagerId, 
+			prdManager, 
+			producterId, 
+			producter, 
+			statisticDate, 
+			furthestGroupDate, 
+			salesPeriodLength, 
+			stdSalesPeriodLength, 
+			splDifValue, 
+			surplusGroupNum, 
+			groupRichness, 
+			stdGroupRichness, 
+			grDifValue, 
+			aloneGroupFlag 
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.prdId},
+			#{e.prdName},
+			#{e.destCate},
+			#{e.businessUnit},
+			#{e.prdDep},
+			#{e.prdTeam},
+			#{e.prdManagerId},
+			#{e.prdManager},
+			#{e.producterId},
+			#{e.producter},
+			#{e.statisticDate},
+			#{e.furthestGroupDate},
+			#{e.salesPeriodLength},
+			#{e.stdSalesPeriodLength},
+			#{e.splDifValue},
+			#{e.surplusGroupNum},
+			#{e.groupRichness},
+			#{e.stdGroupRichness},
+			#{e.grDifValue},
+			#{e.aloneGroupFlag}
+        )
+        </foreach>
+    </insert>
+    
+    <insert id="addDepPrdNumSnapshot" parameterType="java.sql.Date" flushCache="true" statementType="PREPARED">
+		INSERT INTO qs_dep_prdnum_snapshot (businessUnit, prdDep, prdTeam, statisticDate, substdSplPrdNum, substdGrPrdNum, unAgPrdNum, onsellPrdNum)
+		SELECT t1.businessUnit,t1.prdDep,t1.prdTeam,#{statisticDate},IFNULL(t2.substdSplPrdNum,0),IFNULL(t3.substdGrPrdNum,0),IFNULL(t4.unAgPrdNum,0),t1.onsellPrdNum FROM  
+		(SELECT businessUnit,prdDep,prdTeam,COUNT(1) AS onsellPrdNum FROM qs_product_ext GROUP BY businessUnit,prdDep,prdTeam) t1 LEFT JOIN
+		(SELECT businessUnit,prdDep,prdTeam,COUNT(1) AS substdSplPrdNum FROM qs_substd_product_snapshot WHERE statisticDate=#{statisticDate} AND splDifValue > 0 GROUP BY businessUnit,prdDep,prdTeam) t2
+		ON t1.businessUnit=t2.businessUnit AND t1.prdDep=t2.prdDep AND t1.prdTeam=t2.prdTeam LEFT JOIN 
+		(SELECT businessUnit,prdDep,prdTeam,COUNT(1) AS substdGrPrdNum FROM qs_substd_product_snapshot WHERE statisticDate=#{statisticDate} AND grDifValue > 0 GROUP BY businessUnit,prdDep,prdTeam) t3
+		ON t1.businessUnit=t3.businessUnit AND t1.prdDep=t3.prdDep AND t1.prdTeam=t3.prdTeam LEFT JOIN 
+		(SELECT businessUnit,prdDep,prdTeam,COUNT(1) AS unAgPrdNum FROM qs_substd_product_snapshot WHERE statisticDate=#{statisticDate} AND aloneGroupFlag = 0 GROUP BY businessUnit,prdDep,prdTeam) t4
+		ON t1.businessUnit=t4.businessUnit AND t1.prdDep=t4.prdDep AND t1.prdTeam=t4.prdTeam
+    </insert>
+    
+    <delete id="deleteByStatisticDate" parameterType="java.sql.Date">
+		DELETE FROM qs_substd_product_snapshot WHERE statisticDate=#{statisticDate}
+	</delete>
+	
+	<delete id="deleteDepPrdNumSnapshot" parameterType="java.sql.Date">
+		DELETE FROM qs_dep_prdnum_snapshot WHERE statisticDate=#{statisticDate}
+	</delete>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.SubstdProductSnapshot">
+		SELECT * FROM qs_substd_product_snapshot WHERE id=#{id}
+	</select>
+	
+	<sql id="whereSql">
+		<where>1=1
+			<if test="substdKey == 'salesPeriodLength'">AND splDifValue > 0</if>
+			<if test="substdKey == 'groupRichness'">AND grDifValue > 0</if>
+			<if test="substdKey == 'aloneGroup'">AND aloneGroupFlag = 0</if>
+			<if test="destCate != null and destCate != '全部'">AND destCate=#{destCate}</if>
+			<if test="statisticDate != null and statisticDate != ''">AND statisticDate=#{statisticDate}</if>
+			<if test="prdId != null and prdId != ''">AND prdId=#{prdId}</if>
+			<if test="businessUnit != null and businessUnit != ''">AND businessUnit LIKE #{businessUnit}</if>
+			<if test="prdDep != null and prdDep != ''">AND prdDep LIKE #{prdDep}</if>
+			<if test="prdTeam != null and prdTeam != ''">AND prdTeam LIKE #{prdTeam}</if>
+			<if test="prdManager != null and prdManager != ''">AND prdManager LIKE #{prdManager}</if>
+			<if test="producter != null and producter != ''">AND producter LIKE #{producter}</if>
+		</where>
+	</sql>
+	
+	<select id="count" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="Integer">
+		SELECT COUNT(1) FROM qs_substd_product_snapshot
+		<include refid="whereSql"/>
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="com.tuniu.qms.qs.model.SubstdProductSnapshot">
+		SELECT * FROM qs_substd_product_snapshot 
+		<include refid="whereSql"/>
+		<if test="substdKey == 'salesPeriodLength'">ORDER BY splDifValue DESC</if>
+		<if test="substdKey == 'groupRichness'">ORDER BY grDifValue DESC</if>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getBusinessUnits" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="String">
+		SELECT DISTINCT businessUnit FROM qs_dep_prdnum_snapshot 
+		<if test="statisticDate!=null and statisticDate!=''">WHERE statisticDate=#{statisticDate}</if>
+	</select>
+	
+	<select id="getPrdDeps" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="String">
+		SELECT DISTINCT prdDep FROM qs_dep_prdnum_snapshot WHERE businessUnit=#{businessUnit}
+		<if test="statisticDate!=null and statisticDate!=''">AND statisticDate=#{statisticDate}</if>
+	</select>
+	
+	<select id="statDepSplRate" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="Map">
+		<if test="businessUnit == null or businessUnit == ''">
+			SELECT businessUnit AS depName,SUM(substdSplPrdNum) AS substdSplPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+			FROM qs_dep_prdnum_snapshot 
+			WHERE statisticDate=#{statisticDate} AND substdSplPrdNum > 0 GROUP BY businessUnit
+			ORDER BY substdSplPrdNumTotal DESC
+		</if>
+		<if test="businessUnit != null and businessUnit != ''">
+			<if test="prdDep == null or prdDep == ''">
+				SELECT prdDep AS depName,SUM(substdSplPrdNum) AS substdSplPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+				FROM qs_dep_prdnum_snapshot 
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND substdSplPrdNum > 0 GROUP BY prdDep
+				ORDER BY substdSplPrdNumTotal DESC
+			</if>
+			<if test="prdDep != null and prdDep != ''">
+				SELECT prdTeam AS depName,SUM(substdSplPrdNum) AS substdSplPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+				FROM qs_dep_prdnum_snapshot 
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND prdDep=#{prdDep} 
+				AND substdSplPrdNum > 0 GROUP BY prdTeam ORDER BY substdSplPrdNumTotal DESC
+			</if>
+		</if>
+	</select>
+	
+	<select id="statDateSplRate" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="Map">
+		SELECT statisticDate,SUM(substdSplPrdNum) AS substdSplPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+		FROM qs_dep_prdnum_snapshot WHERE #{statisticDateBgn} &lt;= statisticDate AND statisticDate &lt;= #{statisticDateEnd} 
+		<if test="businessUnit != null and businessUnit != ''">
+			AND businessUnit=#{businessUnit} 
+			<if test="prdDep != null and prdDep != ''">
+				AND prdDep=#{prdDep} 
+			</if>
+		</if>
+		AND substdSplPrdNum > 0 GROUP BY statisticDate
+	</select>
+	
+	<select id="statDepGrRate" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="Map">
+		<if test="businessUnit == null or businessUnit == ''">
+			SELECT businessUnit AS depName,SUM(substdGrPrdNum) AS substdGrPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+			FROM qs_dep_prdnum_snapshot 
+			WHERE statisticDate=#{statisticDate} AND substdGrPrdNum > 0 GROUP BY businessUnit
+			ORDER BY substdGrPrdNumTotal DESC
+		</if>
+		<if test="businessUnit != null and businessUnit != ''">
+			<if test="prdDep == null or prdDep == ''">
+				SELECT prdDep AS depName,SUM(substdGrPrdNum) AS substdGrPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+				FROM qs_dep_prdnum_snapshot 
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND substdGrPrdNum > 0 GROUP BY prdDep
+				ORDER BY substdGrPrdNumTotal DESC
+			</if>
+			<if test="prdDep != null and prdDep != ''">
+				SELECT prdTeam AS depName,SUM(substdGrPrdNum) AS substdGrPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+				FROM qs_dep_prdnum_snapshot 
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND prdDep=#{prdDep} 
+				AND substdGrPrdNum > 0 GROUP BY prdTeam ORDER BY substdGrPrdNumTotal DESC
+			</if>
+		</if>
+	</select>
+	
+	<select id="statDateGrRate" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="Map">
+		SELECT statisticDate,SUM(substdGrPrdNum) AS substdGrPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+		FROM qs_dep_prdnum_snapshot WHERE #{statisticDateBgn} &lt;= statisticDate AND statisticDate &lt;= #{statisticDateEnd} 
+		<if test="businessUnit != null and businessUnit != ''">
+			AND businessUnit=#{businessUnit} 
+			<if test="prdDep != null and prdDep != ''">
+				AND prdDep=#{prdDep} 
+			</if>
+		</if>
+		AND substdGrPrdNum > 0 GROUP BY statisticDate
+	</select>
+	
+	<select id="statDepUnAgRate" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="Map">
+		<if test="businessUnit == null or businessUnit == ''">
+			SELECT businessUnit AS depName,SUM(unAgPrdNum) AS unAgPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+			FROM qs_dep_prdnum_snapshot 
+			WHERE statisticDate=#{statisticDate} AND unAgPrdNum > 0 GROUP BY businessUnit
+			ORDER BY unAgPrdNumTotal DESC
+		</if>
+		<if test="businessUnit != null and businessUnit != ''">
+			<if test="prdDep == null or prdDep == ''">
+				SELECT prdDep AS depName,SUM(unAgPrdNum) AS unAgPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+				FROM qs_dep_prdnum_snapshot 
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND unAgPrdNum > 0 GROUP BY prdDep
+				ORDER BY unAgPrdNumTotal DESC
+			</if>
+			<if test="prdDep != null and prdDep != ''">
+				SELECT prdTeam AS depName,SUM(unAgPrdNum) AS unAgPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+				FROM qs_dep_prdnum_snapshot 
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND prdDep=#{prdDep} 
+				AND unAgPrdNum > 0 GROUP BY prdTeam ORDER BY unAgPrdNumTotal DESC
+			</if>
+		</if>
+	</select>
+	
+	<select id="statDateUnAgRate" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="Map">
+		SELECT statisticDate,SUM(unAgPrdNum) AS unAgPrdNumTotal,SUM(onsellPrdNum) AS onsellPrdNumTotal 
+		FROM qs_dep_prdnum_snapshot WHERE #{statisticDateBgn} &lt;= statisticDate AND statisticDate &lt;= #{statisticDateEnd} 
+		<if test="businessUnit != null and businessUnit != ''">
+			AND businessUnit=#{businessUnit} 
+			<if test="prdDep != null and prdDep != ''">
+				AND prdDep=#{prdDep} 
+			</if>
+		</if>
+		AND unAgPrdNum > 0 GROUP BY statisticDate
+	</select>
+	
+</mapper>

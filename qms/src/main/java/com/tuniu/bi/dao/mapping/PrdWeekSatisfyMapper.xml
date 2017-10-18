@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.bi.dao.PrdWeekSatisfyMapper">
+	
+	<select id="getSatisfactionByRouteIdAndWeek" parameterType="map" resultType="double">
+		select remark_statisfaction from route_remark_satisfaction where route_key=#{routeId} and year=#{year} and week=#{week} 
+	</select>
+	
+	<select id="getNiuFlagByRouteId"  parameterType="Integer"  resultType="string">
+		SELECT niuren_flag FROM route_remark_satisfaction WHERE route_key=#{routeId} order by time_stamp desc LIMIT 1
+	</select>
+	
+	<select id="listLowRouteIds" parameterType="map" resultType="long">
+		<choose>
+			<when test="curWeek==1">
+				SELECT DISTINCT ro.route_key
+				FROM route_remark_satisfaction ro
+				JOIN route_remark_satisfaction rot ON ro.route_key = rot.route_key 
+					AND ro.year=rot.year  
+					AND ro.week	= rot.week - 1 
+					AND rot.week=(
+						select max(week) from route_remark_satisfaction 
+						where year=#{curYear}-1) 
+					AND (<include refid="myCondition2"></include>)
+				WHERE ro.year=#{curYear}-1
+			</when>
+			<when test="curWeek==2">
+				SELECT DISTINCT ro.route_key
+				FROM route_remark_satisfaction ro
+				JOIN route_remark_satisfaction rot ON ro.route_key = rot.route_key 
+					AND rot.year=#{curYear}
+					AND rot.week=1 
+					AND (<include refid="myCondition2"></include>)
+				WHERE ro.year=#{curYear}-1
+				AND ro.week=52
+			</when>
+			<otherwise>
+				SELECT DISTINCT ro.route_key
+				FROM route_remark_satisfaction ro
+				JOIN route_remark_satisfaction rot ON ro.route_key = rot.route_key 
+					AND rot.year=#{curYear}
+					AND ro.week	= rot.week - 1 
+					AND (<include refid="myCondition2"></include>)
+				WHERE ro.year=#{curYear}
+				AND ro.week=#{curWeek}-2
+			</otherwise>
+		</choose>
+	</select>
+	
+	<sql id="myCondition2">
+		(rot.niuren_flag IN ('一路之上')  AND rot.remark_statisfaction &lt; 0.95 AND ro.remark_statisfaction &lt; 0.95)
+		OR
+		(rot.niuren_flag IN ('朋派定制游')  AND rot.remark_statisfaction &lt; 0.92 AND ro.remark_statisfaction &lt; 0.92) 
+		OR
+		(rot.niuren_flag IN ('牛人专线', '乐开花爸妈游', '出发吧我们', '瓜果亲子游') AND rot.remark_statisfaction &lt; 0.9 AND ro.remark_statisfaction &lt; 0.9)
+		OR
+		(rot.niuren_flag IN ('实惠游')  AND rot.remark_statisfaction &lt; 0.85 AND ro.remark_statisfaction &lt; 0.85) 
+		OR
+		(rot.niuren_flag NOT IN ('一路之上', '朋派定制游', '牛人专线', '乐开花爸妈游', '出发吧我们', '瓜果亲子游', '实惠游')  AND rot.remark_statisfaction &lt; 0.75 AND ro.remark_statisfaction &lt; 0.75)
+	</sql>
+	
+	<select id="listLastWeekLowRoute" parameterType="map" resultType="long">
+		<choose>
+			<when test="curWeek==1">
+				SELECT DISTINCT
+				rot.route_key
+				FROM route_remark_satisfaction rot 
+				where  rot.year=#{curYear}-1
+					AND rot.week=(
+						select max(week) from route_remark_satisfaction 
+						where year=#{curYear}-1) 
+					AND(<include refid="myCondition"></include>)
+					
+			</when>
+			<otherwise>
+				SELECT DISTINCT rot.route_key
+				FROM  route_remark_satisfaction rot 
+				WHERE rot.year=#{curYear}
+					AND rot.week = #{curWeek}-1
+					AND (<include refid="myCondition"></include>)
+			</otherwise>
+		</choose>
+	</select>
+	
+	<sql id="myCondition">
+		(rot.niuren_flag IN ('一路之上')  AND rot.remark_statisfaction &lt; 0.95)
+		OR
+		(rot.niuren_flag IN ('朋派定制游')  AND rot.remark_statisfaction &lt; 0.92) 
+		OR
+		(rot.niuren_flag IN ('牛人专线', '乐开花爸妈游', '出发吧我们', '瓜果亲子游') AND rot.remark_statisfaction &lt; 0.9)
+		OR
+		(rot.niuren_flag IN ('实惠游')  AND rot.remark_statisfaction &lt; 0.85) 
+		OR
+		(rot.niuren_flag NOT IN ('一路之上', '朋派定制游', '牛人专线', '乐开花爸妈游', '出发吧我们', '瓜果亲子游', '实惠游')  AND rot.remark_statisfaction &lt; 0.75)
+	</sql>
+	
+</mapper>

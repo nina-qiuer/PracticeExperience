@@ -1,0 +1,4 @@
+src\com\tuniu\gt\{app_name}
+WebContent\WEB-INF\html\{app_name}
+WebContent\WEB-INF\config\{app_name}
+WebContent\res\script\{app_name}

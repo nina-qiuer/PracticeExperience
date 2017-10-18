@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.InnerQcBillMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcBill"  useGeneratedKeys="true" keyProperty="id"  keyColumn="id">
+		INSERT INTO qc_qc_bill (
+			<if test="prdId != null">prdId,</if>
+			<if test="groupDate != null">groupDate,</if>
+			<if test="ordId != null">ordId,</if>
+			<if test="cmpId != null">cmpId,</if>
+			<if test="jiraNum != null">jiraNum,</if>
+			<if test="groupFlag != null">groupFlag,</if>
+			<if test="qcTypeId != null">qcTypeId,</if>
+			<if test="qcAffairSummary != null">qcAffairSummary,</if>
+			<if test="qcAffairDesc != null">qcAffairDesc,</if>
+			<if test="remark != null">remark,</if>
+			<if test="lossAmount != null">lossAmount,</if>
+			<if test="state != null">state,</if>
+			<if test="addPersonId != null">addPersonId,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="importantFlag != null">importantFlag,</if>
+			<if test="verification != null">verification,</if>
+			<if test="evidence != null">evidence,</if>
+			<if test="qcPeriodEndTime != null">qcPeriodEndTime,</if>
+			<if test="qcPeriodBgnTime != null">qcPeriodBgnTime,</if>
+			<if test="submitTime != null">submitTime,</if>
+			<if test="delFlag != null">delFlag</if>
+			
+		) VALUES (
+			<if test="prdId != null">#{prdId},</if>
+			<if test="groupDate != null">#{groupDate},</if>
+			<if test="ordId != null">#{ordId},</if>
+			<if test="cmpId != null">#{cmpId},</if>
+			<if test="jiraNum != null">#{jiraNum},</if>
+			<if test="groupFlag != null">#{groupFlag},</if>
+			<if test="qcTypeId != null">#{qcTypeId},</if>
+			<if test="qcAffairSummary != null">#{qcAffairSummary},</if>
+			<if test="qcAffairDesc != null">#{qcAffairDesc},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="lossAmount != null">#{lossAmount},</if>
+			<if test="state != null">#{state},</if>
+			<if test="addPersonId != null">#{addPersonId},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="importantFlag != null">#{importantFlag},</if>
+			<if test="verification != null">#{verification},</if>
+			<if test="evidence != null">#{evidence},</if>
+			<if test="qcPeriodEndTime != null">#{qcPeriodEndTime},</if>
+			<if test="qcPeriodBgnTime != null">#{qcPeriodBgnTime},</if>
+			<if test="submitTime != null">#{submitTime},</if>
+			<if test="delFlag != null">#{delFlag}</if>
+			
+		)
+	</insert>
+	
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_qc_bill WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcBill" flushCache="true" statementType="PREPARED">
+		UPDATE qc_qc_bill 
+		<set>
+			<if test="prdId != null">prdId=#{prdId},</if>
+			<if test="groupDate != null">groupDate=#{groupDate},</if>
+			<if test="ordId != null">ordId=#{ordId},</if>
+			<if test="cmpId != null">cmpId=#{cmpId},</if>
+			<if test="jiraNum != null">jiraNum=#{jiraNum},</if>
+			<if test="groupFlag != null">groupFlag=#{groupFlag},</if>
+			<if test="qcTypeId != null">qcTypeId=#{qcTypeId},</if>
+			<if test="qcAffairSummary != null">qcAffairSummary=#{qcAffairSummary},</if>
+			<if test="qcAffairDesc != null">qcAffairDesc=#{qcAffairDesc},</if>
+			<if test="remark != null">remark=#{remark},</if>
+			<if test="lossAmount != null">lossAmount=#{lossAmount},</if>
+			<if test="state != null">state=#{state},</if>
+			<if test="state != null and  state==1">submitTime='0000-00-00 00:00:00',</if>
+			<if test="state != null and  state==3">finishTime='0000-00-00 00:00:00',</if>
+			<if test="qcPersonId != null">qcPersonId=#{qcPersonId},</if>
+			<if test="qcPerson != null">qcPerson=#{qcPerson},</if>
+			<if test="addPersonId != null">addPersonId=#{addPersonId},</if>
+			<if test="addPerson != null">addPerson=#{addPerson},</if>
+			<if test="distribTime != null">distribTime=#{distribTime},</if>
+			<if test="finishTime != null">finishTime=#{finishTime},</if>
+			<if test="updatePerson != null">updatePerson=#{updatePerson},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			<if test="verification != null">verification=#{verification},</if>
+			<if test="evidence != null">evidence=#{evidence},</if>
+	    	<if test="returnFlag != null">returnFlag=#{returnFlag},</if>
+	    	<if test="submitTime != null">submitTime=#{submitTime},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcBill">
+		SELECT qc.*,qt.name as qcTypeName FROM qc_qc_bill qc left  join qc_qc_type qt on qc.qcTypeId = qt.id and qt.delFlag =0  WHERE qc.id=#{id} and qc.delFlag = 0
+	</select>
+
+	<sql id="listSql">
+		SELECT qc.*,qt.name as qcTypeName
+		FROM qc_qc_bill qc LEFT JOIN qc_qc_type qt ON qc.qcTypeId = qt.id AND qt.delFlag =0
+		<where>
+			qc.delFlag=0 
+			<if test="id != null and id!=''">AND qc.id=#{id}</if>
+			<if test="qcTypeId != null">AND qc.qcTypeId=#{qcTypeId}</if>
+		    <if test="state != null and state!=-1">AND qc.state=#{state}</if>
+		    <if test="state == -1">AND qc.state in 
+		       <foreach collection="states" item="state"
+			      open="(" close=")" separator=",">
+			  	 #{state}
+			   </foreach>
+		    </if>
+			<if test="prdId != null">AND qc.prdId=#{prdId}</if>
+			<if test="orderId != null">AND qc.ordId=#{orderId}</if>
+			<if test="addPerson != null and addPerson !='' ">AND qc.addPerson=#{addPerson}</if>
+			<if test="returnFlag != null ">AND qc.returnFlag=#{returnFlag}</if>
+			<if test="qcPerson != null and qcPerson !='' ">AND qc.qcPerson=#{qcPerson}</if>
+			<if test="addTimeFrom != null and addTimeFrom !=''" >AND qc.addTime &gt;=#{addTimeFrom}</if>
+			<if test="addTimeTo != null and addTimeTo !='' ">AND qc.addTime &lt;= concat(#{addTimeTo},' 23:59:59')</if>
+			<if test="submitTimeFrom != null and submitTimeFrom !=''" >AND qc.submitTime &gt;=#{submitTimeFrom}</if>
+			<if test="submitTimeTo != null and submitTimeTo !='' ">AND qc.submitTime &lt;= concat(#{submitTimeTo},' 23:59:59')</if>
+			<if test="finishTimeBgn != null and finishTimeBgn !=''" >AND qc.finishTime &gt;=#{finishTimeBgn}</if>
+			<if test="finishTimeEnd != null and finishTimeEnd !='' ">AND qc.finishTime &lt;= concat(#{finishTimeEnd},' 23:59:59')</if>
+			AND qc.groupFlag = 4
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="com.tuniu.qms.qc.model.QcBill">
+		<include refid="listSql" />
+		ORDER BY
+		<if test="orderDirect !=0">
+			<if test="orderField !=null">
+				${orderField}
+				<if test="orderDirect==1">
+					desc
+				</if>
+			</if>
+		</if>
+		<if test="orderDirect==0">
+				id desc
+		</if>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+	</select>
+	
+	
+	<delete id="deleteAttachByQcId" parameterType="java.util.Map">
+	      
+	      delete from qc_point_attach where qcId in (select id from qc_qc_bill where addPerson=#{addPerson} and groupFlag = 4 and delFlag =1)
+	      
+	</delete>
+	
+	<delete id="deleteQc" parameterType="java.util.Map">
+	      
+	      delete from qc_qc_bill  where addPerson=#{addPerson} and groupFlag = 4 and delFlag =1
+	      
+	</delete>
+	
+	
+	<!--  -->
+	<insert id="batchAddInQcBill" parameterType="java.util.List" >
+		INSERT INTO qc_qc_bill (
+			prdId,
+			groupDate,
+			ordId,
+			groupFlag,
+			qcTypeId,
+			qcAffairSummary,
+			qcAffairDesc,
+			lossAmount,
+			state,
+			addPersonId,
+			addPerson,
+			userFlag,
+			delFlag
+			
+		) VALUES 
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+				#{item.prdId},
+				#{item.groupDate},
+				#{item.ordId},
+				#{item.groupFlag},
+				#{item.qcTypeId},
+				#{item.qcAffairSummary},
+				#{item.qcAffairDesc},
+				#{item.lossAmount},
+				#{item.state},
+				#{item.addPersonId},
+				#{item.addPerson},
+				#{item.userFlag},
+				#{item.delFlag}
+				
+			)
+	   </foreach>	
+	</insert>
+	
+	<select id="getQcPersonByOrderId" parameterType="Integer" resultType="String">
+		SELECT qcPerson 
+		FROM qc_qc_bill 
+		WHERE ordId = #{ordId} 
+			AND groupFlag = 4 
+			AND cancelFlag = 0 
+			AND returnFlag = 0
+		limit 1
+	</select>
+</mapper>

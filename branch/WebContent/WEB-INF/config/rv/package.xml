@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="rv" extends="apply-default" namespace="/rv/action">
+		<action name="*-*" class="rv_action-{1}" method="{2}">
+			<result name="post_sale_return_visit_list">/WEB-INF/html/returnvisit/post_sale_return_visit_list.jsp</result>
+			<result name="post_sale_return_visit_report">/WEB-INF/html/returnvisit/post_sale_return_visit_report.jsp</result>
+			<result name="post_sale_return_visit_report_detail">/WEB-INF/html/returnvisit/post_sale_return_visit_report_detail.jsp</result>
+		</action>
+	</package>
+</struts>

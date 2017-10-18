@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IFollowUpRecordMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>1=1
+			<if test="complaintId != null">
+				AND complaint_id=#{complaintId}
+			</if>
+			AND del_flag=0
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.FollowUpRecordEntity">  
+		
+		<result property="orderId" column="order_id" />
+		
+		<result property="complaintId" column="complaint_id" />
+		
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="addTime" column="add_time" />
+		
+		<result property="addUser" column="add_user" />
+		
+		<result property="note" column="note" />
+		
+	</resultMap>
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="orderId" column="order_id" />
+		
+		<result property="complaintId" column="complaint_id" />
+		
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="addTime" column="add_time" />
+		
+		<result property="addUser" column="add_user" />
+		
+		<result property="note" column="note" />
+		
+	</resultMap>
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  order_id,
+		 
+		  complaint_id,
+		 
+		  del_flag,
+		 
+		  add_time,
+		  
+		  add_user,
+		 
+		  note
+		 
+		) values  (
+		
+		  #{e.orderId}, 
+		 
+		  #{e.complaintId}, 
+		 
+		  #{e.delFlag}, 
+		 
+		  #{e.addTime}, 
+		  
+		  #{e.addUser},
+		 
+		  #{e.note} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.orderId != null">order_id=#{e.orderId},</if>
+			
+				<if test="e.complaintId != null">complaint_id=#{e.complaintId},</if>
+			
+				<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			
+				<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			
+				<if test="e.addUser != null">add_user=#{e.addUser},</if>
+			
+				<if test="e.note != null">note=#{e.note}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<select id="getMinAndMaxDealTime" resultMap="minAndMaxDealTime" parameterType="map">
+		SELECT MIN(add_time) AS minAddTime,MAX(add_time) AS maxAddTime FROM ct_follow_up_record WHERE complaint_id=#{complaintId} AND del_flag=0
+	</select>
+	
+	
+	<select id="getDealPersonExtension" resultMap="minAndMaxDealTime" parameterType="map">
+		SELECT DISTINCT(u.real_name) AS peopleName,u.extension FROM ct_follow_up_record n
+		INNER JOIN frm_user u
+		ON n.add_user = u.id
+		WHERE n.complaint_id=#{complaintId} AND n.del_flag=0 AND u.del_flag=0
+	</select>
+	
+	<resultMap type="map" id="minAndMaxDealTime">
+		<result column="minAddTime"  property="minAddTime"/>
+		<result column="maxAddTime" property="maxAddTime"/>
+	</resultMap>
+	
+		<resultMap type="map" id="dealPersonExtensionMap">
+		<result column="peopleName"  property="peopleName"/>
+		<result column="extension" property="extension"/>
+	</resultMap>
+	
+	<select id="getCrmComplaintFollow" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.FollowUpRecordSynchEntity">
+		SELECT
+		id AS record_id, 
+		complaint_id,
+		add_user,
+		DATE_FORMAT(add_time,'%Y-%m-%d %H:%i:%s') AS add_time,
+		note
+		<include refid="getCrmComplaintFollowSql" />
+		<if test="pageStart != null and pageSize != null">
+			limit #{pageStart},#{pageSize}
+	    </if>
+	</select>
+	
+	<select id="getCrmComplaintFollowCount" parameterType="Map"
+		resultType="Integer">
+		  SELECT COUNT(1)
+		  <include refid="getCrmComplaintFollowSql" />
+	</select>
+	
+	<sql id="getCrmComplaintFollowSql">
+		FROM ct_follow_up_record 
+		WHERE 
+		del_flag=0
+		<if test="complaint_id != null">
+			AND complaint_id = #{complaint_id}
+		</if>
+		<if test="complaint_id == null">
+			AND (add_time &gt;= #{startDate}
+			AND add_time &lt;= #{endDate})
+		</if>
+	</sql>
+</mapper>

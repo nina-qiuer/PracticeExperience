@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.bi.gmvrank.dao.sqlmap.imap.IGMVRankMap">
+	<select id="fetchList" parameterType="Map" resultMap="listResult">
+		SELECT id,route_key,route_name,score_rank,product_area,route_cnt FROM
+		tmk_route_gmv_rank WHERE product_area !='null' AND
+		sign_year_month=DATE_FORMAT(SUBDATE(CURDATE(),INTERVAL 1 MONTH),'%Y%m')
+	</select>
+	
+	<select id="get" parameterType="int" resultMap="listResult">
+		select * from tmk_route_gmv_rank where id=#{id}
+	</select>
+	
+	<resultMap type="com.tuniu.bi.gmvrank.entity.GMVRankEntity" id="listResult">
+		<result column="route_key" property="routeKey"/>
+		<result column="route_name" property="routeName"/>
+		<result column="product_name" property="productName"/>
+		<result column="product_area" property="productArea"/>
+		<result column="avg_score" property="avgScore"/>
+		<result column="score_rank" property="scoreRank"/>
+		<result column="route_rank"  property="routeRank"/>
+		<result column="route_cnt" property="routeCnt"/>
+	</resultMap>
+</mapper>

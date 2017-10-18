@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.OuterRespBillMapper">
+
+    <resultMap type="com.tuniu.qms.qc.model.OuterRespBill" id="outerRespMap">
+	
+	     <result property="id" column="id"  />
+	     <result property="qpId" column="qpId"  />
+	     <result property="agencyId" column="agencyId"  />
+	     <result property="agencyName" column="agencyName"  />
+	     <result property="impPersonId" column="impPersonId"  />
+	     <result property="impPersonName" column="impPersonName"  /> 
+	     <result property="respPersonId" column="respPersonId"  />
+	     <result property="respPersonName" column="respPersonName"  /> 
+	     <result property="depId" column="depId"  /> 
+	     <result property="respReason" column="respReason"  />
+	     <result property="addPerson" column="addPerson"  />
+	     <result property="addTime" column="addTime"  />
+	     <result property="updatePerson" column="updatePerson"  />
+	     <result property="updateTime" column="updateTime"  />
+	  	 <result property="delFlag" column="delFlag"  />
+	  	 <result property="appealPersonName" column="appeal_person_name"  />
+	  	 <result property="appealPersonId" column="appeal_person_Id"  />
+	  	 <result property="respManagerName" column="resp_manager_name"/>
+		 <result property="managerJobName" column="managerJobName"/>
+		 <result property="respGeneralName" column="resp_general_name"/>
+		 <result property="generalJobName" column="generalJobName"/>
+		 <result property="qcId" column="qcId"/>
+	</resultMap>
+
+
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.OuterRespBill" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO qc_outer_resp_bill (
+			<if test="qpId != null">qpId,</if>
+			<if test="agencyId != null">agencyId,</if>
+			<if test="agencyName != null">agencyName,</if>
+			<if test="impPersonId != null">impPersonId,</if>
+			<if test="impPersonName != null">impPersonName,</if>
+			<if test="depId != null">depId,</if>
+			<if test="respPersonId != null">respPersonId,</if>
+			<if test="respPersonName != null">respPersonName,</if>
+			<if test="respReason != null">respReason,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="appealPersonId != null">appeal_person_id,</if>
+			<if test="appealPersonName != null">appeal_person_name,</if>
+			<if test="respManagerId != null">resp_manager_id,</if>
+			<if test="respManagerName != null">resp_manager_name,</if>
+			<if test="managerJobId != null">manager_job_id,</if>
+			<if test="respGeneralId != null">resp_general_id,</if>
+			<if test="respGeneralName != null">resp_general_name,</if>
+			<if test="generalJobId != null">general_job_id,</if>
+			delFlag
+		) VALUES (
+			<if test="qpId != null">#{qpId},</if>
+			<if test="agencyId != null">#{agencyId},</if>
+			<if test="agencyName != null">#{agencyName},</if>
+			<if test="impPersonId != null">#{impPersonId},</if>
+			<if test="impPersonName != null">#{impPersonName},</if>
+			<if test="depId != null">#{depId},</if>
+			<if test="respPersonId != null">#{respPersonId},</if>
+			<if test="respPersonName != null">#{respPersonName},</if>
+			<if test="respReason != null">#{respReason},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="appealPersonId != null">#{appealPersonId},</if>
+			<if test="appealPersonName != null">#{appealPersonName},</if>
+			<if test="respManagerId != null">#{respManagerId},</if>
+			<if test="respManagerName != null">#{respManagerName},</if>
+			<if test="managerJobId != null">#{managerJobId},</if>
+			<if test="respGeneralId != null">#{respGeneralId},</if>
+			<if test="respGeneralName != null">#{respGeneralName},</if>
+			<if test="generalJobId != null">#{generalJobId},</if>
+			0
+		)
+	</insert>
+	
+	<insert id="copyOuterRespBill" parameterType="com.tuniu.qms.qc.model.OuterRespBill" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	   insert into qc_outer_resp_bill
+	   (
+		    qpId,
+		    agencyId,
+		    agencyName,
+		    respReason,
+		    impPersonId,
+			impPersonName,
+		    respPersonId,
+		    respPersonName,
+		    depId,
+			addPerson,
+			appeal_person_id,
+			appeal_person_name,
+			delFlag, 
+			resp_manager_id, 
+			resp_manager_name, 
+			manager_job_id, 
+			resp_general_id, 
+			resp_general_name, 
+			general_job_id
+	   )
+	   select 
+	   	   #{qpId},
+           b.agencyId,
+		   b.agencyName,
+		   b.respReason,
+		   b.impPersonId,
+		   b.impPersonName,
+		   b.respPersonId,
+		   b.respPersonName,
+		   b.depId,
+		   #{addPerson},
+		   appeal_person_id,
+	   	   appeal_person_name,
+		   b.delFlag, 
+		   resp_manager_id, 
+		   resp_manager_name, 
+		   manager_job_id, 
+		   resp_general_id, 
+		   resp_general_name, 
+		   general_job_id
+	   from qc_outer_resp_bill b
+	   where b.id =#{oldRespId} and b.delFlag =0 
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_outer_resp_bill WHERE id=#{id}
+	</delete>
+	
+	<sql id="listSql">
+		<where>
+			qc.delFlag=0 
+			<if test="id != null ">AND qc.id=#{id}</if>
+			<if test="qpId != null ">AND qc.qpId=#{qpId}</if>
+			<if test="agencyId != null ">AND qc.agencyId=#{agencyId}</if>
+			<if test="addTimeFrom != null ">AND qc.addTime &gt;= #{addTimeFrom}</if>
+			<if test="addTimeTo != null ">AND qc.addTime &lt;= #{addTimeTo}</if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.OuterRespBillDto" resultMap="outerRespMap">
+		SELECT qc.*, dep.name as depName,
+			t1.name as managerJobName, t2.name as generalJobName
+		from  qc_outer_resp_bill qc
+		LEFT JOIN uc_department  dep ON qc.depId = dep.id and dep.delFlag =0
+		left join uc_job t1 on qc.manager_job_id = t1.id and t1.delFlag = 0
+		left join uc_job t2 on qc.general_job_id = t2.id and t2.delFlag = 0
+		<include refid="listSql"/>
+		ORDER BY qc.id 
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.OuterRespBillDto" resultType="Integer">
+		SELECT COUNT(1)
+		from  qc_outer_resp_bill qc
+		<include refid="listSql"></include>
+	</select>
+	
+	<select id="getOuterRespIsExist" parameterType="com.tuniu.qms.qc.model.OuterRespBill" resultType="Integer" >
+	   select count(1) 
+	   from qc_outer_resp_bill
+	   where qpId = #{qpId} 
+	    and agencyName =#{agencyName}
+	  	<if test="agencyId != null">  and agencyId =#{agencyId}</if>
+	</select>
+	
+	<select id="get" parameterType="Integer" resultMap="outerRespMap">
+		SELECT resp.*,dep.name as depName,
+			t1.name as managerJobName, t2.name as generalJobName, qqp.qcId AS qcId
+		from  qc_outer_resp_bill resp 
+		LEFT JOIN qc_quality_problem qqp ON resp.qpId = qqp.id AND qqp.delFlag = 0
+		LEFT JOIN uc_department  dep ON resp.depId = dep.id and dep.delFlag =0
+		left join uc_job t1 on resp.manager_job_id = t1.id and t1.delFlag = 0
+		left join uc_job t2 on resp.general_job_id = t2.id and t2.delFlag = 0
+		where resp.id =#{id} and resp.delFlag =0
+	</select>
+	
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.OuterRespBill" >
+		UPDATE qc_outer_resp_bill 
+		<set>
+			<if test="agencyId != null">agencyId = #{agencyId},</if>
+			<if test="agencyName != null">agencyName = #{agencyName},</if>
+			<if test="impPersonId != null">impPersonId = #{impPersonId},</if>
+			<if test="impPersonName != null">impPersonName = #{impPersonName},</if>
+			<if test="respPersonId != null">respPersonId = #{respPersonId},</if>
+			<if test="respPersonName != null">respPersonName = #{respPersonName},</if>
+			<if test="depId != null">depId = #{depId},</if>
+			<if test="respReason != null">respReason =#{respReason},</if>	
+			<if test="updatePerson != null">updatePerson =#{updatePerson},</if>
+			<if test="appealPersonId != null">appeal_person_id = #{appealPersonId},</if>
+			<if test="appealPersonName != null">appeal_person_name = #{appealPersonName},</if>
+			<if test="respManagerId != null">resp_manager_id = #{respManagerId},</if>
+			<if test="respManagerName != null">resp_manager_name = #{respManagerName},</if>
+			<if test="managerJobId != null">manager_job_id = #{managerJobId},</if>
+			<if test="respGeneralId != null">resp_general_id = #{respGeneralId},</if>
+			<if test="respGeneralName != null">resp_general_name = #{respGeneralName},</if>
+			<if test="generalJobId != null">general_job_id = #{generalJobId},</if>
+			updateTime = CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<delete id="deleteOutRespBill" parameterType="Integer">
+	     delete from qc_outer_resp_bill  where qpId =#{qpId}
+	</delete>
+	
+	<select id="listResp" resultType="com.tuniu.qms.qc.model.OuterRespBill">
+	
+	    SELECT a.qcId, a.punishPersonId AS respPersonId,a.punishPersonName AS respPersonName,a.depId ,qp.id AS qpId FROM qc_quality_problem qp  INNER JOIN (
+			SELECT f.* FROM (SELECT ipb.id ,ipb.qcId ,ipb.punishPersonId,ipb.punishPersonName,ipb.depId FROM qc_inner_punish_bill ipb INNER JOIN qc_inner_punish_basis ipbs ON ipb.id  = ipbs.ipbId AND ipbs.delFlag =0 
+			INNER JOIN qc_punish_standard ps ON ipbs.psId = ps.id AND ps.cmpQcUse =1 AND ps.punishObj =1 AND ps.delFlag =0 AND ps.redLineFlag =0 AND ps.level LIKE'供应商问题%' ORDER BY ipb.qcId) f
+			UNION ALL 
+			SELECT qp.id,qp.qcId,qp.punishPersonId,qp.punishPersonName,qp.depId FROM qc_inner_punish_bill qp INNER JOIN 
+			(
+			SELECT MIN(t.id) AS id ,t.qcId FROM (SELECT ipb.id AS id,ipb.qcId AS qcId FROM qc_inner_punish_bill ipb INNER JOIN qc_inner_punish_basis ipbs ON ipb.id  = ipbs.ipbId AND ipbs.delFlag =0 
+			INNER JOIN qc_punish_standard ps ON ipbs.psId = ps.id AND ps.cmpQcUse =1 AND ps.punishObj =1 AND ps.delFlag =0 AND ps.redLineFlag =1 AND  ps.level LIKE'供应商问题%' ORDER BY ipb.qcId) t GROUP BY t.qcId) b
+			ON qp.id = b.id 
+			) a ON a.qcId = qp.qcId 
+			INNER JOIN qc_quality_problem_type qt ON qt.id = qp.qptLv1Id AND qt.name ='供应商问题'  WHERE  qp.delFlag =0 ORDER BY qp.qcId
+	  
+	</select>
+	
+	<select id="getRespInfoByComplaintId" parameterType="Integer" resultType="com.tuniu.qms.qc.model.OuterRespBill">
+		select t1.id as qcId, t2.qptId as qualityPrombleTypeId, t3.impPersonId as impPersonId, t3.agencyName as agencyName
+		from qc_qc_bill t1
+		inner join qc_quality_problem t2 on t2.qcId = t1.id and t2.delFlag = 0
+		inner join qc_outer_resp_bill t3 on t2.id = t3.qpId and t3.delFlag = 0
+		where t1.cmpId = #{dataId} limit 1
+	</select>
+</mapper>

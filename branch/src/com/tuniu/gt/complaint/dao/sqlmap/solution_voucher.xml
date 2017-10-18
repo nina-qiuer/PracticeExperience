@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.ISolutionVoucherMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			<if test="solutionId != null">
+				solution_id=#{solutionId}
+			</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.SolutionVoucherEntity">
+		<result property="id" column="id" />
+		<result property="solutionId" column="solution_id" />
+		<result property="mobileNo" column="mobile_no" />
+		<result property="custId" column="cust_id" />
+		<result property="amount" column="amount" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		<result property="id" column="id" />
+		<result property="solutionId" column="solution_id" />
+		<result property="mobileNo" column="mobile_no" />
+		<result property="custId" column="cust_id" />
+		<result property="amount" column="amount" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  solution_id,
+		  mobile_no,
+		  cust_id,
+		  amount
+		) values  (
+		  #{e.solutionId},
+		  #{e.mobileNo},
+		  #{e.custId},
+		  #{e.amount}
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			<if test="e.mobileNo != null">mobile_no=#{e.mobileNo},</if>
+			<if test="e.custId != null">cust_id=#{e.custId},</if>
+			<if test="e.amount != null">amount=#{e.amount},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<delete id="deleteBySolutionId" parameterType="Integer">
+		DELETE FROM ct_solution_voucher WHERE solution_id = #{solutionId}
+	</delete>
+	
+</mapper>

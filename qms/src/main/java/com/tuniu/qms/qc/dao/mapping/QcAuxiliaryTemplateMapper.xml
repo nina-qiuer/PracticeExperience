@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.QcAuxiliaryTemplateMapper">
+
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcAuxiliaryTemplate">
+		INSERT INTO qc_auxiliary_bill_template (
+		
+		    <if test="qcType != null">qcType,</if>
+			<if test="fieldName1 != null">fieldName1,</if>
+			<if test="fieldName2 != null">fieldName2,</if>
+			<if test="fieldName3 != null">fieldName3,</if>
+			<if test="fieldName4 != null">fieldName4,</if>
+			<if test="fieldName5 != null">fieldName5,</if>
+			<if test="fieldName6 != null">fieldName6,</if>
+			<if test="fieldName7 != null">fieldName7,</if>
+			<if test="fieldName8 != null">fieldName8,</if>
+			<if test="fieldName9 != null">fieldName9,</if>
+			<if test="fieldName10 != null">fieldName10,</if>
+			<if test="fieldName11 != null">fieldName11,</if>
+			<if test="fieldName12 != null">fieldName12,</if>
+			<if test="fieldName13 != null">fieldName13,</if>
+			<if test="fieldName14 != null">fieldName14,</if>
+			<if test="fieldName15 != null">fieldName15,</if>
+			<if test="fieldName16 != null">fieldName16,</if>
+			<if test="fieldName17 != null">fieldName17,</if>
+			<if test="fieldName18 != null">fieldName18,</if>
+			<if test="fieldName19 != null">fieldName19,</if>
+			<if test="fieldName20 != null">fieldName20,</if>
+			<if test="fieldName21 != null">fieldName21,</if>
+			<if test="fieldName22 != null">fieldName22,</if>
+			<if test="fieldName23 != null">fieldName23,</if>
+			<if test="fieldName24 != null">fieldName24,</if>
+			<if test="fieldName25 != null">fieldName25,</if>
+			<if test="fieldName26 != null">fieldName26,</if>
+			<if test="fieldName27 != null">fieldName27,</if>
+			<if test="fieldName28 != null">fieldName28,</if>
+			<if test="fieldName29 != null">fieldName29,</if>
+			<if test="fieldName30 != null">fieldName30,</if>
+			<if test="addPerson != null">addPerson,</if>
+			addTime,
+			delFlag
+		) VALUES (
+		
+			<if test="qcType != null">#{qcType},</if>
+			<if test="fieldName1 != null">#{fieldName1},</if>
+			<if test="fieldName2 != null">#{fieldName2},</if>
+			<if test="fieldName3 != null">#{fieldName3},</if>
+			<if test="fieldName4 != null">#{fieldName4},</if>
+			<if test="fieldName5 != null">#{fieldName5},</if>
+			<if test="fieldName6 != null">#{fieldName6},</if>
+			<if test="fieldName7 != null">#{fieldName7},</if>
+			<if test="fieldName8 != null">#{fieldName8},</if>
+			<if test="fieldName9 != null">#{fieldName9},</if>
+			<if test="fieldName10 != null">#{fieldName10},</if>
+			<if test="fieldName11 != null">#{fieldName11},</if>
+			<if test="fieldName12 != null">#{fieldName12},</if>
+			<if test="fieldName13 != null">#{fieldName13},</if>
+			<if test="fieldName14 != null">#{fieldName14},</if>
+			<if test="fieldName15 != null">#{fieldName15},</if>
+			<if test="fieldName16 != null">#{fieldName16},</if>
+			<if test="fieldName17 != null">#{fieldName17},</if>
+			<if test="fieldName18 != null">#{fieldName18},</if>
+			<if test="fieldName19 != null">#{fieldName19},</if>
+			<if test="fieldName20 != null">#{fieldName20},</if>
+			<if test="fieldName21 != null">#{fieldName21},</if>
+			<if test="fieldName22 != null">#{fieldName22},</if>
+			<if test="fieldName23 != null">#{fieldName23},</if>
+			<if test="fieldName24 != null">#{fieldName24},</if>
+			<if test="fieldName25 != null">#{fieldName25},</if>
+			<if test="fieldName26 != null">#{fieldName26},</if>
+			<if test="fieldName27 != null">#{fieldName27},</if>
+			<if test="fieldName28 != null">#{fieldName28},</if>
+			<if test="fieldName29 != null">#{fieldName29},</if>
+			<if test="fieldName30 != null">#{fieldName30},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			 CURRENT_TIMESTAMP() ,
+			0
+		)
+	</insert>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_auxiliary_bill_template WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcAuxiliaryTemplate" flushCache="true" statementType="PREPARED">
+		UPDATE qc_auxiliary_bill_template 
+		<set>
+			<if test="fieldName1 != null">fieldName1=#{fieldName1},</if>
+			<if test="fieldName2 != null">fieldName2=#{fieldName2},</if>
+			<if test="fieldName3 != null">fieldName3=#{fieldName3},</if>
+			<if test="fieldName4 != null">fieldName4=#{fieldName4},</if>
+			<if test="fieldName5 != null">fieldName5=#{fieldName5},</if>
+			<if test="fieldName6 != null">fieldName6=#{fieldName6},</if>
+			<if test="fieldName7 != null">fieldName7=#{fieldName7},</if>
+			<if test="fieldName8 != null">fieldName8=#{fieldName8},</if>
+			<if test="fieldName9 != null">fieldName9=#{fieldName9},</if>
+			<if test="fieldName10 != null">fieldName10=#{fieldName10},</if>
+			<if test="fieldName11 != null">fieldName11=#{fieldName11},</if>
+			<if test="fieldName12 != null">fieldName12=#{fieldName12},</if>
+			<if test="fieldName13 != null">fieldName13=#{fieldName13},</if>
+			<if test="fieldName14 != null">fieldName14=#{fieldName14},</if>
+			<if test="fieldName15 != null">fieldName15=#{fieldName15},</if>
+			<if test="fieldName16 != null">fieldName16=#{fieldName16},</if>
+			<if test="fieldName17 != null">fieldName17=#{fieldName17},</if>
+			<if test="fieldName18 != null">fieldName18=#{fieldName18},</if>
+			<if test="fieldName19 != null">fieldName19=#{fieldName19},</if>
+			<if test="fieldName20 != null">fieldName20=#{fieldName20},</if>
+			<if test="fieldName21 != null">fieldName21=#{fieldName21},</if>
+			<if test="fieldName22 != null">fieldName22=#{fieldName22},</if>
+			<if test="fieldName23 != null">fieldName23=#{fieldName23},</if>
+			<if test="fieldName24 != null">fieldName24=#{fieldName24},</if>
+			<if test="fieldName25 != null">fieldName25=#{fieldName25},</if>
+			<if test="fieldName26 != null">fieldName26=#{fieldName26},</if>
+			<if test="fieldName27 != null">fieldName27=#{fieldName27},</if>
+			<if test="fieldName28 != null">fieldName28=#{fieldName28},</if>
+			<if test="fieldName29 != null">fieldName29=#{fieldName29},</if>
+			<if test="fieldName30 != null">fieldName30=#{fieldName30},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcAuxiliaryTemplate">
+		SELECT *  FROM qc_auxiliary_bill_template
+		 
+		  WHERE delFlag =0 and id=#{id}
+	</select>
+
+    <select id="getByQcType" parameterType="com.tuniu.qms.qc.dto.QcAuxiliaryTemplateDto" resultType="com.tuniu.qms.qc.model.QcAuxiliaryTemplate">
+       
+      
+        select * from qc_auxiliary_bill_template where qcType = #{qcType} and delFlag = 0 limit 1
+      
+    </select>
+    
+    
+    
+</mapper>

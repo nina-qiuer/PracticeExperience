@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.CenterReportMapper">
+   
+   
+    <resultMap id="criticalReportEntity" type="com.tuniu.infobird.vdnlog.entity.CriticalReportEntity">
+		
+		<result property="id" column="id" />
+		<result property="dealName" column="deal_name" />
+		<result property="deal" column="deal" />
+		<result property="state" column="state" />
+		<result property="callBackRate" column="callBackRate" />
+		<result property="upgradeComplaintRate" column="upgradeComplaintRate" />
+		<result property="weekTime" column="week_time" />
+		<result property="startTime" column="start_time" />
+		<result property="endTime" column="end_time" />
+		<result property="addTime" column="add_time" />
+	</resultMap>
+	
+	  <!-- 批量插入统计-->
+	<insert id="insertCriticalReport" parameterType="java.util.List">
+		insert into ct_critical_report (
+							dealName,
+							deal,
+							state,
+							callBackRate,
+							upgradeComplaintRate,
+							week_time,
+							start_time,
+							end_time,
+							add_time
+					)values
+				<foreach collection="list" item="item" index="index"
+					separator=",">
+					(
+					 	#{item.dealName},
+						#{item.deal},
+						#{item.state},
+						<if test="item.callBackRate !=null ">
+						#{item.callBackRate},
+						</if>
+						<if test="item.callBackRate == null">
+						 '0.00%',
+						</if>
+						<if test="item.upgradeComplaintRate !=null ">
+						#{item.upgradeComplaintRate},
+						</if>
+						<if test="item.upgradeComplaintRate ==null ">
+						   '0.00%',
+						</if>
+						#{item.weekTime},
+						#{item.startTime},
+						#{item.endTime},
+					    CURRENT_TIMESTAMP() 
+					)
+				</foreach>
+	</insert>
+	
+	<insert id="insertUpCriticalReport" parameterType="com.tuniu.infobird.vdnlog.entity.CriticalReportEntity">
+	   
+	      INSERT INTO ct_critical_report
+	            (
+	             dealName,
+	             deal,
+	             state,
+	             callBackRate,
+	             upgradeComplaintRate,
+	             week_time,
+	             start_time,
+	             end_time,
+	             add_time
+	             )
+				VALUES 
+					(	
+						#{dealName},
+						#{deal},
+						#{state},
+						<if test="callBackRate !=null ">
+						#{callBackRate},
+						</if>
+						<if test="callBackRate == null">
+						 '0.00%',
+						</if>
+						<if test="upgradeComplaintRate !=null ">
+						#{upgradeComplaintRate},
+						</if>
+						<if test="upgradeComplaintRate ==null ">
+						 '0.00%',
+						</if>
+						#{weekTime},
+						#{startTime},
+						#{endTime},
+					    CURRENT_TIMESTAMP() 
+					    )
+				      ON DUPLICATE KEY UPDATE callBackRate = VALUES(callBackRate),add_time = VALUES(add_time)
+	                  
+	</insert>
+	
+	
+	<select id="queryCriticalReport" parameterType="java.util.Map" resultMap="criticalReportEntity">
+	
+	    select 
+	      dealName,
+	      deal,
+	      state,
+	      callBackRate,
+	      upgradeComplaintRate,
+	      week_time,
+	      DATE_FORMAT( start_time,'%Y-%m-%d %H:%i:%s')  as start_time ,
+	      DATE_FORMAT( end_time,'%Y-%m-%d %H:%i:%s')  as end_time 
+	     from ct_critical_report 
+	    where
+	       week_time =#{week}
+	    <if test="dealName !=null and dealName!=''">
+	    	AND dealName = #{dealName} 
+	     </if>
+	     <if test="states !=null ">
+			     AND state in
+			     <foreach collection="states" item="state"
+				      open="(" close=")" separator=",">
+				   #{state}
+				   </foreach>
+	      </if> 
+	   
+	     order by deal,state,week_time
+	 	 <if test="dataLimitStart != null">
+					limit #{dataLimitStart}
+					<if test="dataLimitEnd != null">
+						,#{dataLimitEnd}
+					</if>
+				</if>
+	
+	
+	</select>
+	
+	<select id="queryCriticalReportCount" parameterType="java.util.Map"  resultType="int">
+	
+	  select count(1) from ct_critical_report 
+	    where
+	        week_time = #{week}
+	      <if test="dealName !=null and dealName!=''">
+	       AND dealName = #{dealName} 
+	     </if>
+	     <if test="states !=null ">
+			     AND state in
+			     <foreach collection="states" item="state"
+				      open="(" close=")" separator=",">
+				   #{state}
+				   </foreach>
+	      </if> 
+	  
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,10 @@
+src\com\tuniu\gt\{app_name}\action\{module_dir}{upper_module_name}Action.java
+src\com\tuniu\gt\{app_name}\entity\{upper_module_name}Entity.java
+src\com\tuniu\gt\{app_name}\dao\impl\{upper_module_name}Dao.java
+src\com\tuniu\gt\{app_name}\dao\sqlmap\{module_name}.xml
+src\com\tuniu\gt\{app_name}\dao\sqlmap\imap\I{upper_module_name}Map.java
+src\com\tuniu\gt\{app_name}\service\{module_dir}I{upper_module_name}Service.java
+src\com\tuniu\gt\{app_name}\service\{module_dir}impl\{upper_module_name}ServiceImpl.java
+WebContent\WEB-INF\html\{app_name}\{module_dir}{module_name}_form.jsp
+WebContent\WEB-INF\html\{app_name}\{module_dir}{module_name}_list.jsp
+WebContent\res\script\{app_name}\{module_dir}{module_name}.js

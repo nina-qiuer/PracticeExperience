@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.ResourceMapper">
+	<insert id="add" parameterType="com.tuniu.qms.common.model.Resource">
+		INSERT INTO cm_resource (
+			<if test="pid != null">pid,</if>
+			<if test="name != null">name,</if>
+			<if test="widgetCode != null">widgetCode,</if>
+			<if test="url != null">url,</if>
+			<if test="menuFlag != null">menuFlag,</if>
+			<if test="operType != null">operType,</if>
+			<if test="chkAuthFlag != null">chkAuthFlag,</if>
+			<if test="addPerson != null">addPerson,</if>
+			delFlag
+		) VALUES (
+			<if test="pid != null">#{pid},</if>
+			<if test="name != null">#{name},</if>
+			<if test="widgetCode != null">#{widgetCode},</if>
+			<if test="url != null">#{url},</if>
+			<if test="menuFlag != null">#{menuFlag},</if>
+			<if test="operType != null">#{operType},</if>
+			<if test="chkAuthFlag != null">#{chkAuthFlag},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM cm_resource WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.Resource" flushCache="true" statementType="PREPARED">
+		UPDATE cm_resource 
+		<set>
+			<if test="pid != null">pid=#{pid},</if>
+			<if test="name != null">name=#{name},</if>
+			<if test="widgetCode != null">widgetCode=#{widgetCode},</if>
+			<if test="url != null">url=#{url},</if>
+			<if test="menuFlag != null">menuFlag=#{menuFlag},</if>
+			<if test="operType != null">operType=#{operType},</if>
+			<if test="chkAuthFlag != null">chkAuthFlag=#{chkAuthFlag},</if>
+			<if test="updatePerson != null">updatePerson=#{updatePerson},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultMap="resourceMap">
+		SELECT * FROM cm_resource WHERE id=#{id}
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.ResourceDto" resultMap="resourceMap">
+		SELECT * FROM cm_resource 
+		<where>
+			delFlag=0
+			<if test="pid != null">AND pid=#{pid}</if>
+			<if test="menuFlag != null">AND menuFlag=#{menuFlag}</if>
+			<if test="chkAuthFlag != null">AND chkAuthFlag=#{chkAuthFlag}</if>
+			<if test="roleId != null">AND id IN (SELECT resourceId FROM cm_role_resource_rel WHERE roleId=#{roleId})</if>
+		</where>
+	</select>
+	
+	<resultMap type="com.tuniu.qms.common.model.Resource" id="resourceMap">
+		<id column="id" property="id" />
+		<result column="pid" property="pid" />
+		<result column="name" property="name" />
+		<result column="widgetCode" property="widgetCode" />
+		<result column="url" property="url" />
+		<result column="menuFlag" property="menuFlag" />
+		<result column="operType" property="operType" />
+		<result column="chkAuthFlag" property="chkAuthFlag" />
+		<result column="addPerson" property="addPerson" />
+		<result column="addTime" property="addTime" />
+		<result column="updatePerson" property="updatePerson" />
+		<result column="updateTime" property="updateTime" />
+		<result column="delFlag" property="delFlag" />
+	</resultMap>
+	
+</mapper>

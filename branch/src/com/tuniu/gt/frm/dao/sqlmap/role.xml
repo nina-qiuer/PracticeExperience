@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.IRoleMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		
+		<where>
+			<if test="superManageId != null and superManageId>0">
+				super_manage_id = #{superManageId}
+			</if>
+			
+			<if test="manageId != null and manageId>0">
+				find_in_set(${manageId},manage_ids)
+			</if>
+		</where>
+		
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.frm.entity.RoleEntity">  
+		
+		<result property="roleName" column="role_name" />
+		
+		<result property="superManageId" column="super_manage_id" />
+		
+		<result property="manageIds" column="manage_ids" />
+		
+		<result property="addTime" column="add_time" />
+		
+		<result property="updateTime" column="update_time" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="roleName" column="role_name"/>
+		
+		<result property="superManageId" column="super_manage_id"/>
+		
+		<result property="manageIds" column="manage_ids"/>
+		
+		<result property="addTime" column="add_time"/>
+		
+		<result property="updateTime" column="update_time"/>
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  role_name,
+		 
+		  super_manage_id,
+		 
+		  manage_ids,
+		 
+		  add_time,
+		 
+		  update_time
+		 
+		) values  (
+		
+		  #{e.roleName}, 
+		 
+		  #{e.superManageId}, 
+		 
+		  #{e.manageIds}, 
+		 
+		  #{e.addTime}, 
+		 
+		  #{e.updateTime} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.roleName != null">role_name=#{e.roleName},</if>
+			
+				<if test="e.superManageId != null">super_manage_id=#{e.superManageId},</if>
+			
+				<if test="e.manageIds != null">manage_ids=#{e.manageIds},</if>
+			
+				<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			
+				<if test="e.updateTime != null">update_time=#{e.updateTime}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+</mapper>

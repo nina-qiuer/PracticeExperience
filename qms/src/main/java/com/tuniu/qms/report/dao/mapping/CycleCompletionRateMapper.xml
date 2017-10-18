@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.report.dao.CycleCompletionRateMapper">
+
+	<select id="list" parameterType="com.tuniu.qms.report.dto.CycleCompletionRateDto" resultType="com.tuniu.qms.report.model.CycleCompletionRate">
+	
+	SELECT qc.* FROM (
+       
+       SELECT IFNULL( uc.realName,'') AS qcPerson, t.qcPeriodBgnDoneNum,t.qcPeriodBgnNum FROM
+		(
+			SELECT  a.qcPersonId,IFNULL(b.qcPeriodBgnDoneNum,0) AS qcPeriodBgnDoneNum ,IFNULL(a.qcPeriodBgnNum ,0) AS qcPeriodBgnNum
+			FROM (
+	                SELECT qcPersonId,
+				           COUNT(1) AS qcPeriodBgnNum 
+					FROM qc_qc_bill 
+					WHERE groupFlag=1 AND qcPersonId>0 AND delFlag=0
+					AND qcPeriodBgnTime &gt;= #{qcPeriodTimeBgn} AND qcPeriodBgnTime &lt;= CONCAT(#{qcPeriodTimeEnd},' 23:59:59') 
+					GROUP BY qcPersonId ) a  LEFT JOIN (
+					SELECT qcPersonId,
+						   COUNT(CASE WHEN state IN (4,5) THEN 1 END) AS qcPeriodBgnDoneNum
+					FROM qc_qc_bill 
+					WHERE groupFlag=1 AND qcPersonId>0 AND delFlag=0
+					AND qcPeriodBgnTime &gt;= #{qcPeriodTimeBgn} AND qcPeriodBgnTime &lt;= CONCAT(#{qcPeriodTimeEnd},' 23:59:59') 
+				    AND finishTime &lt;= CONCAT(#{statisticDate},' 23:59:59')
+					GROUP BY qcPersonId) b  ON a.qcPersonId = b.qcPersonId
+			) t
+		LEFT JOIN uc_user uc ON t.qcPersonId =uc.id AND uc.delFlag =0
+		) qc
+		UNION ALL
+		SELECT qa.* FROM (		
+		 
+		SELECT '【合计】',IFNULL(b.qcPeriodBgnDoneNum ,0) AS qcPeriodBgnDoneNum,IFNULL(a.qcPeriodBgnNum ,0) AS qcPeriodBgnNum  FROM ( SELECT 
+			           COUNT(1) AS qcPeriodBgnNum 
+				FROM qc_qc_bill 
+				WHERE groupFlag=1 AND qcPersonId>0 AND delFlag=0
+				AND qcPeriodBgnTime &gt;= #{qcPeriodTimeBgn} AND qcPeriodBgnTime &lt;= CONCAT(#{qcPeriodTimeEnd},' 23:59:59') 
+				) a 
+				,
+				(SELECT 
+					   COUNT(CASE WHEN state IN (4,5) THEN 1 END) AS qcPeriodBgnDoneNum
+				FROM qc_qc_bill 
+				WHERE groupFlag=1 AND qcPersonId>0 AND delFlag=0
+				AND qcPeriodBgnTime &gt;= #{qcPeriodTimeBgn} AND qcPeriodBgnTime &lt;= CONCAT(#{qcPeriodTimeEnd},' 23:59:59') 
+				 AND finishTime &lt;= CONCAT(#{statisticDate},' 23:59:59')
+				) b  
+		)qa
+		
+	</select>
+	
+	
+</mapper>

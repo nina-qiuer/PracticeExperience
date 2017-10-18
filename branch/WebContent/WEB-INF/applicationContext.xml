@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- bean id 命名 规则 中划线前为namespace -->	
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-lazy-init="false"> 
+	
+	<import resource="config/common_bean.xml"></import> 
+	<import resource="config/db_bean.xml"></import>
+	<import resource="config/mq_bean.xml"></import>
+	<import resource="config/spring-job.xml"></import>
+	<import resource="config/tspclient.xml"/>
+	
+	<!-- sql map 自动加载  -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+   		<property name="basePackage" value="com.tuniu.gt"/>
+   		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean> 
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		  <property name="basePackage" value="com.tuniu.infobird" /> 
+		  <property name="sqlSessionFactoryBeanName" value="infoBirdSqlSessionFactory" /> 
+	</bean>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		  <property name="basePackage" value="com.tuniu.bi" /> 
+		  <property name="sqlSessionFactoryBeanName" value="biSqlSessionFactory" /> 
+	</bean>
+	
+	 <bean id="springBeanContext" class="com.tuniu.operation.platform.llt.context.SpringBeanContext">
+      </bean>
+	<context:component-scan base-package="com.tuniu" />
+	<context:annotation-config/>
+	
+</beans>

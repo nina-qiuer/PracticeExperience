@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.OuterPunishBillMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.OuterPunishBill" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO qc_outer_punish_bill (
+			<if test="qcId != null">qcId,</if>
+			<if test="agencyId != null">agencyId,</if>
+			<if test="agencyName != null">agencyName,</if>
+			<if test="punishReason != null">punishReason,</if>
+			<if test="scorePunish != null">scorePunish,</if>
+			<if test="economicPunish != null">economicPunish,</if>	
+			<if test="addPerson != null">addPerson,</if>
+			<if test="updatePerson != null">updatePerson,</if>
+			delFlag
+		) VALUES (
+			<if test="qcId != null">#{qcId},</if>
+			<if test="agencyId != null">#{agencyId},</if>
+			<if test="agencyName != null">#{agencyName},</if>
+			<if test="punishReason != null">#{punishReason},</if>
+			<if test="scorePunish != null">#{scorePunish},</if>
+			<if test="economicPunish != null">#{economicPunish},</if>	
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="updatePerson != null">#{updatePerson},</if>
+			0
+		)
+	</insert>
+	
+	<insert id="addPunish" parameterType="com.tuniu.qms.qc.model.OuterPunishBill"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO qc_outer_punish_bill (
+			<if test="qcId != null">qcId,</if>
+			<if test="agencyId != null">agencyId,</if>
+			<if test="agencyName != null">agencyName,</if>
+			<if test="punishReason != null">punishReason,</if>
+			<if test="scorePunish != null">scorePunish,</if>
+			<if test="economicPunish != null">economicPunish,</if>	
+			<if test="addPerson != null">addPerson,</if>
+			<if test="updatePerson != null">updatePerson,</if>
+			<if test="delFlag != null">delFlag,</if>	
+			addTime
+		) VALUES (
+			<if test="qcId != null">#{qcId},</if>
+			<if test="agencyId != null">#{agencyId},</if>
+			<if test="agencyName != null">#{agencyName},</if>
+			<if test="punishReason != null">#{punishReason},</if>
+			<if test="scorePunish != null">#{scorePunish},</if>
+			<if test="economicPunish != null">#{economicPunish},</if>	
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="updatePerson != null">#{updatePerson},</if>
+			<if test="delFlag != null">#{delFlag},</if>
+			CURRENT_TIMESTAMP() 
+		)
+	</insert>
+	
+	
+	<insert id="copyOuterPunishBill" parameterType="com.tuniu.qms.qc.model.OuterPunishBill" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+	
+	   insert into qc_outer_punish_bill
+	   (
+		    qcId,
+		    agencyId,
+		    agencyName,
+			punishReason,
+			scorePunish,
+			economicPunish,
+			addPerson,
+			delFlag
+	   )
+	   select #{qcId},
+	           b.agencyId,
+			   b.agencyName,
+			   b.punishReason,
+			   b.scorePunish,
+			   b.economicPunish,
+			   #{addPerson},
+			   b.delFlag
+	    from qc_outer_punish_bill b where b.id =#{oldId} and b.delFlag =0 
+	
+	</insert>
+	
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_outer_punish_bill WHERE id=#{id}
+	</delete>
+	
+	<sql id="listSql">
+		<where>
+		     qc.delFlag = 0 
+		    <if test="agencyId != null ">AND qc.agencyId=#{agencyId}</if>
+		    <if test="agencyName != null and agencyName!=''">AND qc.agencyName like CONCAT('%','${agencyName}','%' )</if>
+			<if test="addPerson != null and addPerson!='' ">AND qc.addPerson = #{addPerson}</if>
+		    <if test="addPunishTimeBgn != null and addPunishTimeBgn!='' ">AND qc.addTime &gt;=#{addPunishTimeBgn}</if>
+		    <if test="addPunishTimeEnd != null and addPunishTimeEnd!='' ">AND qc.addTime &lt;=concat(#{addPunishTimeEnd},' 23:59:59')</if>
+		    <if test="id != null and id!=''">AND qc.id=#{id}</if>
+			<if test="qcId != null ">AND qc.qcId=#{qcId}</if>
+		    <if test="economicPunishBgn != null "> AND qc.economicPunish &gt;=#{economicPunishBgn}</if>
+		    <if test="economicPunishEnd != null ">AND qc.economicPunish &lt;=#{economicPunishEnd}</if>
+		    <if test="scorePunishBgn != null "> AND qc.scorePunish &gt;=#{scorePunishBgn}</if>
+		    <if test="scorePunishEnd != null "> AND qc.scorePunish &lt;=#{scorePunishEnd}</if>
+		    <if test="cmpId != null">AND qb.cmpId =#{cmpId}</if>
+			<if test="ordId != null">AND qb.ordId= #{ordId} </if>
+			<if test="prdId != null">AND qb.prdId =#{prdId}</if>
+			<if test="state != null and state!=-1">AND qb.state =#{state}</if>
+			<if test="state==-1">AND qb.state in(3,4,6,7)</if>
+			<if test="qcTypeId != null"> AND (qb.qcTypeId =#{qcTypeId} or qb.qcTypeId in(select id from qc_qc_type where pid = #{qcTypeId} ))</if>
+			<if test="jiraNum != null"> AND qb.jiraNum =#{jiraNum}</if>	
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.OuterPunishBillDto" resultType="com.tuniu.qms.qc.model.OuterPunishBill">
+		SELECT qc.*,
+			    qt.name as qcTypeName,
+			    qt.id as qcTypeId,
+				qb.prdId,
+				qb.cmpId,
+				qb.ordId,
+				qb.state as qcState,
+				qb.jiraNum
+		FROM  qc_outer_punish_bill qc 
+		INNER JOIN qc_qc_bill qb ON qc.qcId =qb.id AND  qb.delFlag = 0 
+		LEFT JOIN qc_qc_type qt	ON qt.id = qb.qcTypeId  AND qt.delFlag = 0
+		<include refid="listSql"/>
+		ORDER BY qc.qcId desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.OuterPunishBillDto" resultType="Integer">
+		SELECT count(1)
+		FROM  qc_outer_punish_bill qc 
+		INNER JOIN qc_qc_bill qb ON qc.qcId =qb.id AND  qb.delFlag = 0 
+		<include refid="listSql"></include>
+	</select>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.OuterPunishBill">
+	
+			SELECT  qc.*,  
+				    qt.name as qcTypeName,
+				    qt.id as qcTypeId,
+					qb.prdId,
+					qb.cmpId,
+					qb.ordId,
+					qb.jiraNum,
+					t4.resp_type as respType,
+					t4.resp_id as respId
+				from  qc_outer_punish_bill qc
+			    INNER JOIN qc_qc_bill qb ON qc.qcId =qb.id AND  qb.delFlag = 0 
+				LEFT JOIN qc_qc_type qt ON qt.id = qb.qcTypeId  AND qt.delFlag = 0
+				left join qc_resp_punish_relation t4 on qc.id = t4.punish_id and t4.punish_type = 2
+				where qc.id =#{id} and qc.delFlag =0
+	</select>
+	
+	<select id="listOuterPunishBill" parameterType="Integer" resultMap="opbMap">
+		SELECT t1.id, 
+				t1.qcId, 
+				t1.agencyId, 
+				t1.agencyName, 
+				t1.punishReason, 
+				t1.scorePunish, 
+				t1.economicPunish, 
+				t2.execFlag, 
+				t3.level, 
+				t3.redLineFlag, 
+				t3.description, 
+				t3.economicPunish AS economicPunishPs, 
+				t3.scorePunish AS scorePunishPs, 
+				t3.source,
+				t4.resp_type as respType,
+				t4.resp_id as respId
+		FROM qc_outer_punish_bill t1 
+		LEFT JOIN qc_outer_punish_basis t2 ON t1.id=t2.opbId
+		LEFT JOIN qc_punish_standard t3 ON t2.psId=t3.id 
+		left join qc_resp_punish_relation t4 on t1.id = t4.punish_id and t4.punish_type = 2
+		WHERE t1.qcId=#{qcId} AND t1.delFlag=0
+	</select>
+	
+	<resultMap type="com.tuniu.qms.qc.model.OuterPunishBill" id="opbMap">
+		<id column="id" property="id" />
+		<result column="qcId" property="qcId" />
+		<result column="agencyId" property="agencyId" />
+		<result column="agencyName" property="agencyName" />
+		<result column="punishReason" property="punishReason" />
+		<result column="scorePunish" property="scorePunish" />
+		<result column="economicPunish" property="economicPunish" />
+		<result column="respId" property="respId" />
+		<result column="respType" property="respType" />
+	    <collection property="opbList" javaType="ArrayList" ofType="com.tuniu.qms.qc.model.OuterPunishBasis">
+	     	<id column="opbId" property="id" />
+	    	<result column="execFlag" property="execFlag" />
+	    	<association property="punishStandard" javaType="com.tuniu.qms.qc.model.PunishStandard">
+	     		<result column="level" property="level" />
+	     		<result column="redLineFlag" property="redLineFlag" />
+	     		<result column="description" property="description" />
+	     		<result column="economicPunishPs" property="economicPunish" />
+	     		<result column="scorePunishPs" property="scorePunish" />
+	     		<result column="source" property="source" />
+	    	</association>
+	    </collection>
+	</resultMap>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.OuterPunishBill" >
+		UPDATE qc_outer_punish_bill 
+		<set>
+			<if test="agencyId != null">agencyId = #{agencyId},</if>
+			<if test="agencyName != null">agencyName = #{agencyName},</if>
+			<if test="scorePunish != null">scorePunish =#{scorePunish},</if>	
+			<if test="economicPunish != null">economicPunish =#{economicPunish},</if>
+			<if test="punishReason != null">punishReason =#{punishReason},</if>	
+			<if test="updatePerson != null">updatePerson =#{updatePerson},</if>
+			<if test="delFlag != null">delFlag = #{delFlag},</if>
+			updateTime = CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<delete id="deleteOuterPunishBill" parameterType="Integer">
+	   
+	     delete from qc_outer_punish_bill  where qcId =#{qcId}
+	   
+	</delete>
+	
+	<select id="getOuterPunishIsExist" parameterType="com.tuniu.qms.qc.model.OuterPunishBill" resultType="Integer">
+	
+	   	   select count(1) from qc_outer_punish_bill
+		    where
+		    qcId = #{qcId} 
+		    and agencyName =#{agencyName}
+		  	<if test="agencyId != null">  and agencyId =#{agencyId}</if>
+		
+	</select>
+	
+	<delete id="deleteUnUsePunish" parameterType="com.tuniu.qms.qc.dto.OuterPunishBillDto"> 
+	
+	
+	    delete from qc_outer_punish_bill where delFlag = #{delFlag} and qcId =#{qcId}
+	
+	</delete>
+	
+	
+	<update id="updatePunishBill" parameterType="com.tuniu.qms.qc.model.OuterPunishBasis" >
+	   
+	   UPDATE qc_outer_punish_bill qb
+	   set qb.economicPunish = (select economicPunish from qc_punish_standard where id =#{psId} ),
+	    qb.scorePunish = (select scorePunish from  qc_punish_standard where id = #{psId})
+		WHERE  qb.id = #{opbId}
+	
+	</update>
+	
+	<select id="copyList" parameterType="com.tuniu.qms.qc.dto.OuterPunishBillDto" resultType="com.tuniu.qms.qc.model.OuterPunishBill">
+	     select * from qc_outer_punish_bill where qcId =#{qcId} and delFlag =0
+	</select>
+	
+	<select id="getByQcId" parameterType="java.util.Map" resultType="Integer">
+	    select id from qc_outer_punish_bill where qcId =#{qcId}
+	   <if test="delFlag != null and delFlag!=''"> and delFlag = #{delFlag}</if>
+	</select>
+	
+	
+</mapper>

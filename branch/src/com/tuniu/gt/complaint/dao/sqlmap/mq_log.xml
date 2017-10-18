@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.satisfaction.dao.sqlmap.imap.IMQLogMap">
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		<if test="e.mqMsg!= null">mq_msg,</if>
+
+		<if test="e.inteMsg!= null">inte_msg,</if>
+
+		create_time
+		
+		) values (
+
+		<if test="e.mqMsg!= null">#{e.mqMsg},</if>
+
+		<if test="e.inteMsg!= null">#{e.inteMsg},</if>
+
+		#{e.createTime}
+		
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+
+	<select id="getFixData"  resultMap="listResultMap"  parameterType="Map">
+		SELECT DISTINCT mq_msg,create_time FROM ct_mq_log WHERE LENGTH(mq_msg)>0 AND inte_msg IS NULL
+		<if test="dataBegin != null and dataBegin != ''">
+		 AND create_time>#{dataBegin} 
+		 </if>
+		 <if test="dataEnd != null and dataEnd != ''">
+		 <![CDATA[
+		 AND create_time<#{dataEnd}
+		 ]]>
+		 </if>
+	</select>
+
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="mqMsg" column="mq_msg" />
+
+		<result property="createTime" column="create_time" />
+		
+	</resultMap>
+
+
+</mapper>

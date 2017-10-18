@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<ehcache updateCheck="false">
+<!-- 
+<diskStore path="d:/cache" /> 
+<diskStore path="/opt/tuniu/cache" />
+-->
+<diskStore path="/opt/tuniu/tomcat-ssi-test/cache"/>
+<defaultCache 
+  maxElementsInMemory="500" 
+  eternal="false" 
+  timeToIdleSeconds="300" 
+  timeToLiveSeconds="1200" 
+  overflowToDisk="true" />
+    <cache name="com.tuniu.gt" maxElementsInMemory="150" eternal="false" timeToLiveSeconds="36000" timeToIdleSeconds="3600" overflowToDisk="true"/> 
+</ehcache>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintTaskReminderMapper">
+   
+   <insert id="addTaskReminder" parameterType="com.tuniu.gt.complaint.entity.TaskReminderEntity">
+    
+   	 INSERT INTO ct_complaint_task_reminder (
+		
+			<if test="cmpId != null">cmpId,</if>
+			<if test="orderId != null">orderId,</if>
+			<if test="guestName != null">guestName,</if>
+			<if test="guestLevel != null">guestLevel,</if>
+			<if test="orderState != null">orderState,</if>
+			<if test="customerLeader != null">customerLeader,</if>
+			<if test="customerLeaderId != null">customerLeaderId,</if>
+			<if test="dealName != null">dealName,</if>
+			<if test="deal != null">deal,</if>
+			<if test="cmpPerson != null">cmpPerson,</if>
+			<if test="cmpPhone != null">cmpPhone,</if>
+			<if test="content != null">content,</if>
+			<if test="cmpState != null">cmpState,</if>
+			<if test="cbState != null">cbState,</if>
+			<if test="fcState != null">fcState,</if>
+			<if test="dealDepart != null">dealDepart,</if>
+			<if test="level != null">level,</if>
+			<if test="startTime != null">startTime,</if>
+			<if test="buildDate != null">buildDate,</if>
+			<if test="repeateTime != null">repeateTime,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="callBackTime != null">call_back_time,</if>
+			addTime,
+			delFlag
+			
+		) VALUES (
+		
+			<if test="cmpId != null">#{cmpId},</if>
+			<if test="orderId != null">#{orderId},</if>
+			<if test="guestName != null">#{guestName},</if>
+			<if test="guestLevel != null">#{guestLevel},</if>
+			<if test="orderState != null">#{orderState},</if>
+			<if test="customerLeader != null">#{customerLeader},</if>
+			<if test="customerLeaderId != null">#{customerLeaderId},</if>
+			<if test="dealName != null">#{dealName},</if>
+			<if test="deal != null">#{deal},</if>
+			<if test="cmpPerson != null">#{cmpPerson},</if>
+			<if test="cmpPhone != null">#{cmpPhone},</if>
+			<if test="content != null">#{content},</if>
+			<if test="cmpState != null">#{cmpState},</if>
+			<if test="cbState != null">#{cbState},</if>
+			<if test="fcState != null">#{fcState},</if>
+			<if test="dealDepart != null">#{dealDepart},</if>
+			<if test="level != null">#{level},</if>
+			<if test="startTime != null">#{startTime},</if>
+			<if test="buildDate != null">#{buildDate},</if>
+			<if test="repeateTime != null">#{repeateTime},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="callBackTime != null">#{callBackTime},</if>
+			CURRENT_TIMESTAMP() ,
+			0
+		)
+    
+    </insert>
+    
+    
+    <select id="queryTaskReminder" parameterType="java.util.Map" resultType="com.tuniu.gt.complaint.entity.TaskReminderEntity">
+	
+	     select 
+	     cctr.cmpId,
+	     cctr.orderId,
+	     cctr.guestName,
+	     cctr.guestLevel,
+	     cctr.startTime,
+	     cctr.buildDate,
+	     cctr.repeateTime,
+	     cctr.customerLeader,
+	     cctr.level,
+	     DATE_FORMAT(cctr.call_back_time,'%Y-%m-%d %H:%i:%s') as call_back_time,
+	     cc.deal_depart as dealDepart,
+	     cc.deal_name as dealName,
+	     cc.state as cmpState
+	     from ct_complaint_task_reminder cctr
+	     inner join ct_complaint cc on cc.id=cctr.cmpId and cc.del_flag=0
+	   	 where cctr.delFlag =0 
+	   	 <if test="stateType ==1">
+	       and cctr.cbState = 1
+	  	 </if>
+	  	<if test="stateType ==2">
+	       and cctr.fcState = 1
+	  	 </if>
+	  	 <if test="cmpId !=null and cmpId!=''">
+	    	AND cctr.cmpId = #{cmpId} 
+	     </if>
+	     <if test="orderId !=null and orderId!=''">
+	    	AND cctr.orderId = #{orderId} 
+	     </if>
+	     <if test="orderState !=null and orderState!=''">
+	    	AND cctr.orderState = #{orderState} 
+	     </if>
+		 <if test="level != null and level != '' ">
+				and cctr.level = #{level}
+		</if>
+		<if test="customerLeader != null and customerLeader != '' ">
+				and cctr.customerLeader = #{customerLeader}
+		 </if>
+		 <if test="startTimeBegin != null and startTimeBegin != ''">
+				and cctr.startTime &gt;= #{startTimeBegin}
+		</if>
+		<if test="startTimeEnd != null and startTimeEnd != ''">
+				and cctr.startTime &lt;= #{startTimeEnd}
+		</if>
+		<if test="dealName != null and dealName != ''">
+				and cc.deal_name like '%${dealName}%'
+		 </if>
+		 <if test="userId != null and userId != ''">
+				and cc.deal = #{userId} or cc.associater = #{userId}
+		 </if>
+		<if test="dealDepart != null and dealDepart != '' ">
+				and cc.deal_depart = #{dealDepart}
+		</if>
+	     order by cctr.call_back_time desc,cmpId desc
+	 	 <if test="dataLimitStart != null">
+					limit #{dataLimitStart}
+					<if test="dataLimitEnd != null">
+						,#{dataLimitEnd}
+					</if>
+		</if>
+	
+	
+	</select>
+	
+	<select id="queryTaskReminderCount" parameterType="java.util.Map"  resultType="int">
+	
+	     select 
+	     count(1)
+	     from ct_complaint_task_reminder cctr
+	     inner join ct_complaint cc on cc.id=cctr.cmpId and cc.del_flag=0
+	   	 where cctr.delFlag =0 
+	   	 <if test="stateType ==1">
+	       and cctr.cbState = 1
+	  	 </if>
+	  	<if test="stateType ==2">
+	       and cctr.fcState = 1
+	  	 </if>
+	  	 <if test="cmpId !=null and cmpId!=''">
+	    	AND cctr.cmpId = #{cmpId} 
+	     </if>
+	     <if test="orderId !=null and orderId!=''">
+	    	AND cctr.orderId = #{orderId} 
+	     </if>
+	     <if test="orderState !=null and orderState!=''">
+	    	AND cctr.orderState = #{orderState} 
+	     </if>
+		 <if test="level != null and level != '' ">
+				and cctr.level = #{level}
+		</if>
+		<if test="customerLeader != null and customerLeader != '' ">
+				and cctr.customerLeader = #{customerLeader}
+		 </if>
+		 <if test="startTimeBegin != null and startTimeBegin != ''">
+				and cctr.startTime &gt;= #{startTimeBegin}
+		</if>
+		<if test="startTimeEnd != null and startTimeEnd != ''">
+				and cctr.startTime &lt;= #{startTimeEnd}
+		</if>
+		<if test="dealName != null and dealName != ''">
+				and cc.deal_name like '%${dealName}%'
+		 </if>
+		 <if test="userId != null and userId != ''">
+				and cc.deal = #{userId} or cc.associater = #{userId}
+		 </if>
+		<if test="dealDepart != null and dealDepart != '' ">
+				and cc.deal_depart = #{dealDepart}
+		</if>
+	</select>
+	
+	
+	<update id="updateTaskReminder" parameterType="java.util.Map">
+	
+	    update ct_complaint_task_reminder 
+	    set 
+	    cbState = 2,
+	    fcState =2,
+	    update_id = #{userId},
+	    update_name = #{userName},
+	    update_time = CURRENT_TIMESTAMP()
+	    where 
+	    cmpId =#{cmpId} 
+	    and cbState = 1
+	    and delFlag =0
+	
+	</update>
+	
+	<select id="getTaskList" parameterType="java.util.Map" resultType="com.tuniu.gt.complaint.entity.TaskReminderEntity">
+	
+		select
+		id,
+		cbState,
+		fcState,
+		cmpPerson,
+		cmpPhone,
+		content,
+		DATE_FORMAT(call_back_time,'%Y-%m-%d %H:%i:%s') as call_back_time
+		from ct_complaint_task_reminder
+		where delFlag = 0
+		and cmpId = #{cmpId}
+		and (cbState = 1
+		or fcState = 1)
+		order by addTime desc
+		
+	</select>
+	
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="uc_user" extends="apply-default" namespace="/uc/action/user"> 
+		<action name="*-*" class="uc_user-{1}" method="{2}">
+			<result name="form">/WEB-INF/html/uc/user/{1}_form.jsp</result> 
+			<result name="list">/WEB-INF/html/uc/user/{1}_list.jsp</result> 
+			<!-- 支持用户自定义指定jsp页面 -->
+			<result name="*">/WEB-INF/html/uc/user/{1}_${jspTpl}.jsp</result>
+		</action>
+	</package>
+</struts>

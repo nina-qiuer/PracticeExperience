@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.JiraBillMapper">
+
+	<insert id="addJira" parameterType="java.util.List">
+		insert into qc_jira (
+			jiraId, 
+			jiraName,
+			project,
+			statusNum, 
+			statusName, 
+			typeNum, 
+			typeName,
+			summary, 
+			description, 
+			created, 
+			updated,
+			mianReason,
+			reasonDetail,
+			solution,
+			eventClass,
+			devProPeople,
+			applicationPeople,
+			addTime
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.jiraId},
+            #{e.jiraName},
+            #{e.project},
+			#{e.statusNum},
+			<if test="e.statusName == null">'',</if>
+			<if test="e.statusName != null">#{e.statusName},</if>
+			#{e.typeNum},
+			#{e.typeName},
+			#{e.summary},
+			#{e.description},
+			#{e.created},
+			#{e.updated},
+			#{e.mianReason},
+			#{e.reasonDetail},
+			#{e.solution},
+			#{e.eventClass},
+			#{e.devProPeople},
+			#{e.applicationPeople},
+			 CURRENT_TIMESTAMP() 
+        )
+        </foreach>
+    </insert>
+    
+	<update id="update" parameterType="com.tuniu.qms.qc.model.JiraBill" >
+		UPDATE qc_jira 
+		set
+			<if test="flag != null">flag=#{flag},</if>
+			<if test="qcId != null">qcId=#{qcId},</if>
+			updateTime=CURRENT_TIMESTAMP
+		where id=#{id}
+	</update>
+	
+	<sql id="listSql">
+		
+		select jira.* from qc_jira jira 
+			<if test="qcPersonId != null">
+			inner join qc_person_project_dev dev on jira.project = dev.projectId 
+			and dev.qcPersonId =#{qcPersonId}
+			</if>
+		<where> 
+			1=1
+		   <if test="jiraName != null and jiraName !=''">AND jira.jiraName like  CONCAT('%','${jiraName}','%' )  </if>
+		   <if test="applicationPeople != null and applicationPeople !=''">AND jira.applicationPeople like  CONCAT('%','${applicationPeople}','%' )  </if>
+		   <if test="qcId != null ">AND jira.qcId =#{qcId}</if>
+		   <if test="addTimeFrom != null and addTimeFrom!=''">AND jira.addTime &gt;=#{addTimeFrom}</if>
+		   <if test="addTimeTo != null and addTimeTo!=''">AND jira.addTime &lt;=concat(#{addTimeTo},' 23:59:59')</if>
+		   <if test="createTimeBgn != null and createTimeBgn!=''">AND jira.created &gt;=#{createTimeBgn}</if>
+		   <if test="createTimeEnd != null and createTimeEnd!=''">AND jira.created &lt;=concat(#{createTimeEnd},' 23:59:59')</if>
+		   <if test="flag != -1">AND jira.flag=#{flag}</if>
+		   <if test="mianReason != null and mianReason !=''">AND jira.mianReason=#{mianReason}</if>
+		   <if test="eventClass != null and eventClass !=''">AND jira.eventClass=#{eventClass}</if>
+		   <if test="keyWord != null and keyWord !='' ">AND
+		    ( jira.summary like CONCAT('%','${keyWord}','%' )  or jira.description like CONCAT('%','${keyWord}','%' ) 
+		     or jira.reasonDetail like CONCAT('%','${keyWord}','%' )  or jira.solution like CONCAT('%','${keyWord}','%' )
+		     )
+		    </if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.JiraBillDto" resultType="com.tuniu.qms.qc.model.JiraBill">
+		<include refid="listSql"/>
+		ORDER BY  jira.jiraName 
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart} 	
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.JiraBillDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+		
+	</select>
+	
+	
+	<select id="getJiraIsRelation" parameterType="java.lang.String" resultType="Integer">
+	
+	   select count(1) from qc_jira where id = #{jiraId} and flag = 1
+	
+	</select>
+	
+	<update id="updateJiraRelation" parameterType="java.util.Map">
+	 
+	     update qc_jira set qcId =#{qcId} , flag =#{flag},updateTime=CURRENT_TIMESTAMP
+		 where id in 
+		 <foreach collection="jiraIds" item="jiraId"
+	      open="(" close=")" separator=",">
+	  		 #{jiraId}
+	  	 </foreach>
+	</update>
+	
+	
+	<select id="listJira" parameterType="java.lang.String" resultType="com.tuniu.qms.qc.model.JiraBill">
+	   
+	   select jiraName from  qc_jira  where id in 
+		 <foreach collection="jiraIds" item="jiraId"
+	      open="(" close=")" separator=",">
+	  		 #{jiraId}
+	  	 </foreach>
+	   order by id
+	</select>
+	
+	<select id="listByQcId" parameterType="com.tuniu.qms.qc.dto.JiraBillDto" resultType="com.tuniu.qms.qc.model.JiraBill">
+	
+	    select * from qc_jira where qcId =#{qcId} order by jiraName
+	    
+	</select>
+	
+	<update id="updateJiraByQcId" parameterType="java.util.Map">
+	 
+	     update qc_jira set qcId = 0, flag =#{flag},updateTime=CURRENT_TIMESTAMP
+		 where qcId  = #{qcId}
+		
+	</update>
+	
+	<select id="listDistMainReason" resultType="String">
+		SELECT DISTINCT mianReason FROM qc_jira
+	</select>
+	
+	<select id="listDistEventClass" resultType="String">
+		SELECT DISTINCT eventClass FROM qc_jira
+	</select>
+	
+</mapper>

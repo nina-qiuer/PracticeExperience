@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.tuniu.gt.workorder.dao.sqlmap.imap.IWorkOrderConfigMap"> 
+	
+	<select id="get" parameterType="int"  resultType="com.tuniu.gt.workorder.entity.WorkOrderConfig">
+		SELECT t1.*, t2.department AS parentName
+		FROM  wo_config t1
+		LEFT JOIN wo_config t2 ON t1.pid = t2.id AND t2.delFlag = 0
+		where t1.delFlag=0 and t1.id=#{id}
+		limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  department,
+		  principals
+		  <if test="e.assigners != null ">,assigners</if>
+		  <if test="e.members != null ">,members</if>
+		  <if test="e.pid != null">,pid</if>
+		) values  (
+		  #{e.department}, 
+		  #{e.principals}
+		  <if test="e.assigners != null ">,#{e.assigners}</if>
+		  <if test="e.members != null ">,#{e.members}</if>
+		  <if test="e.pid != null">,#{e.pid}</if>
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.workorder.entity.WorkOrderConfig" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+				<if test="e.department != null">department=#{e.department},</if>
+				<if test="e.principals != null">principals = #{e.principals},</if>
+				<if test="e.assigners != null">assigners = #{e.assigners},</if>
+				<if test="e.members != null">members = #{e.members},</if>
+				<if test="e.delFlag != null">delFlag=#{e.delFlag}</if>
+				<if test="e.pid != null">pid=#{e.pid}</if>
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	<update id="update" parameterType="com.tuniu.gt.workorder.entity.WorkOrderConfig" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/>
+	</sql>
+	
+	<delete id="delete">
+		<include refid="delete"/>
+		  where id=#{id}
+	</delete>
+	
+	<select id="getDepartmentList" resultType="string">
+		select distinct(department) from wo_config where delFlag = 0
+	</select>
+	
+	<select id="getPrincipalsByDepartment" parameterType="string"  resultType="string">
+			select principals from wo_config where department=#{department} and delFlag = 0
+	</select>
+	
+	<select id="getResponsibleDepartmentList"  resultType="string">
+		select distinct(department) from wo_config where principals like '%${value}%'  and delFlag = 0
+	</select>
+	
+	<select id="getMembersById" resultType="int">
+			select members from wo_config where id =#{id}
+	</select>
+	
+	<select id="getResponsibleConfig"  resultType="com.tuniu.gt.workorder.entity.WorkOrderConfig"  parameterType="string">
+			select * from wo_config where assigners like '%${value}%'  and delFlag = 0
+	</select>
+	
+	<select id="getDepartmentCount" parameterType="com.tuniu.gt.workorder.entity.WorkOrderConfig" resultType="int">
+		select count(*) as count from wo_config
+		<where>
+			department=#{department}
+			<if test="id!=null">and id!=#{id}</if>
+		</where>
+	</select>
+	
+	<select id="getResponsibleConfigCountByUserName" parameterType="string" resultType="int">
+			select count(*) from wo_config where assigners like '%${value}%' or principals like '%${value}%' and delFlag = 0
+	</select>
+	
+	<select id="getConfigList" resultType="com.tuniu.gt.workorder.entity.WorkOrderConfig">
+		SELECT t1.*, t2.department AS parentName
+		FROM  wo_config t1
+		LEFT JOIN wo_config t2 ON t1.pid = t2.id AND t2.delFlag = 0
+		WHERE t1.delFlag = 0
+		ORDER BY t1.pid
+	</select>
+	
+	<select id="getConfigByDepartment" parameterType="string" resultType="com.tuniu.gt.workorder.entity.WorkOrderConfig">
+		select * from wo_config where delFlag=0 and department = #{name} 
+	</select>
+	
+	<select id="getConfigListByPid" parameterType="int" resultType="com.tuniu.gt.workorder.entity.WorkOrderConfig">
+		SELECT *
+		FROM wo_config 
+		WHERE delFlag = 0 and pid = #{pid}
+	</select>
+	
+</mapper>

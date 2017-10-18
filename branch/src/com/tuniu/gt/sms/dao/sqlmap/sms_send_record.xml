@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.sms.dao.sqlmap.imap.SmsSendRecordMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			<if test="telNum!=null and telNum !=''">
+				and tel_num=#{telNum}
+			</if>
+			<if test="content!=null and content !=''">
+				and content=#{content}
+			</if>
+			<if test="businessId != null and businessId != 0">
+				and business_id=#{businessId}
+			</if>
+			<if test="type!=null and type !=''">
+				and type=#{type}
+			</if>
+			<if test="sendResult!=null and sendResult !=''">
+				and send_result=#{sendResult} 
+			</if>
+			<if test="repeatSend!=null and repeatSend !=''">
+				and ABS(TIME_TO_SEC(TIMEDIFF(send_time,NOW()))) &lt; 172800
+			</if>
+		</where>
+		order by id
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.sms.entity.SmsSendRecordEntity">  
+		
+		<result property="telNum" column="tel_num" />
+		
+		<result property="smsTaskId" column="sms_task_id" />
+		
+		<result property="sendTime" column="send_time" />
+		
+		<result property="operatorId" column="operator_id" />
+		
+		<result property="content" column="content" />
+		
+		<result property="sendResult" column="send_result" />
+		
+		<result property="resultMsg" column="result_msg" />
+		
+		<result property="type" column="type" />
+	</resultMap>
+	
+	<insert id="addSmsRecord" useGeneratedKeys="true" keyProperty="id"
+		parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		insert into sms_send_record (
+		tel_num,
+		business_id,
+		sms_task_id,
+		send_time,
+		operator_id,
+		content,
+		send_result,
+		result_msg,
+		type
+		) values
+		<foreach collection="list" item="e" index="index" separator=",">
+			(
+			#{e.telNum},
+			#{e.businessId},
+			#{e.smsTaskId},
+			#{e.sendTime},
+			#{e.operatorId},
+			#{e.content},
+			#{e.sendResult},
+			#{e.resultMsg},
+			#{e.type}
+			)  
+        </foreach>
+	</insert>
+	
+	<select id="getAlreadySendNos" parameterType="Map" resultType="String">
+		SELECT tel_num FROM sms_send_record WHERE send_time > #{timeBegin} AND content = #{content} AND send_result=0
+	</select>
+
+</mapper>

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.warning.dao.sqlmap.imap.EarlyWarningOrderMap">
+	<sql id="whereSql">
+		<where>1=1
+			<if test="orderId != null and orderId != 0">
+				AND order_id = #{orderId}
+			</if>
+			<if test="ewId != null and ewId != 0">
+				AND ew_id = #{ewId}
+			</if>
+			<if test="routeId != null and routeId != 0">
+				AND route_id = #{routeId}
+			</if>
+			<if test="groupTermNum != null and groupTermNum != ''">
+				AND group_term_num = #{groupTermNum}
+			</if>
+			<if test="selfGroupNum != null and selfGroupNum != ''">
+				AND self_group_num = #{selfGroupNum}
+			</if>
+			<if test="destCategoryName != null and destCategoryName != ''">
+			   AND dest_category_name = #{destCategoryName} 
+			</if>
+			<if test="orderType != null and orderType != ''">
+			   AND order_type = #{orderType} 
+			</if>
+			<if test="startTimeBegin != null and startTimeBegin != ''">
+			   AND start_date >= #{startTimeBegin} 
+			</if>
+			<if test="startTimeEnd != null and startTimeEnd != ''">
+			   AND #{startTimeEnd} >= start_date 
+			</if>
+			<if test="backTimeStart != null and backTimeStart != ''">
+			   AND back_date >= #{backTimeStart} 
+			</if>
+			<if test="backTimeEnd != null and backTimeEnd != ''">
+			   AND #{backTimeEnd} >= back_date 
+			</if>
+			<if test="startCity != null and startCity != ''">
+			   AND start_city = #{startCity} 
+			</if>
+			<if test="backCity != null and backCity != ''">
+			   AND back_city = #{backCity} 
+			</if>
+			<if test="menuId == 'menu_1'">
+			   AND del_flag = 0 
+			</if>
+			<if test="menuId == 'menu_2'">
+			   AND del_flag = 1 
+			</if>
+			<if test="idsStr != null and idsStr != ''">
+			   AND id in (${idsStr}) 
+			</if>
+			<if test="(flightNo != null and flightNo != '') or (flightDtBegin != null and flightDtBegin != '') or 
+						(flightDtEnd != null and flightDtEnd != '') or (flightLtBegin != null and flightLtBegin != '') or 
+						(flightLtEnd != null and flightLtEnd != '') or (flightDcitys != null and flightDcitys != '') or 
+						(flightLcitys != null and flightLcitys != '')">
+				AND id IN (SELECT ew_order_id FROM ew_order_flight WHERE 1=1 
+				<if test="flightNo != null and flightNo != ''">
+					AND flight_no = #{flightNo}
+				</if>
+				<if test="flightDtBegin != null and flightDtBegin != ''">
+					AND departure_time >= #{flightDtBegin}  
+				</if>
+				<if test="flightDtEnd != null and flightDtEnd != ''">
+					AND #{flightDtEnd} >= departure_time
+				</if>
+				<if test="flightLtBegin != null and flightLtBegin != ''">
+				    AND arrive_time >= #{flightLtBegin} 
+				</if>
+				<if test="flightLtEnd != null and flightLtEnd != ''">
+				   AND #{flightLtEnd} >= arrive_time
+				</if>
+				<if test="flightDcitys != null and flightDcitys != ''">
+				   AND departure_city_name = #{flightDcitys}
+				</if>
+				<if test="flightLcitys != null and flightLcitys != ''">
+				   AND arrive_city_name = #{flightLcitys}
+				</if>
+				)
+			</if>
+			<if test="(agencyId != null and agencyId != '') or (agencyName != null and agencyName != '')">
+				AND id IN (SELECT ew_order_id FROM ew_order_agency WHERE 1=1 
+				<if test="agencyId != null and agencyId != ''">
+				   AND agency_id=#{agencyId} 
+				</if>
+				<if test="agencyName2 != null and agencyName2 != ''">
+				   AND agency_name LIKE ${agencyName2}
+				</if>
+				)
+			</if>
+		</where>
+	</sql>
+	<sql id="pageSql">
+		<if test="start != -1">
+			limit #{start}
+			<if test="pageSize > 0">
+				,#{pageSize}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="getEwoNum" parameterType="com.tuniu.gt.warning.common.EarlyWarningOrderPage" resultType="Integer">
+		SELECT COUNT(1) FROM ew_order
+		<include refid="whereSql" />
+	</select>
+
+	<select id="getEwoList" parameterType="com.tuniu.gt.warning.common.EarlyWarningOrderPage" resultMap="listResultEntity">
+		SELECT * FROM ew_order
+		<include refid="whereSql" />
+		<include refid="pageSql" />
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.warning.entity.EarlyWarningOrderEntity">
+		<result property="id" column="id" />
+		<result property="ewId" column="ew_id" />
+		<result property="orderId" column="order_id" />
+		<result property="orderType" column="order_type" />
+		<result property="routeId" column="route_id" />
+		<result property="routeName" column="route_name" />
+		<result property="destCategoryId" column="dest_category_id" />
+		<result property="destCategoryName" column="dest_category_name" />
+		<result property="productType" column="product_type" />
+		<result property="startDate" column="start_date" />
+		<result property="backDate" column="back_date" />
+		<result property="startCity" column="start_city" />
+		<result property="backCity" column="back_city" />
+		<result property="contactId" column="contact_id" />
+		<result property="contactName" column="contact_name" />
+		<result property="contactPhone" column="contact_phone" />
+		<result property="childCnt" column="child_cnt" />
+		<result property="adultCnt" column="adult_cnt" />
+		<result property="groupTermNum" column="group_term_num" />
+		<result property="selfGroupNum" column="self_group_num" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			<if test="e.complaintId != null">complaint_id=#{e.complaintId},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<update id="toggleEwo" parameterType="Map" flushCache="true" statementType="PREPARED">
+		UPDATE ew_order SET del_flag=#{toggleFlag} WHERE id IN (${idsStr})
+	</update>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+			ew_id, 
+			order_id, 
+			order_type, 
+			route_id, 
+			route_name, 
+			dest_category_id, 
+			dest_category_name, 
+			product_type, 
+			start_date, 
+			back_date, 
+			start_city, 
+			back_city, 
+			contact_id, 
+			contact_name, 
+			contact_phone, 
+			child_cnt, 
+			adult_cnt, 
+			group_term_num, 
+			self_group_num
+		) values (
+			#{e.ewId},
+			#{e.orderId},
+			#{e.orderType},
+			#{e.routeId},
+			#{e.routeName},
+			#{e.destCategoryId},
+			#{e.destCategoryName},
+			#{e.productType},
+			#{e.startDate},
+			#{e.backDate},
+			#{e.startCity},
+			#{e.backCity},
+			#{e.contactId},
+			#{e.contactName},
+			#{e.contactPhone},
+			#{e.childCnt},
+			#{e.adultCnt},
+			#{e.groupTermNum},
+			#{e.selfGroupNum}
+		)
+	</sql>
+	
+	<insert id="insertFlight" useGeneratedKeys="true" keyProperty="id" 
+		parameterType="com.tuniu.gt.warning.entity.EwOrderFlightEntity" flushCache="true" statementType="PREPARED">
+		insert into ew_order_flight
+		(
+			ew_order_id, 
+			flight_no, 
+			departure_time, 
+			arrive_time, 
+			departure_city_name, 
+			arrive_city_name
+		) values (
+			#{ewOrderId},
+			#{flightNo},
+			#{departureTime},
+			#{arriveTime},
+			#{departureCityName},
+			#{arriveCityName}
+		)
+	</insert>
+	
+	<insert id="insertAgency" useGeneratedKeys="true" keyProperty="id" 
+		parameterType="com.tuniu.gt.warning.entity.EwOrderAgencyEntity" flushCache="true" statementType="PREPARED">
+		insert into ew_order_agency
+		(
+			ew_order_id, 
+			agency_id, 
+			agency_name
+		) values (
+			#{ewOrderId},
+			#{agencyId},
+			#{agencyName}
+		)
+	</insert>
+	
+	<select id="getFlightList" parameterType="Integer" resultMap="flightEntity">
+		SELECT * FROM ew_order_flight WHERE ew_order_id=#{ewOrderId}
+	</select>
+	<resultMap id="flightEntity" type="com.tuniu.gt.warning.entity.EwOrderFlightEntity">
+		<result property="id" column="id" />
+		<result property="ewOrderId" column="ew_order_id" />
+		<result property="flightNo" column="flight_no" />
+		<result property="departureTime" column="departure_time" />
+		<result property="arriveTime" column="arrive_time" />
+		<result property="departureCityName" column="departure_city_name" />
+		<result property="arriveCityName" column="arrive_city_name" />
+	</resultMap>
+	
+	<select id="getAgencyList" parameterType="Integer" resultMap="agencyEntity">
+		SELECT * FROM ew_order_agency WHERE ew_order_id=#{ewOrderId}
+	</select>
+	<resultMap id="agencyEntity" type="com.tuniu.gt.warning.entity.EwOrderAgencyEntity">
+		<result property="id" column="id" />
+		<result property="ewOrderId" column="ew_order_id" />
+		<result property="agencyId" column="agency_id" />
+		<result property="agencyName" column="agency_name" />
+	</resultMap>
+
+</mapper>

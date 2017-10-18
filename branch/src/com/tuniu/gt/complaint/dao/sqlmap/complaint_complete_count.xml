@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintCompleteCountMap">
+	
+	<insert id="insertOrUpdate" parameterType="Map">
+		INSERT INTO ct_complaint_complete_count
+		(
+		  order_id,
+		  complaint_id,
+		  deal,
+		  deal_depart,
+		  <if test="route_type != ''">
+		  route_type,
+		  dest_category_name,
+		  </if>
+		  finish_time
+		) values (
+		  #{orderId},
+		  0,
+		  #{userId},
+		  #{dealDepart},
+		  <if test="route_type != ''">
+		  #{routeType},
+		  #{destCategoryName},
+		  </if>
+		  #{finishDate}
+		)ON DUPLICATE KEY UPDATE 
+		complaint_id = VALUES(complaint_id), 
+		deal = VALUES(deal), 
+		<if test="route_type != ''">
+		route_type = VALUES(route_type),
+		dest_category_name = VALUES(dest_category_name),
+		</if>
+		finish_time = VALUES(finish_time);
+	</insert>
+	
+	<select id="getComplaintCompleteCount" parameterType="map"
+		resultType="com.tuniu.gt.complaint.vo.AfterSaleReportVo">
+		SELECT deal_name AS dealName,
+		CASE WHEN route_type IN
+		('门票','酒店','签证','机票','火车票','汽车票','用车服务') THEN route_type
+		WHEN
+		dest_category_name IN('出境长线','出境短线','国内长线','周边') THEN
+		dest_category_name
+		ELSE '其他' END AS statisticsField,COUNT(1) AS COUNT
+		FROM
+		ct_complaint_complete_count
+		WHERE
+		finish_time &gt;= #{finishTimeBgn}
+		AND finish_time &lt;= #{finishTimeEnd}
+		AND
+		deal_depart NOT
+		IN('售前组','出游前客户服务')
+		GROUP BY dealName,statisticsField
+		ORDER BY deal_name
+	</select>
+
+	<select id="getCompleteCmpOrderList" parameterType="map"
+		resultType="int">
+		SELECT order_id FROM ct_complaint_complete_count
+		WHERE
+		<choose>
+			<when
+				test="statisticsFieldType !=null and statisticsFieldType =='other_type'">
+				route_type not in ('门票','酒店','签证','机票','火车票','汽车票','用车服务')
+				AND
+				dest_category_name not in ('出境长线','出境短线','国内长线','周边')
+			</when>
+			<when
+				test="statisticsFieldType !=null and statisticsFieldType !='other_type'">
+				${statisticsFieldType} =#{statisticsField}
+			</when>
+		</choose>
+		AND deal_name=#{dealName}
+		AND finish_time &gt;= #{finishTimeBgn}
+		AND
+		finish_time &lt;= #{finishTimeEnd}
+		AND deal_depart NOT
+		IN('售前组','出游前客户服务')
+	</select>
+
+	<insert id="insertComplaintIdByOrderId">
+		INSERT INTO
+		ct_complaint_complete_count
+		(order_id,complaint_id,deal,deal_depart,finish_time,route_type,dest_category_name)
+		SELECT
+		cc.order_id,
+		cc.id AS complaint_id,
+		cc.deal,
+		cc.deal_depart,
+		cc.finish_date AS finish_time,
+		cc.route_type,
+		cc.dest_category_name
+		FROM
+		ct_complaint cc
+		INNER JOIN (SELECT
+		MAX(id) AS id
+		FROM ct_complaint
+		tempone
+		INNER JOIN (SELECT
+		order_id,
+		deal_depart,
+		MAX(finish_date) AS
+		finish_date
+		FROM ct_complaint
+		WHERE deal_depart != ''
+		AND order_id > 0
+		AND state = 4
+		AND finish_date &gt;= #{finishTimeBgn}
+		AND
+		finish_date
+		&lt;=
+		#{finishTimeEnd}
+		AND del_flag = 0
+		GROUP BY order_id,deal_depart)
+		temptwo
+		ON tempone.order_id = temptwo.order_id
+		AND tempone.deal_depart =
+		temptwo.deal_depart
+		AND tempone.finish_date = temptwo.finish_date
+		WHERE
+		tempone.state = 4
+		AND tempone.order_id > 0
+		AND tempone.del_flag = 0
+		GROUP BY tempone.order_id,tempone.deal_depart,tempone.finish_date
+		)
+		tempcc
+		ON cc.id=tempcc.id
+		ON DUPLICATE KEY
+		UPDATE complaint_id =
+		VALUES(complaint_id),
+		deal =
+		VALUES(deal),finish_time=VALUES(finish_time),
+		route_type=VALUES(route_type),dest_category_name=VALUES(dest_category_name);
+	</insert>
+
+	<update id="updateDepartmentByUserId">
+		UPDATE ct_complaint_complete_count cccc
+		SET
+		cccc.deal_name= IFNULL((SELECT
+		fu.real_name
+		FROM frm_user fu
+		WHERE fu.id
+		= cccc.deal),0),
+		cccc.worknum= IFNULL((SELECT
+		fu.worknum
+		FROM frm_user fu
+		WHERE fu.id = cccc.deal),0),
+		cccc.deal_depart_first = IFNULL((SELECT
+		ud1.dep_name
+		FROM frm_user fu
+		INNER JOIN uc_department ud1
+		ON ud1.id =
+		fu.dep_id
+		WHERE fu.id = cccc.deal),''),
+		cccc.deal_depart_second =
+		IFNULL((SELECT
+		ud2.dep_name
+		FROM frm_user fu
+		INNER JOIN uc_department ud1
+		ON ud1.id = fu.dep_id
+		INNER JOIN uc_department ud2
+		ON ud2.id =
+		ud1.father_id
+		WHERE fu.id = cccc.deal),''),
+		cccc.deal_depart_third =
+		IFNULL((SELECT
+		ud3.dep_name
+		FROM frm_user fu
+		INNER JOIN uc_department ud1
+		ON ud1.id = fu.dep_id
+		LEFT JOIN uc_department ud2
+		ON ud2.id =
+		ud1.father_id
+		LEFT JOIN uc_department ud3
+		ON ud3.id = ud2.father_id
+		WHERE fu.id = cccc.deal),'')
+	</update>
+
+	<select id="getCompleteCountByWorknum" parameterType="map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintCompleteCountEntity">
+		SELECT worknum,
+		COUNT(1) AS COUNT,
+		dest_category_name AS
+		count_type
+		FROM
+		ct_complaint_complete_count
+		WHERE
+		DATE_FORMAT(finish_time,'%Y-%m') =
+		#{countMonth}
+		AND dest_category_name
+		IN('出境长线','出境短线','国内长线','周边')
+		AND deal_depart='售后组'
+		GROUP BY
+		worknum,count_type
+		UNION
+		SELECT worknum,
+		COUNT(1) AS COUNT,
+		route_type AS count_type
+		FROM
+		ct_complaint_complete_count
+		WHERE
+		DATE_FORMAT(finish_time,'%Y-%m') =
+		#{countMonth}
+		AND route_type IN
+		('门票','酒店','签证','机票','火车票','汽车票','用车服务')
+		AND deal_depart='售后组'
+		GROUP BY
+		worknum,count_type
+		UNION
+		SELECT worknum,
+		COUNT(1) AS COUNT,
+		'其他' AS count_type
+		FROM
+		ct_complaint_complete_count
+		WHERE
+		DATE_FORMAT(finish_time,'%Y-%m') =
+		#{countMonth}
+		AND route_type NOT IN
+		('门票','酒店','签证','机票','火车票','汽车票','用车服务')
+		AND dest_category_name NOT IN('出境长线','出境短线','国内长线','周边')
+		AND deal_depart='售后组'
+		GROUP BY
+		worknum,count_type
+	</select>
+	
+	<select id="getDataByOrderIdAndDepart" parameterType="map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintCompleted">
+		SELECT id,order_id,deal_depart,finish_time
+		FROM ct_complaint_complete_count
+		WHERE order_id = #{orderId}
+    	AND deal_depart = #{dealDepart}
+	</select>
+</mapper>

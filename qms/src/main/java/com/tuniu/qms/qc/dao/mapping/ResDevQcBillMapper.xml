@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.ResDevQcBillMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcBill" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO qc_qc_bill (
+		
+			<if test="influenceTime != null">influenceTime,</if>
+			<if test="qualityEventClass != null">qualityEventClass,</if>
+			<if test="influenceRange != null">influenceRange,</if>
+			<if test="influenceResult != null">influenceResult,</if>
+			<if test="groupFlag != null">groupFlag,</if>
+			<if test="qcTypeId != null">qcTypeId,</if>
+			<if test="qcAffairSummary != null">qcAffairSummary,</if>
+			<if test="qcAffairDesc != null">qcAffairDesc,</if>
+			<if test="remark != null">remark,</if>
+			<if test="lossAmount != null">lossAmount,</if>
+			<if test="state != null">state,</if>
+			<if test="addPersonId != null">addPersonId,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="qcPersonId != null">qcPersonId,</if>
+			<if test="qcPerson != null">qcPerson,</if>
+			<if test="verification != null">verification,</if>
+			<if test="faultSource != null">faultSource,</if>
+			<if test="distribTime != null">distribTime,</if>
+			<if test="qcPeriodBgnTime != null">qcPeriodBgnTime,</if>
+			<if test="qcPeriodEndTime != null">qcPeriodEndTime,</if>
+			<if test="faultHappenTime != null">fault_happen_time,</if>
+			<if test="faultFinishTime != null">fault_finish_time,</if>
+			delFlag
+		) VALUES (
+		
+		    <if test="influenceTime != null">#{influenceTime},</if>
+			<if test="qualityEventClass != null">#{qualityEventClass},</if>
+			<if test="influenceRange != null">#{influenceRange},</if>
+			<if test="influenceResult != null">#{influenceResult},</if>
+			<if test="groupFlag != null">#{groupFlag},</if>
+			<if test="qcTypeId != null">#{qcTypeId},</if>
+			<if test="qcAffairSummary != null">#{qcAffairSummary},</if>
+			<if test="qcAffairDesc != null">#{qcAffairDesc},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="lossAmount != null">#{lossAmount},</if>
+			<if test="state != null">#{state},</if>
+			<if test="addPersonId != null">#{addPersonId},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="qcPersonId != null">#{qcPersonId},</if>
+			<if test="qcPerson != null">#{qcPerson},</if>
+			<if test="verification != null">#{verification},</if>
+			<if test="faultSource != null">#{faultSource},</if>
+			<if test="distribTime != null">#{distribTime},</if>
+			<if test="qcPeriodBgnTime != null">#{qcPeriodBgnTime},</if>
+			<if test="qcPeriodEndTime != null">#{qcPeriodEndTime},</if>
+			<if test="faultHappenTime != null">#{faultHappenTime},</if>
+			<if test="faultFinishTime != null">#{faultFinishTime},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_qc_bill WHERE id=#{id}
+	</delete>
+	
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcBill" flushCache="true" statementType="PREPARED">
+		UPDATE qc_qc_bill 
+		<set>
+			<if test="prdId != null">prdId=#{prdId},</if>
+			<if test="groupDate != null">groupDate=#{groupDate},</if>
+			<if test="ordId != null">ordId=#{ordId},</if>
+			<if test="cmpId != null">cmpId=#{cmpId},</if>
+			<if test="groupFlag != null">groupFlag=#{groupFlag},</if>
+			<if test="qcTypeId != null">qcTypeId=#{qcTypeId},</if>
+			<if test="qcAffairSummary != null">qcAffairSummary=#{qcAffairSummary},</if>
+			<if test="qcAffairDesc != null">qcAffairDesc=#{qcAffairDesc},</if>
+			<if test="remark != null">remark=#{remark},</if>
+			<if test="lossAmount != null">lossAmount=#{lossAmount},</if>
+			<if test="state != null">state=#{state},</if>
+			<if test="qcPersonId != null">qcPersonId=#{qcPersonId},</if>
+			<if test="qcPerson != null">qcPerson=#{qcPerson},</if>
+			<if test="distribTime != null">distribTime=#{distribTime},</if>
+			<if test="finishTime != null">finishTime=#{finishTime},</if>
+			<if test="updatePerson != null">updatePerson=#{updatePerson},</if>
+			<if test="qualityEventClass != null">qualityEventClass=#{qualityEventClass},</if>
+			<if test="influenceTime != null">influenceTime=#{influenceTime},</if>
+			<if test="influenceRange != null">influenceRange=#{influenceRange},</if>
+			<if test="influenceResult != null">influenceResult=#{influenceResult},</if>
+			<if test="faultSource != null">faultSource=#{faultSource},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			<if test="qcPeriodBgnTime != null">qcPeriodBgnTime=#{qcPeriodBgnTime},</if>
+	    	<if test="qcPeriodEndTime != null">qcPeriodEndTime=#{qcPeriodEndTime},</if>
+	    	<if test="faultHappenTime != null">fault_happen_time = #{faultHappenTime},</if>
+			<if test="faultFinishTime != null">fault_finish_time = #{faultFinishTime},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcBill">
+		SELECT *, fault_finish_time as faultFinishTime, fault_happen_time as faultHappenTime
+		FROM qc_qc_bill WHERE id=#{id} and delFlag = 0
+	</select>
+	
+	<select id="getQcBillIsExist" parameterType="Integer" resultType="Integer">
+		SELECT count(1) FROM qc_qc_bill WHERE id=#{id} and delFlag = 0 and groupFlag = 3
+	</select>
+
+	<sql id="listSql">
+		<where>
+			qc.delFlag=0 	
+			and qc.groupFlag = 3
+			<if test="qcId != null ">AND qc.id=#{qcId}</if>
+			<if test="state != null and state != -1">AND qc.state=#{state}</if>
+			<if test="faultSource != null and faultSource!=''">AND qc.faultSource=#{faultSource}</if>
+			<if test="qcPerson != null and qcPerson !='' ">AND qc.qcPerson=#{qcPerson}</if>
+			<if test="qualityEventClass != null and qualityEventClass !='' ">AND qc.qualityEventClass=#{qualityEventClass}</if>
+		    <if test="addTimeFrom != null and addTimeFrom!=''">AND qc.addTime &gt;=#{addTimeFrom}</if>
+		    <if test="addTimeTo != null and addTimeTo!=''">AND qc.addTime &lt;=concat(#{addTimeTo},' 23:59:59')</if>
+		    <if test="finishTimeBgn != null and finishTimeBgn!=''">AND qc.finishTime &gt;=#{finishTimeBgn}</if>
+		    <if test="finishTimeEnd != null and finishTimeEnd!=''">AND qc.finishTime &lt;=concat(#{finishTimeEnd},' 23:59:59')</if>
+		     <if test="faultHappenTimeFrom != null and faultHappenTimeFrom !=''">AND qc.fault_happen_time &gt;=#{faultHappenTimeFrom}</if>
+		    <if test="faultHappenTimeTo != null and faultHappenTimeTo !=''">AND qc.fault_happen_time &lt;=concat(#{faultHappenTimeTo},' 23:59:59')</if>
+		     <if test="faultFinishTimeFrom != null and faultFinishTimeFrom !=''">AND qc.fault_finish_time &gt;=#{faultFinishTimeFrom}</if>
+		    <if test="faultFinishTimeTo != null and faultFinishTimeTo !=''">AND qc.fault_finish_time &lt;=concat(#{faultFinishTimeTo},' 23:59:59')</if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="com.tuniu.qms.qc.model.QcBill">
+		SELECT qc.*, qc.fault_finish_time as faultFinishTime, qc.fault_happen_time as faultHappenTime
+		FROM qc_qc_bill qc
+		<include refid="listSql"/>
+		ORDER BY 
+		<if test="orderDirect !=0">
+			<if test="orderField !=null">
+				<if test="orderDirect==1">
+					${orderField} desc,id desc
+				</if>
+				<if test="orderDirect!=1">
+					${orderField} ,id desc
+				</if>
+			</if>
+		</if>
+		<if test="orderDirect==0">
+				qc.id desc
+		</if>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="Integer">
+		SELECT count(1)
+		FROM qc_qc_bill qc
+		<include refid="listSql"></include>
+	</select>
+	
+	<select id="getInfluenceSystem" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcInfluenceSystem">
+	   select * from qc_influence_system where qcId = #{qcId}
+	</select>
+	
+	<delete id="deleteSystem"  parameterType="Integer">
+	   delete from qc_influence_system where id = #{id}
+	</delete>
+	
+	<insert id="addSystem" parameterType="com.tuniu.qms.qc.model.QcInfluenceSystem">
+	
+	    INSERT INTO qc_influence_system (
+			<if test="qcId != null">qcId,</if>
+			<if test="influenceSystem != null">influenceSystem,</if>
+			<if test="addPerson != null">addPerson,</if>	
+			addTime,
+			updateTime,
+			delFlag
+		) VALUES (
+			
+			<if test="qcId != null">#{qcId},</if>
+			<if test="influenceSystem != null">#{influenceSystem},</if>	
+			<if test="addPerson != null">#{addPerson},</if>
+			 CURRENT_TIMESTAMP() ,
+			 CURRENT_TIMESTAMP() ,
+			0
+		)
+	    
+	</insert>
+	
+	
+	<sql id="queryListSql">
+		SELECT *
+		FROM qc_qc_bill qc
+		<where>
+			qc.delFlag=0 	
+			and qc.groupFlag = 3
+			<if test="qcId != null ">AND qc.id=#{qcId}</if>
+			<if test="state != null and state != -1">AND qc.state=#{state}</if>
+			<if test="faultSource != null and faultSource!=''">AND qc.faultSource=#{faultSource}</if>
+			<if test="qcPerson != null and qcPerson !='' ">AND qc.qcPerson=#{qcPerson}</if>
+			<if test="qualityEventClass != null and qualityEventClass !='' ">AND qc.qualityEventClass=#{qualityEventClass}</if>
+			<if test="qualityEventClass == null or qualityEventClass =='' ">AND qc.qualityEventClass in("S","A","B","C")</if>
+		    <if test="addTimeFrom != null and addTimeFrom!=''">AND qc.addTime &gt;=#{addTimeFrom}</if>
+		    <if test="addTimeTo != null and addTimeTo!=''">AND qc.addTime &lt;=concat(#{addTimeTo},' 23:59:59')</if>
+		    <if test="finishTimeBgn != null and finishTimeBgn!=''">AND qc.finishTime &gt;=#{finishTimeBgn}</if>
+		    <if test="finishTimeEnd != null and finishTimeEnd!=''">AND qc.finishTime &lt;=concat(#{finishTimeEnd},' 23:59:59')</if>
+		</where>
+	</sql>
+	
+	<select id="queryList" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="com.tuniu.qms.qc.model.QcBill">
+		<include refid="queryListSql"/>
+		ORDER BY qc.id desc
+		
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="queryCount" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="queryListSql"></include>
+		) t
+	</select>
+	
+	<select id="exportList" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="com.tuniu.qms.qc.model.ResDevExportBill">
+	   SELECT
+	 	  qc.id  AS qcId,
+	 	  qc.finishTime,
+		  qc.qcPerson,
+		  qc.groupFlag,
+		  (CASE qc.faultSource WHEN 1 THEN '内部转单' WHEN 2 THEN '看板问题' WHEN 3 THEN '紧急上线' WHEN 4 THEN 'RT群反馈' WHEN 5 THEN '微信群反馈' WHEN 7 THEN '安全类' END)  faultSource,
+		  qc.qcAffairSummary,
+		  qc.qualityEventClass,
+		  (CASE qc.state WHEN 4 THEN '已完成'END )  state,
+		  qc.influenceTime,
+		  t.influenceSystem,
+		  qc.influenceResult,
+		  qpt.name  AS qptName,
+		  qpt.id  AS qptId,
+		  resp.respPersonName,
+		  resp.depId ,
+		  qb.depId as punishDepId,
+		  qf.causeAnalysis,
+		  qf.influenceSystem as respSystem,
+		  qf.impMeasures,
+		  qf.treMeasures,
+		  IFNULL(qb.scorePunish,0) AS scorePunish,
+		  IFNULL(qb.economicPunish,0) AS economicPunish
+		FROM qc_qc_bill qc
+		INNER JOIN qc_dev_fault qf  ON qc.id = qf.qcId AND qf.delFlag = 0
+		LEFT JOIN qc_quality_problem_type qpt ON qf.qptId = qpt.id  AND qpt.delFlag = 0
+		INNER JOIN qc_dev_resp_bill resp  ON resp.devId = qf.id AND resp.delFlag = 0
+		LEFT JOIN qc_inner_punish_bill qb  ON resp.respPersonName = qb.punishPersonName  and qb.qcId = qc.id
+		LEFT JOIN (SELECT qcId, GROUP_CONCAT(influenceSystem) AS influenceSystem  FROM qc_influence_system GROUP BY qcId) t  ON t.qcId = qc.id
+	    <include refid="listSql"></include>
+		ORDER BY qc.id 
+	</select>
+	
+	<select id="getInfluenceSystemCount" parameterType="Integer" resultType="int">
+	    select count(1) from qc_influence_system where qcId = #{qcId}
+	</select>
+	
+	<select id="getQcPeriodList" resultType="com.tuniu.qms.qc.model.QcBill">
+	   select * from qc_qc_bill 
+	   where state in (3,4,5) and groupFlag = 3 and delFlag = 0 
+	    and qcPeriodEndTime = '0000-00-00 00:00:00' 
+	    and qcPeriodBgnTime = '0000-00-00 00:00:00'
+	</select>
+	
+	<select id="getComplainIdByDevId" parameterType="Integer" resultType="Integer">
+		SELECT DISTINCT cmpId
+		FROM qc_relation_bill
+		WHERE devId = #{qcId}
+			AND flag = 1
+	</select>
+	
+</mapper>

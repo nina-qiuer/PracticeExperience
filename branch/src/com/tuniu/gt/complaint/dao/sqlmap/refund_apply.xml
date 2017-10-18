@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IRefundApplyMap"> 
+
+    <resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.RefundApplyEntity">
+		<result property="id" column="id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="amount" column="amount" />
+		<result property="reason" column="reason" />
+		<result property="recipients" column="recipients" />
+		<result property="ccs" column="ccs" />
+		<result property="applyId" column="apply_id" />
+		<result property="applyName" column="apply_name" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+	</sql>
+	
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  complaint_id, 
+		  amount, 
+		  reason, 
+		  recipients, 
+		  ccs, 
+		  apply_id, 
+		  apply_name
+		) values (
+		  #{e.complaintId}, 
+		  #{e.amount},
+		  #{e.reason},
+		  #{e.recipients},
+		  #{e.ccs},
+		  #{e.applyId},
+		  #{e.applyName}
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			<if test="e.processInfo != null">process_info=#{e.processInfo},</if>
+			<if test="e.resultFlag != null">result_flag=#{e.resultFlag},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+</mapper>

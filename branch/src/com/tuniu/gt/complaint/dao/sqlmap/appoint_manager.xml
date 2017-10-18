@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IAppointManagerMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			del_flag=0
+			<if test="type != null">
+				and type = #{type}
+			</if>
+			<if test="departmentId != null">
+				and department_id = #{departmentId}
+			</if>
+			<if test="userId != null">
+				and user_id = #{userId}
+			</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.AppointManagerEntity">
+
+		<result property="delFlag" column="del_flag" />
+
+		<result property="updateTime" column="update_time" />
+
+		<result property="addTime" column="add_time" />
+
+		<result property="userName" column="user_name" />
+
+		<result property="userId" column="user_id" />
+
+		<result property="departmentName" column="department_name" />
+
+		<result property="departmentId" column="department_id" />
+
+		<result property="type" column="type" />
+
+	</resultMap>
+
+
+	<select id="fetchListMap" parameterType="Map" resultMap="listResultMap">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="delFlag" column="del_flag" />
+
+		<result property="updateTime" column="update_time" />
+
+		<result property="addTime" column="add_time" />
+
+		<result property="userName" column="user_name" />
+
+		<result property="userId" column="user_id" />
+
+		<result property="departmentName" column="department_name" />
+
+		<result property="departmentId" column="department_id" />
+
+		<result property="type" column="type" />
+
+	</resultMap>
+
+
+	<select id="get" parameterType="Map" resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		del_flag,
+
+		update_time,
+
+		add_time,
+
+		user_name,
+
+		user_id,
+
+		department_name,
+
+		department_id,
+
+		type
+
+		) values (
+
+		#{e.delFlag},
+
+		#{e.updateTime},
+
+		#{e.addTime},
+
+		#{e.userName},
+
+		#{e.userId},
+
+		#{e.departmentName},
+
+		#{e.departmentId},
+
+		#{e.type}
+
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+
+			<if test="e.updateTime != null">update_time=#{e.updateTime},</if>
+
+			<if test="e.addTime != null">add_time=#{e.addTime},</if>
+
+			<if test="e.userName != null">user_name=#{e.userName},</if>
+
+			<if test="e.userId != null">user_id=#{e.userId},</if>
+
+			<if test="e.departmentName != null">department_name=#{e.departmentName},</if>
+
+			<if test="e.departmentId != null">department_id=#{e.departmentId},</if>
+
+			<if test="e.type != null">type=#{e.type}</if>
+
+		</set>
+		where id=#{e.id}
+	</sql>
+
+
+	<update id="update" parameterType="Map" flushCache="true"
+		statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	
+	<select id="count" parameterType="map" resultType="int">
+			select count(*) as count from ct_appoint_manager
+			<where>
+				<if test="userId != null">user_id=#{userId}</if>
+				<if test="type != null">and type=#{type}</if>
+				and del_flag=0
+			</where>
+	</select>
+
+	<select id ="getVipDepartGroupList" parameterType="Map" 
+		resultMap="listResultEntity">
+			SELECT
+			cam.id,
+			CONCAT(ud3.dep_name,'-',ud2.dep_name,'-',cam.department_name) AS department_name,
+			cam.department_id
+			FROM ct_appoint_manager cam
+			LEFT JOIN uc_department ud1
+			ON cam.department_id = ud1.id
+			LEFT JOIN uc_department ud2
+			ON ud1.father_id = ud2.id
+			LEFT JOIN uc_department ud3
+			ON ud2.father_id = ud3.id
+			WHERE cam.del_flag = 0
+			<if test="type != null">AND cam.type=#{type}</if>
+			order by ud3.id,ud2.id,ud1.id
+	</select>
+</mapper>

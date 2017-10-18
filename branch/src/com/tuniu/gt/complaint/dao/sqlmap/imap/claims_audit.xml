@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.ClaimsAuditMap"> 
+
+    <resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.ClaimsAuditEntity">
+		<association property="complaintEntity" javaType="com.tuniu.gt.complaint.entity.ComplaintEntity">
+		<result property="id" column="id" />
+		<result property="orderId" column="order_id" />
+		<result property="dealDepart" column="deal_depart" />
+		</association>
+		<association property="shareSolutionEntity" javaType="com.tuniu.gt.complaint.entity.ShareSolutionEntity">
+			<id property="id" column="ss_id"/>
+			<result property="orderId" column="order_id" />
+			<result property="complaintId" column="complaint_id" />
+			<result property="total" column="total" />
+			<result property="dealId" column="deal_id" />
+			<result property="dealName" column="s_deal_name" />
+			<result property="auditFlag" column="s_audit_flag" />
+			<result property="submitFlag" column="s_submit_flag" />
+			<result property="submitTime" column="s_submit_time" />
+		</association>
+		<association property="complaintSolutionEntity" javaType="com.tuniu.gt.complaint.entity.ComplaintSolutionEntity">
+			<id property="id" column="cs_id"/>
+			<result property="complaintId" column="complaint_id" />
+			<result property="orderId" column="order_id" />
+			<result property="cash" column="cash" />
+			<result property="touristBook" column="tourist_book" />
+			<result property="payment" column="payment" />
+			<result property="appointedTime" column="appointed_time" />
+			<result property="auditFlag" column="ss_audit_flag" />
+			<result property="dealId" column="deal_id" />
+			<result property="dealName" column="ss_deal_name" />
+			<result property="submitFlag" column="ss_submit_flag" />
+			<result property="submitTime" column="ss_submit_time" />
+		</association>
+	</resultMap>
+	
+	<resultMap id="listResultMap" type="Map">
+		<association property="complaintEntity" javaType="com.tuniu.gt.complaint.entity.ComplaintEntity">
+			<result property="id" column="id" />
+			<result property="orderId" column="order_id" />
+			<result property="dealDepart" column="deal_depart" />
+		</association>
+		<association property="shareSolutionEntity" javaType="com.tuniu.gt.complaint.entity.ShareSolutionEntity">
+			<id property="id" column="ss_id"/>
+			<result property="orderId" column="order_id" />
+			<result property="complaintId" column="complaint_id" />
+			<result property="total" column="total" />
+			<result property="dealId" column="deal_id" />
+			<result property="dealName" column="s_deal_name" />
+			<result property="auditFlag" column="s_audit_flag" />
+			<result property="submitTime" column="s_submit_time" />
+		</association>
+		<association property="complaintSolutionEntity" javaType="com.tuniu.gt.complaint.entity.ComplaintSolutionEntity">
+			<id property="id" column="cs_id"/>
+			<result property="complaintId" column="complaint_id" />
+			<result property="orderId" column="order_id" />
+			<result property="payment" column="payment" />
+			<result property="appointedTime" column="appointed_time" />
+			<result property="cash" column="cash" />
+			<result property="auditFlag" column="ss_audit_flag" />
+			<result property="dealId" column="deal_id" />
+			<result property="dealName" column="ss_deal_name" />
+			<result property="submitTime" column="ss_submit_time" />
+		</association>
+	</resultMap>
+	
+	<sql id="listSql">
+		SELECT c.id,c.order_id AS order_id,c.deal_depart,
+		s.id AS ss_id,s.total,s.dealName AS s_deal_name,s.audit_flag AS s_audit_flag,s.submit_time AS s_submit_time,s.submit_flag AS s_submit_flag,
+		ss.id AS cs_id,ss.cash,ss.tourist_book,ss.deal_name AS ss_deal_name,ss.audit_flag AS ss_audit_flag,ss.payment,ss.appointed_time,ss.submit_time AS ss_submit_time,ss.submit_flag AS ss_submit_flag
+		FROM ct_complaint c
+		INNER JOIN (
+			SELECT a.id
+			FROM ct_complaint a ,ct_complaint_solution b
+			WHERE a.id=b.complaint_id AND (b.audit_flag IN (${audit_flag}) AND b.submit_flag= 1) AND b.del_flag=1 
+			UNION 
+			SELECT a.id
+			FROM ct_complaint a ,ct_share_solution b
+			WHERE a.id=b.complaint_id AND (b.audit_flag IN (${audit_flag}) AND b.submit_flag= 1) AND b.del_flag=1 
+		) t1 ON c.id=t1.id 
+		LEFT JOIN ct_complaint_solution ss ON c.id = ss.complaint_id AND ss.del_flag=1 
+	    LEFT JOIN ct_share_solution s ON c.id = s.complaint_id AND s.del_flag=1 
+		WHERE ((s.audit_flag in (${audit_flag}) AND s.submit_flag=1) OR (ss.audit_flag in (${audit_flag})) AND ss.submit_flag=1)
+		<if test="cmpId !=null and cmpId != 0">and c.id = #{cmpId }</if>
+		<if test="orderId != null and orderId !=''">
+			and	c.order_id=#{orderId}
+		</if>
+		<if test="dealDepart != null and dealDepart !=''">
+			and	c.deal_depart=#{dealDepart}
+		</if>
+		<if test="payment != null  and payment !=0">
+			and	ss.payment=#{payment}
+		</if>
+		<if test="startDate != null  and startDate !=''">
+			and	(ss.submit_time &gt;= #{startDate} or s.submit_time &gt;= #{startDate})
+		</if>
+		<if test="endDate != null  and endDate !=''">
+			and	(ss.submit_time &lt;= #{endDate} or s.submit_time &lt;= #{endDate})
+		</if>
+	</sql>
+	
+	<select id="queryClaimsAuditList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="listSql"/>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</select>
+	
+	<select id="queryClaimsAuditListCount" parameterType="Map"  resultType="Integer">
+		SELECT count(1) FROM (
+			<include refid="listSql"/>
+		) t
+	</select>
+	
+</mapper>

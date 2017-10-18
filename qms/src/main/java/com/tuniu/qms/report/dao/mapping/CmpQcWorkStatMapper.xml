@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.report.dao.CmpQcWorkStatMapper">
+
+	<select id="getPersonDataList" parameterType="com.tuniu.qms.report.dto.CmpQcWorkStatDto" resultType="com.tuniu.qms.report.dto.CmpQcWorkStatReportDto">
+		SELECT tz.qcPerson as name,
+			ud.name as 'data.departmentName',
+			tz.qcPersonId as 'data.qcPersonId',
+			tz.qcPerson as 'data.qcPerson',
+			IFNULL(ta.distribNum,0) AS 'data.distribNum',
+			IFNULL(tb.doneTotalNum,0) AS 'data.doneTotalNum',
+			IFNULL(tb.cmpUnDoneQcDoneNum,0) AS 'data.cmpUnDoneQcDoneNum',
+			IFNULL(tb.cancelNum,0) AS 'data.cancelNum',
+			IFNULL(tb.zxNum,0) AS 'data.zxNum',
+			IFNULL(tb.lcxtNum,0) AS 'data.lcxtNum',
+			IFNULL(tb.gysNum,0) AS 'data.gysNum',
+			IFNULL(tb.dmyNum,0) AS 'data.dmyNum',
+			IFNULL(tb.workDayNum,0) AS 'data.workDayNum',
+			IFNULL(tc.timelyDoneNum,0) AS 'data.timelyDoneNum',
+			IFNULL(tc.expireNum,0) AS 'data.expireNum',
+			IFNULL(td.qcPeriodBgnDoneNum,0) AS 'data.qcPeriodBgnDoneNum',
+			IFNULL(td.qcPeriodBgnNum,0) AS 'data.qcPeriodBgnNum' 
+		FROM 
+		(
+			select qcPersonId,qcPersonName as qcPerson  from qc_assign_config_cmp where delFlag = 0 
+		) tz LEFT JOIN 
+		(SELECT qcPersonId, COUNT(1) AS distribNum FROM qc_qc_bill
+		<where>groupFlag=1 AND delFlag=0 
+			<if test="statDateBgn != null and statDateBgn != ''">AND #{statDateBgn} &lt;= distribTime</if>
+			<if test="statDateEnd != null and statDateEnd != ''">AND distribTime &lt;= #{statDateEnd}</if>
+		</where>
+		GROUP BY qcPersonId) ta ON tz.qcPersonId=ta.qcPersonId LEFT JOIN 
+		(SELECT t1.qcPersonId, 
+			COUNT(DISTINCT t1.id) AS doneTotalNum,
+			COUNT(DISTINCT CASE WHEN (t3.state!=4 OR t1.finishTime&lt;=t3.finishTime) THEN t1.id END) AS cmpUnDoneQcDoneNum,
+			COUNT(DISTINCT CASE WHEN t1.state=5 THEN t1.id END) AS cancelNum,
+			COUNT(CASE WHEN t2.qptLv1Id=2 AND t2.lowSatisDegree=0 THEN 1 END) AS zxNum,
+			COUNT(CASE WHEN t2.qptLv1Id=32 AND t2.lowSatisDegree=0 THEN 1 END) AS lcxtNum,
+			COUNT(CASE WHEN t2.qptLv1Id=37 AND t2.lowSatisDegree=0 THEN 1 END) AS gysNum,
+			COUNT(CASE WHEN t2.lowSatisDegree=1 THEN 1 END) AS dmyNum,
+			COUNT(DISTINCT DATE_FORMAT(t1.finishTime,'%Y-%m-%d')) AS workDayNum
+		FROM qc_qc_bill t1 
+		LEFT JOIN cm_complaint_bill t3 ON t1.cmpId=t3.id AND t3.delFlag = 0
+		LEFT JOIN qc_quality_problem t2 ON t1.id=t2.qcId AND t2.delFlag=0
+		<where>t1.groupFlag=1 AND t1.state IN (4,5) AND t1.delFlag=0 
+			<if test="statDateBgn != null and statDateBgn != ''">AND #{statDateBgn} &lt;= t1.finishTime</if>
+			<if test="statDateEnd != null and statDateEnd != ''">AND t1.finishTime &lt;= #{statDateEnd}</if>
+		</where>
+		GROUP BY t1.qcPersonId) tb ON tz.qcPersonId=tb.qcPersonId LEFT JOIN 
+		(SELECT qcPersonId,
+			COUNT(CASE WHEN (finishTime!='0000-00-00 00:00:00' AND finishTime&lt;=qcPeriodEndTime) THEN 1 END) AS timelyDoneNum, 
+			COUNT(1) AS expireNum 
+		FROM qc_qc_bill 
+		<where>groupFlag=1 AND delFlag=0 
+			<if test="statDateBgn != null and statDateBgn != ''">AND #{statDateBgn} &lt;= qcPeriodEndTime</if>
+			<if test="statDateEnd != null and statDateEnd != ''">AND qcPeriodEndTime &lt;= #{statDateEnd}</if>
+		</where>
+		GROUP BY qcPersonId) tc ON tz.qcPersonId=tc.qcPersonId LEFT JOIN 
+		(SELECT qcPersonId,
+			COUNT(CASE WHEN state IN (4,5) THEN 1 END) AS qcPeriodBgnDoneNum, 
+			COUNT(1) AS qcPeriodBgnNum
+		FROM qc_qc_bill 
+		<where>groupFlag=1 AND delFlag=0
+			<if test="statDateBgn != null and statDateBgn != ''">AND #{statDateBgn} &lt;= qcPeriodBgnTime</if>
+			<if test="statDateEnd != null and statDateEnd != ''">AND qcPeriodBgnTime &lt;= #{statDateEnd}</if>
+		</where>
+		GROUP BY qcPersonId) td ON tz.qcPersonId=td.qcPersonId
+		INNER JOIN uc_user uu ON uu.id = tz.qcPersonId
+		INNER JOIN uc_department ud ON ud.id = uu.depId
+	</select>
+	
+	<!-- 获得分组 -->
+	<select id="getGroupList" resultType="String">
+		SELECT DISTINCT ud.name AS departmentName
+		FROM qc_assign_config_cmp tz
+		INNER JOIN uc_user uu ON uu.id = tz.qcPersonId
+		INNER JOIN uc_department ud ON ud.id = uu.depId
+		where tz.delFlag = 0
+	</select>	
+</mapper>

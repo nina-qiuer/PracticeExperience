@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.satisfaction.dao.sqlmap.imap.ISignSatisfactionMsgSendMap">
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		customer_name,
+		
+		tel_no,
+		
+		<if test="e.msg!= null">msg,</if>
+
+		create_time,
+		
+		<if test="e.result!= null">result,</if>
+		
+		<if test="e.errorCode!= null">error_code,</if>
+		
+		<if test="e.errorMsg!= null">error_msg,</if>
+		
+		satis_id
+		
+		) values (
+		
+		#{e.customerName},
+
+		#{e.telNo},
+
+		<if test="e.msg!= null">#{e.msg},</if>
+
+		#{e.createTime},
+		
+		<if test="e.result!= null">#{e.result},</if>
+		
+		<if test="e.errorCode!= null">#{e.errorCode},</if>
+		
+		<if test="e.errorMsg!= null">#{e.errorMsg},</if>
+		
+		#{e.satisId}
+
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="customerName" column="customer_name" />
+
+		<result property="telNo" column="tel_no" />
+
+		<result property="msg" column="msg" />
+
+		<result property="createTime" column="create_time" />
+
+		<result property="satisId" column="satis_id" />
+		
+		<result property="result" column="result" />
+		
+		<result property="errorCode" column="error_code" />
+		
+		<result property="errorMsg" column="error_msg" />
+
+	</resultMap>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.satisfaction.entity.SignSatisfactionMsgSendEntity">
+
+		<result property="customerName" column="customer_name" />
+
+		<result property="telNo" column="tel_no" />
+
+		<result property="msg" column="msg" />
+
+		<result property="createTime" column="create_time" />
+
+		<result property="satisId" column="satis_id" />
+		
+		<result property="result" column="result" />
+		
+		<result property="errorCode" column="error_code" />
+		
+		<result property="errorMsg" column="error_msg" />
+		
+	</resultMap>
+	
+</mapper>

@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IQcMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			<if test="status!=null">
+				status=#{status}
+			</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.QcEntity">
+		<result property="complaintId" column="complaint_id"/>
+		<result property="orderId" column="order_id"/>
+		<result property="finishDate" column="finish_date"/>
+		<result property="distributionDate" column="distribution_date"/>
+		<result property="qcPerson" column="qc_person"/>
+		<result property="qcPersonName" column="qc_person_name"/>
+		<result property="leader" column="leader"/>
+		<result property="leaderName" column="leader_name"/>
+		<result property="associater" column="associater"/>
+		<result property="associaterName" column="associater_name"/>
+		<result property="verify" column="verify"/>
+		<result property="status" column="status"/>
+		<result property="recipients" column="recipients"/>
+		<result property="ccs" column="ccs"/>
+		<result property="addTime" column="add_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="consultation" column="is_consultation"/>
+		<result property="specialConsultation" column="special_consultation"/>
+	</resultMap>
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		<result property="complaintId" column="complaint_id"/>
+		<result property="orderId" column="order_id"/>
+		<result property="finishDate" column="finish_date"/>
+		<result property="distributionDate" column="distribution_date"/>
+		<result property="qcPerson" column="qc_person"/>
+		<result property="qcPersonName" column="qc_person_name"/>
+		<result property="leader" column="leader"/>
+		<result property="leaderName" column="leader_name"/>
+		<result property="associater" column="associater"/>
+		<result property="associaterName" column="associater_name"/>
+		<result property="verify" column="verify"/>
+		<result property="status" column="status"/>
+		<result property="recipients" column="recipients"/>
+		<result property="ccs" column="ccs"/>
+		<result property="addTime" column="add_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="impFlag" column="imp_flag"/>
+		<result property="checkFlag" column="check_flag"/>
+		<result property="consultation" column="is_consultation"/>
+		<result property="specialConsultation" column="special_consultation"/>
+	</resultMap>
+	 
+	<select id="get" parameterType="Map"  resultMap="searchResult">
+		SELECT a.*, b.*, a.id AS qc_id, b.id AS complaint_id, a.finish_date AS qcFinishTime, b.finish_date AS cmpFinishTime
+		FROM ct_qc a, ct_complaint b
+		<where>1=1
+			<if test="id!=null">
+				and a.id=#{id}
+			</if>
+			<if test="complaintId!=null">
+				and a.complaint_id=#{complaintId}
+			</if>
+			<if test="orderId!=null">
+				and a.order_id=#{orderId}
+			</if>
+			<if test="status!=null">
+				and a.status in (${status}) 
+			</if>
+			<if test="consultation!=null and consultation==0">
+ 			    AND (a.is_consultation=0 OR a.special_consultation=1)
+ 			</if>
+			and a.complaint_id=b.id AND a.del_flag=0 AND b.del_flag=0 AND b.state!=9
+		</where>
+		limit 1
+	</select>
+	
+	<sql id="whereSql">
+		<where>1=1 
+			<if test="id != null and id!='' ">
+				and a.id=#{id}
+			</if>
+			<if test="complaintId !=null and complaintId!='' ">
+				and a.complaint_id=#{complaintId}	
+			</if>
+			<if test="orderId!=null and orderId!='' ">
+				and a.order_id=#{orderId} 
+			</if>
+			<if test="qc_person!=null"> 
+ 				and (a.qc_person in (${qc_person}) or a.associater in (${qc_person}))
+ 			</if>
+			<if test="status != null">
+				and a.status = #{status}
+			</if>
+			<if test="source!=null and source!='' ">
+				and b.come_from=#{source}
+			</if>
+			<if test="startCity!=null and startCity!='' ">
+				and b.start_city=#{startCity}
+			</if>
+			<if test="destination!=null and destination!='' ">
+				and b.route like '%${destination}%'
+			</if>
+			<if test="backTimeStart!=null and backTimeStart!='' "> 
+ 				and UNIX_TIMESTAMP(b.back_time)>=UNIX_TIMESTAMP(CONCAT(#{backTimeStart},' 00:00:00'))
+ 			</if>
+ 			<if test="backTimeEnd!=null and backTimeEnd!='' ">
+				<![CDATA[ 
+ 				and UNIX_TIMESTAMP(b.back_time)<=UNIX_TIMESTAMP(CONCAT(#{backTimeEnd},' 23:59:59'))
+ 				]]>
+ 			</if> 
+			<if test="complaintStartTime!=null and complaintStartTime!='' "> 
+ 				and UNIX_TIMESTAMP(b.build_date)>=UNIX_TIMESTAMP(CONCAT(#{complaintStartTime},' 00:00:00'))
+ 			</if>
+			<if test="complaintEndTime!=null and complaintEndTime!='' ">
+				<![CDATA[ 
+ 				and UNIX_TIMESTAMP(b.build_date)<=UNIX_TIMESTAMP(CONCAT(#{complaintEndTime},' 23:59:59'))
+ 				]]>
+ 			</if> 
+			<if test="closedStartTime!=null and closedStartTime!='' ">				
+ 				and a.finish_date>=CONCAT(#{closedStartTime},' 00:00:00')
+ 			</if> 
+			<if test="closedEndTime!=null and closedEndTime!='' "> 
+				<![CDATA[ 
+ 					and a.finish_date<=CONCAT(#{closedEndTime},' 23:59:59')
+ 				]]>
+ 			</if> 
+			<if test="assignee!=null and assignee!='' "> 
+ 				and b.deal_name like '%${assignee}%'
+ 			</if> 
+			<if test="leader!=null and leader!='' "> 
+ 				and b.manager_name like '%${leader}%'
+			</if> 
+			<if test="level!=null and level!='' "> 
+ 				and b.level=#{level}
+ 			</if> 
+			<if test="preSales!=null and preSales!='' "> 
+ 				and b.customer like '%${preSales}%'
+ 			</if> 
+			<if test="salesLeader!=null and salesLeader!=''"> 
+ 				and b.customer_leader like '%${salesLeader}%'
+ 			</if> 
+			<if test="producter!=null and producter!='' "> 
+ 				and b.producter like '%${producter}%'
+ 			</if>
+ 			<if test="productManager!=null and productManager!='' "> 
+ 				and b.product_leader ='${productManager}'
+ 			</if>
+ 			<if test="bdpName !=null and bdpName != ''">
+ 				and b.bdp_name = #{bdpName}
+ 			</if>
+ 			<if test="agencyName!=null and agencyName!=''"> 
+ 				and b.agency_name like '%${agencyName}%'
+ 			</if>
+ 			<if test="qcPersonName!=0 and qcPersonName!='' and qcPersonName!=null"> 
+ 				and (a.qc_person = #{qcPersonName} )
+ 			</if>
+ 			<if test="state!=null and state!=''">
+ 			    and b.state = #{state} 
+ 			</if>
+ 			<!-- 判断是否咨询单add by hanxuliang 2014-5-13 Begin -->
+ 			<if test="consultation!=null and consultation==1">
+ 			   AND a.is_consultation=1 AND a.special_consultation=0
+ 			</if>
+ 			<if test="consultation!=null and consultation==0">
+ 			    AND (a.is_consultation=0 OR a.special_consultation=1)
+ 			</if>
+ 			<if test="timeOutFlag != null and timeOutFlag != ''">
+ 			    and a.time_out_flag = #{timeOutFlag} 
+ 			</if>
+ 			<!-- 判断是否咨询单add by hanxuliang 2014-5-13 End -->
+ 			<if test="reason!=null and reason!=''">
+ 			    AND a.complaint_id IN (SELECT DISTINCT complaint_id FROM ct_complaint_reason WHERE type=#{reason})
+ 			</if>
+ 			AND a.del_flag=0 AND b.state!=9 AND b.del_flag=0 AND a.complaint_id=b.id
+		</where>
+	</sql>
+	
+	<sql id="searchSql">
+		SELECT 
+		<choose >
+			<when test="fields != null"><choose><when test="reason!=null and reason!=''" >COUNT(DISTINCT b.id) as count</when><otherwise> ${fields}</otherwise></choose></when>
+			<otherwise>
+				a.*, b.*, a.id AS qc_id, b.id AS complaint_id, a.finish_date AS qcFinishTime, b.finish_date AS cmpFinishTime,(c.cash+c.tourist_book) AS paymentForCust
+			</otherwise>
+		</choose>
+		FROM ct_qc a INNER JOIN ct_complaint b ON a.del_flag=0
+		<!-- 判断是否咨询单add by hanxuliang 2014-5-13 Begin -->
+		<if test="consultation!=null and consultation==1">
+		   AND a.is_consultation=1 AND a.special_consultation=0
+		</if>
+		<if test="consultation!=null and consultation==0">
+		    AND (a.is_consultation=0 OR a.special_consultation=1)
+		</if>
+		<if test="timeOutFlag != null and timeOutFlag != ''">
+		    and a.time_out_flag = #{timeOutFlag} 
+		</if>
+		<!-- 判断是否咨询单add by hanxuliang 2014-5-13 End -->
+		AND a.complaint_id=b.id AND b.state!=9 AND b.del_flag=0
+		LEFT JOIN ct_complaint_solution c ON b.id=c.complaint_id AND c.del_flag=1
+		<where>1=1 
+			<if test="id != null and id!='' ">
+				and a.id=#{id}
+			</if>
+			<if test="complaintId !=null and complaintId!='' ">
+				and a.complaint_id=#{complaintId}	
+			</if>
+			<if test="orderId!=null and orderId!='' ">
+				and a.order_id=#{orderId} 
+			</if>
+			<if test="qc_person!=null"> 
+ 				and (a.qc_person in (${qc_person}) or a.associater in (${qc_person}))
+ 			</if>
+			<if test="status != null">
+				and a.status = #{status}
+			</if>
+			<if test="source!=null and source!='' ">
+				and b.come_from=#{source}
+			</if>
+			<if test="startCity!=null and startCity!='' ">
+				and b.start_city=#{startCity}
+			</if>
+			<if test="destination!=null and destination!='' ">
+				and b.route like '%${destination}%'
+			</if>
+			<if test="backTimeStart!=null and backTimeStart!='' "> 
+ 				and UNIX_TIMESTAMP(b.back_time)>=UNIX_TIMESTAMP(CONCAT(#{backTimeStart},' 00:00:00'))
+ 			</if>
+ 			<if test="backTimeEnd!=null and backTimeEnd!='' ">
+				<![CDATA[ 
+ 				and UNIX_TIMESTAMP(b.back_time)<=UNIX_TIMESTAMP(CONCAT(#{backTimeEnd},' 23:59:59'))
+ 				]]>
+ 			</if> 
+			<if test="complaintStartTime!=null and complaintStartTime!='' "> 
+ 				and UNIX_TIMESTAMP(b.build_date)>=UNIX_TIMESTAMP(CONCAT(#{complaintStartTime},' 00:00:00'))
+ 			</if>
+			<if test="complaintEndTime!=null and complaintEndTime!='' ">
+				<![CDATA[ 
+ 				and UNIX_TIMESTAMP(b.build_date)<=UNIX_TIMESTAMP(CONCAT(#{complaintEndTime},' 23:59:59'))
+ 				]]>
+ 			</if> 
+			<if test="closedStartTime!=null and closedStartTime!='' ">				
+ 				and a.finish_date>=CONCAT(#{closedStartTime},' 00:00:00')
+ 			</if> 
+			<if test="closedEndTime!=null and closedEndTime!='' "> 
+				<![CDATA[ 
+ 					and a.finish_date<=CONCAT(#{closedEndTime},' 23:59:59')
+ 				]]>
+ 			</if> 
+			<if test="assignee!=null and assignee!='' "> 
+ 				and b.deal_name like '%${assignee}%'
+ 			</if> 
+			<if test="leader!=null and leader!='' "> 
+ 				and b.manager_name like '%${leader}%'
+			</if> 
+			<if test="level!=null and level!='' "> 
+ 				and b.level=#{level}
+ 			</if> 
+			<if test="preSales!=null and preSales!='' "> 
+ 				and b.customer like '%${preSales}%'
+ 			</if> 
+			<if test="salesLeader!=null and salesLeader!=''"> 
+ 				and b.customer_leader like '%${salesLeader}%'
+ 			</if> 
+			<if test="producter!=null and producter!='' "> 
+ 				and b.producter like '%${producter}%'
+ 			</if>
+ 			<if test="productManager!=null and productManager!='' "> 
+ 				and b.product_leader ='${productManager}'
+ 			</if>
+ 			<if test="bdpName !=null and bdpName != ''">
+ 				and b.bdp_name = #{bdpName}
+ 			</if>
+ 			<if test="agencyName!=null and agencyName!=''"> 
+ 				and b.agency_name like '%${agencyName}%'
+ 			</if>
+ 			<if test="qcPersonName!=0 and qcPersonName!='' and qcPersonName!=null"> 
+ 				and (a.qc_person = #{qcPersonName} )
+ 			</if>
+ 			<if test="state!=null and state!=''">
+ 			    and b.state = #{state} 
+ 			</if>
+ 			<if test="reason!=null and reason!=''">
+ 			    AND a.complaint_id IN (SELECT DISTINCT complaint_id FROM ct_complaint_reason WHERE type=#{reason})
+ 			</if>
+		</where>
+		order by a.imp_flag desc, a.check_flag desc, a.add_time desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+					,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="search" parameterType="Map"  resultMap="searchResult">
+		<include refid="searchSql"/>
+	</select>
+	<resultMap id="searchResult" type="com.tuniu.gt.complaint.entity.QcEntity">
+		<id property="id" column="qc_id"/>
+		<result property="complaintId" column="complaint_id"/>
+		<result property="orderId" column="order_id"/>
+		<result property="finishDate" column="finish_date"/>
+		<result property="distributionDate" column="distribution_date"/>
+		<result property="qcPerson" column="qc_person"/>
+		<result property="qcPersonName" column="qc_person_name"/>
+		<result property="leader" column="leader"/>
+		<result property="leaderName" column="leader_name"/>
+		<result property="associater" column="associater"/>
+		<result property="associaterName" column="associater_name"/>
+		<result property="verify" column="verify"/>
+		<result property="status" column="status"/>
+		<result property="recipients" column="recipients"/>
+		<result property="ccs" column="ccs"/>
+		<result property="addTime" column="add_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="delFlag" column="del_flag"/>
+		<result property="impFlag" column="imp_flag"/>
+		<result property="checkFlag" column="check_flag"/>
+		<result property="finishDate" column="qcFinishTime"/>
+		<result property="consultation" column="is_consultation"/>
+		<result property="paymentForCust" column="paymentForCust"/>
+		<result property="specialConsultation" column="special_consultation"/>
+		
+		<association property="complaint" column="complaint_id" javaType="com.tuniu.gt.complaint.entity.ComplaintEntity">
+			<id property="id" column="complaint_id" />
+			<result property="title" column="title" />
+			<result property="guestName" column="guest_name" />
+			<result property="guestNum" column="guest_num" />
+			<result property="guestLevel" column="guest_level" />
+			<result property="startCity" column="start_city" />
+			<result property="endCity" column="end_city" />
+			<result property="startTime" column="start_time" />
+			<result property="backTime" column="back_time" />
+			<result property="buildDate" column="build_date" />
+			<result property="route" column="route" />
+			<result property="customerLeader" column="customer_leader" />
+			<result property="agencyName" column="agency_name" />
+			<result property="productLeader" column="product_leader" />
+			<result property="bdpName" column="bdp_name"/>
+			<result property="orderState" column="order_state" />
+			<result property="comeFrom" column="come_from" />
+			<result property="level" column="level" />
+			<result property="ownerId" column="owner_id" />
+			<result property="ownerName" column="owner_name" />
+			<result property="ownerPartment" column="owner_partment" />
+			<result property="descript" column="descript" />
+			<result property="requirement" column="requirement" />
+			<result property="state" column="state" />
+			<result property="deal" column="deal" />
+			<result property="dealName" column="deal_name" />
+			<result property="manager" column="manager" />
+			<result property="managerName" column="manager_name" />
+			<result property="customer" column="customer" />
+			<result property="producter" column="producter" />
+			<result property="seniorManager" column="senior_manager" />
+			<result property="serviceManager" column="service_manager" />
+			<result property="orderType" column="order_type" />
+			<result property="routeType" column="route_type" />
+			<result property="orderComeFrom" column="order_come_from" />
+			<result property="score" column="score" />
+			<result property="finishDate" column="cmpFinishTime" />
+			<result property="productPrice" column="product_price" />
+			<result property="airFlag" column="air_flag" />
+			<result property="airfare" column="airfare" />
+			<result property="niuLineFlag" column="niu_line_flag" />
+			<result property="guideId" column="guideId" />
+		 	<result property="guideName" column="guideName" />
+			<result property="guideCall" column="guideCall" />
+		</association>		
+	</resultMap>
+	
+	<select id="getExportDataTotal" parameterType="Map" resultType="Integer">
+		SELECT COUNT(1) AS num 
+		FROM ct_complaint b, ct_complaint_reason c, ct_qc a 
+		LEFT JOIN ct_qc_report d ON d.qc_id=a.id 
+		LEFT JOIN ct_qc_question e ON e.report_id=d.id LEFT JOIN ct_qc_tracker f ON f.question_id=e.id
+		<include refid="whereSql"/>
+		AND c.id=(SELECT MIN(id) FROM ct_complaint_reason WHERE complaint_id=a.complaint_id)
+	</select>
+	
+	<select id="getExportData" parameterType="Map" resultType="Map">
+		SELECT DATE_FORMAT(a.finish_date,'%Y年%m月%d日') AS 质检日期,
+		       a.order_id AS 订单号,
+		       b.route AS 线路,
+		       '' AS 产品类型,
+		       e.comp_level AS 投诉问题等级,
+		       DATE_FORMAT(b.build_date,'%Y年%m月%d日') AS 投诉日期,
+		       DATE_FORMAT(b.start_time,'%Y年%m月%d日') AS 出游日期,
+		       DATE_FORMAT(b.back_time,'%Y年%m月%d日') AS 归来日期,
+		       b.start_city AS 出发地,
+		       b.end_city AS 目的地,
+		       b.customer AS 客服专员,
+		       b.customer_leader AS 客服经理,
+		       b.producter AS 产品专员,
+		       b.product_leader AS 产品经理,
+		       b.owner_name AS 投诉发起人,
+		       c.type AS 投诉类型（一级）,
+		       c.second_type AS 投诉类型（二级）,
+		       c.type_descript AS 投诉详情,
+		       a.verify AS 核实情况,
+		       e.conclusion AS 质检结论,
+		       f.responsibility,
+		       (SELECT dep_name FROM uc_department WHERE id=f.responsibility) AS response1,
+			   (SELECT dep_name FROM uc_department WHERE id=f.resp_second) AS response2,
+			   (SELECT dep_name FROM uc_department WHERE id=f.resp_third) AS response3,
+		       f.position,
+		       f.responsible_person AS 责任人,
+		       f.improver AS 改进人,
+		       e.big_class_name AS 问题大类型,
+		       e.small_class_name AS 问题小类型,
+		       e.score_level AS 记分等级,
+		       e.score_target1 AS 记分对象1,
+		       CASE e.score_target1 WHEN '' THEN 0 WHEN '无' THEN 0 ELSE e.score_value END AS 记分值1,
+		       e.score_target2 AS 记分对象2,
+		       CASE e.score_target2 WHEN '' THEN 0 WHEN '无' THEN 0 ELSE e.score_value END AS 记分值2,
+		       (SELECT special FROM ct_share_solution WHERE complaint_id=b.id AND del_flag=1 limit 1) AS 损失金额,
+		       a.qc_person_name AS 质检人,
+		       DATE_FORMAT(b.build_date,'%Y年%m月%d日 %H:%i:%s') AS 投诉发起时间,
+		       DATE_FORMAT(b.finish_date,'%Y年%m月%d日 %H:%i:%s') AS 投诉完成时间,
+		       DATE_FORMAT(a.distribution_date,'%Y年%m月%d日 %H:%i:%s') AS 质检分配时间,
+		       DATE_FORMAT(a.finish_date,'%Y年%m月%d日 %H:%i:%s') AS 质检完成时间
+		FROM ct_complaint b, ct_complaint_reason c, ct_qc a 
+		LEFT JOIN ct_qc_report d ON d.qc_id=a.id 
+		LEFT JOIN ct_qc_question e ON e.report_id=d.id LEFT JOIN ct_qc_tracker f ON f.question_id=e.id
+		<include refid="whereSql"/>
+		AND c.id=(SELECT MIN(id) FROM ct_complaint_reason WHERE complaint_id=a.complaint_id)
+	</select>
+	
+	<select id="searchByName" parameterType="map"  resultMap="searchNames">
+		SELECT c.real_name as crealName,c.id as cId,c.position_id as  cpositionId
+		FROM uc_user a,uc_department b,uc_user c 
+		WHERE a.real_name = #{name} AND a.dep_id = b.id AND c.dep_id = b.father_id AND c.position_id>3;
+	</select>
+	
+	<resultMap id="searchNames" type="Map">
+
+		<result property="realName" column="crealName" />
+
+		<result property="id" column="cId" />
+
+		<result property="positionId" column="cpositionId" />
+	</resultMap>
+
+	<select id="searchMap" parameterType="Map"  resultType="Map">
+		<include refid="searchSql"/>
+	</select>
+	
+	<select id="searchById" parameterType="Integer"  resultMap="searchResult">
+		SELECT a.*, b.*, a.id AS qc_id, b.id AS complaint_id, a.finish_date AS qcFinishTime, b.finish_date AS cmpFinishTime
+		FROM ct_qc a, ct_complaint b
+		WHERE a.complaint_id = b.id and a.id=#{id} and a.del_flag!=1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  complaint_id,
+		  order_id,
+		  verify,
+		  distribution_date,
+		  finish_date,		 
+		  qc_person,
+		  qc_person_name,
+		  leader,
+		  leader_name,
+		  status,
+		  recipients,
+		  ccs,
+		  add_time,
+		  update_time,
+		  del_flag,
+		 is_consultation
+		) values  (
+		  #{e.complaintId}, 
+		  #{e.orderId},
+		  #{e.verify},
+		  #{e.distributionDate}, 
+		  #{e.finishDate}, 
+		  #{e.qcPerson}, 
+		  #{e.qcPersonName},
+		  #{e.leader},
+		  #{e.leaderName}, 
+		  #{e.status}, 
+		  #{e.recipients},
+		  #{e.ccs},
+		  #{e.addTime}, 
+		  #{e.updateTime}, 
+		  #{e.delFlag},
+	  	  #{e.consultation}
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			<if test="e.orderId != null">order_id=#{e.orderId},</if>
+			<if test="e.verify != null">verify=#{e.verify},</if>
+			<if test="e.distributionDate != null">distribution_date=#{e.distributionDate},</if>
+			<if test="e.finishDate != null">finish_date=#{e.finishDate},</if>
+			<if test="e.qcPerson != null">qc_person=#{e.qcPerson},</if>
+			<if test="e.qcPersonName != null">qc_person_name=#{e.qcPersonName},</if>
+			<if test="e.oldQcPerson != null">old_qc_person=#{e.oldQcPerson},</if>
+			<if test="e.oldQcPersonName != null">old_qc_person_name=#{e.oldQcPersonName},</if>		
+			<if test="e.leader != null">leader=#{e.leader},</if>
+			<if test="e.leaderName != null">leader_name=#{e.leaderName},</if>
+			<if test="e.associater != null">associater=#{e.associater},</if>
+			<if test="e.associaterName != null">associater_name=#{e.associaterName},</if>
+			<if test="e.status != null">status=#{e.status},</if>
+			<if test="e.recipients != null">recipients=#{e.recipients},</if>
+			<if test="e.ccs != null">ccs=#{e.ccs},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			<if test="e.specialConsultation != null">special_consultation=#{e.specialConsultation},</if>
+			<if test="e.consultation != null">is_consultation=#{e.consultation},</if>
+			<if test="e.complaintId != null">complaint_id=#{e.complaintId},</if>
+			<if test="e.timeOutFlag != null">time_out_flag=#{e.timeOutFlag},</if>
+			<if test="e.impFlag != null">imp_flag=#{e.impFlag},</if>
+			<if test="e.checkFlag != null">check_flag=#{e.checkFlag},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	
+	<update id="updateByOrderId" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  		
+				<if test="qcPerson != null">qc_person=#{qcPerson},</if>
+				<if test="qcPersonName != null">qc_person_name=#{qcPersonName},</if>
+				<if test="oldQcPerson != null">old_qc_person=#{oldQcPerson},</if>
+				<if test="oldQcPersonName != null">old_qc_person_name=#{oldQcPersonName},</if>	
+				<if test="status != null">status=#{status},</if>	
+				<if test="distributionDate != null">distribution_date=#{distributionDate},</if>
+				<if test="updateTime != null">update_time=#{updateTime}</if>		
+		</set>
+	    where order_id=#{orderId} and  status != 2
+	</update>
+    <update id="updateByComplaintId" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  		
+			<if test="impFlag != null">imp_flag=#{impFlag},</if>
+			<if test="checkFlag != null">check_flag=#{checkFlag}</if>	
+		</set>
+	    where complaint_id=#{complaintId} and  status != 2
+	</update>
+	
+	<update id="updateSpecialConsultationByIds" parameterType="Map" >
+		update ct_qc set special_consultation=1 where id in (${ids})
+	</update>
+	
+	<update id="updateConsultationById" parameterType="Map" >
+		update ct_qc set is_consultation=#{isConsultation} where complaint_id=#{complaintId}
+	</update>
+	
+</mapper>

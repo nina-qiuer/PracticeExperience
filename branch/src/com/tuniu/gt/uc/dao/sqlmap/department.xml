@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.uc.dao.sqlmap.imap.IDepartmentMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			del_flag=0
+			<if test="id != null">
+				and id=#{id}
+			</if>
+			<if test="useDept != null">
+				and use_dept=#{useDept}
+			</if>
+			<if test="fatherId != null">
+				and father_id=#{fatherId}
+			</if>
+			<if test="depth != null">
+				and depth=#{depth}
+			</if>
+		</where>
+		<choose>
+			<when test="orderBy != null">
+				order by #{orderBy}
+			</when>
+			<otherwise>
+				order by tree_father_id,sequence,id asc
+			</otherwise>
+		</choose>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	
+	<select id="fetchListOrg" parameterType="Map"  resultType="Map">
+		<include refid="list"/>
+	</select> 
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.uc.entity.DepartmentEntity">  
+		
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="depth" column="depth" />
+		
+		<result property="treeId" column="tree_id" />
+		
+		<result property="treeFatherId" column="tree_father_id" />
+		
+		<result property="fatherId" column="father_id" />
+		
+		<result property="depName" column="dep_name" />
+		
+		<result property="useDept" column="use_dept" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="delFlag" column="del_flag"/>
+		
+		<result property="depth" column="depth"/>
+		
+		<result property="treeId" column="tree_id"/>
+		
+		<result property="treeFatherId" column="tree_father_id"/>
+		
+		<result property="fatherId" column="father_id"/>
+		
+		<result property="depName" column="dep_name"/>
+		
+		<result property="useDept" column="use_dept" />
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where 
+		<choose>
+			<when test="id != null">
+				id=#{id}
+			</when>
+			<when test="fatherId != null">
+				father_id=#{fatherId}
+			</when>
+		</choose>
+		limit 1 
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		 <if test="e.id != null">
+			id,
+		  </if>
+		 
+		  del_flag,
+		 
+		  depth,
+		 
+		  tree_id,
+		 
+		  tree_father_id,
+		 
+		  father_id,
+		 
+		  dep_name
+		 
+		) values  (
+		  
+		  <if test="e.id != null">
+			 #{e.id}, 
+		  </if>
+		
+		  #{e.delFlag}, 
+		 
+		  #{e.depth}, 
+		 
+		  #{e.treeId}, 
+		 
+		  #{e.treeFatherId}, 
+		 
+		  #{e.fatherId}, 
+		 
+		  #{e.depName} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			
+				<if test="e.depth != null">depth=#{e.depth},</if>
+			
+				<if test="e.treeId != null">tree_id=#{e.treeId},</if>
+			
+				<if test="e.treeFatherId != null">tree_father_id=#{e.treeFatherId},</if>
+			
+				<if test="e.fatherId != null">father_id=#{e.fatherId},</if>
+				
+				<if test="e.useDept != null">use_dept = #{e.useDept},</if>
+			
+				<if test="e.depName != null">dep_name=#{e.depName}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<!-- 批量更新质检事业部配置 -->
+	<update id="batchUpdateUseDeptForQc">
+		UPDATE uc_department
+		<set> 
+			 use_dept=#{useDept}
+		</set>
+		WHERE del_flag=0 and father_id IN 
+		<foreach collection="depIds" item="depId" index="index"
+            open="(" close=")" separator=",">
+            #{depId}
+        </foreach>
+	</update>
+	
+	<!-- 查询所有qc使用的事业部id -->
+	<select id="getAllDepIdsForQc"  resultType="int">
+		SELECT id FROM uc_department WHERE (father_id=1 OR id =1) AND del_flag=0
+	</select>
+	
+	
+	
+	
+	<update id="doRestore" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/> 
+		set del_flag = 0 
+		where id=#{id}
+	</update>
+	
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+	</sql>
+	
+	<delete id="delete">
+		<include refid="delete"/>
+		 set del_flag = 1
+		  where id=#{id}
+	</delete>
+	
+	<update id="updateChildsTreeFatherId" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			tree_father_id = concat(#{newFatherId},substr(tree_father_id,${len}+1)) ${addSet}
+		</set>
+		where substr(tree_father_id,1,#{len}) = #{oldFatherId}
+	</update>
+	
+	<select id="getSecDeptFullName" parameterType="Integer" resultType="String">
+		SELECT CONCAT((SELECT dep_name FROM uc_department WHERE id=(SELECT father_id FROM uc_department WHERE id=#{depId})),'---',dep_name) AS full_name
+        FROM uc_department WHERE id=#{depId}
+	</select>
+	
+	<select id="getSecondaryDepId" parameterType="Map" resultType="Integer">
+		SELECT id FROM uc_department WHERE dep_name=#{Department}
+		AND father_id=(SELECT id FROM uc_department WHERE dep_name=#{Region} and depth=1 and del_flag=0)
+		AND del_flag=0
+	</select>
+
+	<select id="doSearchConstruts" parameterType="Map" resultMap="listResultUcEntity">
+		SELECT id,father_id as pId,dep_name as name from uc_department where del_flag=0 and id not in (1)
+	</select>
+	<resultMap id="listResultUcEntity" type="com.tuniu.gt.uc.entity.UcDepartmentEntity">  
+		
+		<result property="id" column="id" />
+		
+		<result property="pId" column="pId" />
+		
+		<result property="name" column="name" />
+		
+	</resultMap>
+	<select id="doBackConstruts" parameterType="Map" resultMap="listResultEntity">
+		SELECT * from uc_department where del_flag=0 and id in (#{ids})
+	</select>
+	
+	<select id="getFullDepartmentsByUserRealName" parameterType="string"  resultType="com.tuniu.gt.returnvisit.entity.PostSaleReturnVisitEntity">
+			select d1.id as groupId,d1.dep_name as groupName,d2.id as departmentId,d2.dep_name as departmentName,d3.id as businessUnitId,d3.dep_name as businessUnitName 
+			from uc_department  d1 
+			inner join  uc_department  d2 on d1.father_id=d2.id 
+			 inner join uc_department d3 on d2.father_id=d3.id 
+			 inner join frm_user u on u.dep_id=d1.id 
+			 where u.real_name= #{realName}
+			 and d1.del_flag=0 and d2.del_flag=0 and d3.del_flag=0 and u.del_flag=0
+	</select>
+	
+	<select id="getUserAndDeptList" parameterType="Map" resultType="com.tuniu.gt.uc.entity.DepartmentEntity">
+			SELECT fu.id,fu.real_name AS depname,fu.dep_id AS fatherid FROM frm_user fu
+  			INNER JOIN uc_department ud3 ON fu.dep_id = ud3.id
+  			INNER JOIN uc_department ud2 ON ud3.father_id = ud2.id
+			INNER JOIN uc_department ud1 ON ud2.father_id = ud1.id
+			WHERE ud1.del_flag=0 AND ud2.del_flag=0 AND ud3.del_flag=0 AND fu.del_flag=0
+			AND LENGTH(fu.real_name) &lt;= 12
+			<if test="idlist_second != null">
+			AND ud2.id IN 
+			<foreach collection="idlist_second" item="id_scond" open="(" close=")"
+				separator=",">
+				#{id_scond}
+			</foreach>
+			</if>
+			UNION
+			SELECT ud.id,ud.dep_name AS depname,ud.father_id AS fatherid 
+			FROM uc_department ud WHERE ud.del_flag=0
+			<if test="idlist_second != null">
+			AND ud.id IN 
+			<foreach collection="idlist_second" item="id_scond" open="(" close=")"
+				separator=",">
+				#{id_scond}
+			</foreach>
+			</if>
+			UNION
+			SELECT ud.id,ud.dep_name AS depname,ud.father_id AS fatherid 
+			FROM uc_department ud
+  			INNER JOIN uc_department ud2 ON ud.father_id = ud2.id
+			WHERE ud.del_flag=0
+			<if test="idlist_second != null">
+			AND ud2.id IN
+			<foreach collection="idlist_second" item="id_scond" open="(" close=")"
+				separator=",">
+				#{id_scond}
+			</foreach>
+			</if>
+			ORDER BY depname
+	</select>
+	
+	<select id="getDepartmentsByTreeFatherId" parameterType="Map" resultMap="listResultEntity">
+		SELECT *
+		FROM uc_department
+		WHERE del_flag = 0
+	    AND tree_father_id LIKE '00000000010000000065%' or id in (1296,748) or father_id in (1296,748)
+		ORDER BY tree_father_id,sequence,id asc
+	</select>
+	
+	<select id="getBussinessIdByUserId" parameterType="Integer" resultType="Integer">
+		SELECT
+	  	ud3.id
+		FROM frm_user fu
+  		INNER JOIN uc_department ud1
+    	ON fu.dep_id = ud1.id
+	  	INNER JOIN uc_department ud2
+	    ON ud2.id = ud1.father_id
+	  	INNER JOIN uc_department ud3
+	    ON ud3.id = ud2.father_id
+		WHERE ud1.del_flag = 0
+	    AND ud2.del_flag = 0
+	    AND fu.id = #{userId}
+	</select>
+</mapper>

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IAutoAssignMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+		    <if test="delFlag == null">
+			   del_flag=0
+			</if>
+			<if test="type != null">
+				and type = #{type}
+			</if>
+			<if test="tourTimeNode != null">
+				and tour_time_node = #{tourTimeNode}
+			</if>
+			<if test="levelField == 'complaint_level1_flag'">
+				and complaint_level1_flag = 1 
+			</if>
+			<if test="levelField == 'complaint_level2_flag'">
+				and complaint_level2_flag = 1 
+			</if>
+			<if test="levelField == 'complaint_level3_flag'">
+				and complaint_level3_flag = 1 
+			</if>
+			<if test="destField == 'around_flag'">
+				and around_flag = 1 
+			</if>
+			<if test="destField == 'inland_long_flag'">
+				and inland_long_flag = 1 
+			</if>
+			<if test="destField == 'abroad_short_flag'">
+				and abroad_short_flag = 1 
+			</if>
+			<if test="destField == 'abroad_long_flag'">
+				and abroad_long_flag = 1 
+			</if>
+			<if test="destField == 'others_flag'">
+				and others_flag = 1 
+			</if>
+			<if test="departmentId != null">
+				and department_id = #{departmentId}
+			</if>
+			<if test="userId != null">
+				and user_id = #{userId}
+			</if>
+			<if test="touringGroupType != null ">
+				and touring_group_type = #{touringGroupType}
+			</if>
+			<if test="signCity != null and signCity!=''">
+				and sign_city like '%${signCity}%'
+			</if>
+			<if test="productCategory != null and productCategory!=''">
+				and productCategory like '%${productCategory}%'
+			</if>
+			<if test="comeFrom != null and comeFrom!=''">
+				and come_from like '%${comeFrom}%'
+			</if>
+			<if test="payforOrder != null">
+				and payfor_order = #{payforOrder}
+			</if>
+			<if test="guestLevel != null">
+				<if test="guestLevel>=5">
+					and (guestLevel=2 or  guestLevel=0)
+				</if>
+				<if test="guestLevel &lt; 5">
+					and (guestLevel=1 or  guestLevel=0)
+				</if>
+			</if>
+			
+		</where>
+		order by del_flag,tour_time_node
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.AutoAssignEntity">
+		<result property="delFlag" column="del_flag" />
+		<result property="updateTime" column="update_time" />
+		<result property="addTime" column="add_time" />
+		<result property="userName" column="user_name" />
+		<result property="userId" column="user_id" />
+		<result property="departmentName" column="department_name" />
+		<result property="departmentId" column="department_id" />
+		<result property="type" column="type" />
+		<result property="tourTimeNode" column="tour_time_node" />
+		<result property="complaintLevel1Flag" column="complaint_level1_flag" />
+		<result property="complaintLevel2Flag" column="complaint_level2_flag" />
+		<result property="complaintLevel3Flag" column="complaint_level3_flag" />
+		<result property="withGroupFlag" column="with_group_flag" />
+		<result property="groupFlag" column="group_flag" />
+		<result property="selfServiceFlag" column="self_service_flag" />
+		<result property="aroundFlag" column="around_flag" />
+		<result property="inlandLongFlag" column="inland_long_flag" />
+		<result property="abroadShortFlag" column="abroad_short_flag" />
+		<result property="abroadLongFlag" column="abroad_long_flag" />
+		<result property="othersFlag" column="others_flag" />
+		<result property="noOrdFlag" column="no_ord_flag" />
+		<result property="touringGroupType" column="touring_group_type" />
+		<result property="signCity" column="sign_city" />
+		<result property="productCategory" column="productCategory" />
+		<result property="comeFrom" column="come_from" />
+		<result property="payforOrder" column="payfor_order" />
+		<result property="guestLevel" column="guestLevel" />
+		<result property="lastAssignTime" column="last_assign_time" />
+	</resultMap>
+
+	<select id="fetchListMap" parameterType="Map" resultMap="listResultMap">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		<result property="delFlag" column="del_flag" />
+		<result property="updateTime" column="update_time" />
+		<result property="addTime" column="add_time" />
+		<result property="userName" column="user_name" />
+		<result property="userId" column="user_id" />
+		<result property="departmentName" column="department_name" />
+		<result property="departmentId" column="department_id" />
+		<result property="type" column="type" />
+		<result property="tourTimeNode" column="tour_time_node" />
+		<result property="complaintLevel1Flag" column="complaint_level1_flag" />
+		<result property="complaintLevel2Flag" column="complaint_level2_flag" />
+		<result property="complaintLevel3Flag" column="complaint_level3_flag" />
+		<result property="withGroupFlag" column="with_group_flag" />
+		<result property="groupFlag" column="group_flag" />
+		<result property="selfServiceFlag" column="self_service_flag" />
+		<result property="aroundFlag" column="around_flag" />
+		<result property="inlandLongFlag" column="inland_long_flag" />
+		<result property="abroadShortFlag" column="abroad_short_flag" />
+		<result property="abroadLongFlag" column="abroad_long_flag" />
+		<result property="othersFlag" column="others_flag" />
+		<result property="noOrdFlag" column="no_ord_flag" />
+		<result property="touringGroupType" column="touring_group_type" />
+		<result property="signCity" column="sign_city" />
+		<result property="productCategory" column="productCategory" />
+		<result property="payforOrder" column="payfor_order" />
+		<result property="guestLevel" column="guestLevel" />
+	</resultMap>
+
+	<select id="get" parameterType="Map" resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<select id="getByTypeAndUserId" parameterType="Map" resultMap="listResultEntity">
+		SELECT * FROM ct_auto_assign WHERE user_id=#{userId} AND type=#{type}
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		del_flag,
+		update_time,
+		add_time,
+		user_name,
+		user_id,
+		department_name,
+		department_id,
+		type,
+		tour_time_node,
+		complaint_level1_flag,
+		complaint_level2_flag,
+		complaint_level3_flag,
+		with_group_flag,
+		group_flag,
+		self_service_flag,
+		around_flag,
+		inland_long_flag,
+		abroad_short_flag,
+		abroad_long_flag,
+		others_flag,
+		no_ord_flag,
+		<if test="e.signCity != null">sign_city,</if>
+		<if test="e.productCategory != null">productCategory,</if>
+		<if test="e.comeFrom != null">come_from,</if>
+		<if test="e.payforOrder != null">payfor_order,</if>
+		<if test="e.guestLevel != null">guestLevel,</if>
+		touring_group_type
+		) values (
+		#{e.delFlag},
+		#{e.updateTime},
+		#{e.addTime},
+		#{e.userName},
+		#{e.userId},
+		#{e.departmentName},
+		#{e.departmentId},
+		#{e.type},
+		#{e.tourTimeNode},
+		#{e.complaintLevel1Flag},
+		#{e.complaintLevel2Flag},
+		#{e.complaintLevel3Flag},
+		#{e.withGroupFlag},
+		#{e.groupFlag},
+		#{e.selfServiceFlag},
+		#{e.aroundFlag},
+		#{e.inlandLongFlag},
+		#{e.abroadShortFlag},
+		#{e.abroadLongFlag},
+		#{e.othersFlag},
+		#{e.noOrdFlag},
+		<if test="e.signCity != null">#{e.signCity},</if>
+		<if test="e.productCategory != null">#{e.productCategory},</if>
+		<if test="e.comeFrom != null">#{e.comeFrom},</if>
+		<if test="e.payforOrder != null">#{e.payforOrder},</if>
+		<if test="e.guestLevel != null">#{e.guestLevel},</if>
+		#{e.touringGroupType}
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.delFlag != null">del_flag = #{e.delFlag},</if>
+			<if test="e.complaintLevel1Flag != null">complaint_level1_flag = #{e.complaintLevel1Flag},</if>
+			<if test="e.complaintLevel2Flag != null">complaint_level2_flag = #{e.complaintLevel2Flag},</if>
+			<if test="e.complaintLevel3Flag != null">complaint_level3_flag = #{e.complaintLevel3Flag},</if>
+			<if test="e.withGroupFlag != null">with_group_flag = #{e.withGroupFlag},</if>
+			<if test="e.groupFlag != null">group_flag = #{e.groupFlag},</if>
+			<if test="e.selfServiceFlag != null">self_service_flag = #{e.selfServiceFlag},</if>
+			<if test="e.aroundFlag != null">around_flag = #{e.aroundFlag},</if>
+			<if test="e.inlandLongFlag != null">inland_long_flag = #{e.inlandLongFlag},</if>
+			<if test="e.abroadShortFlag != null">abroad_short_flag = #{e.abroadShortFlag},</if>
+			<if test="e.abroadLongFlag != null">abroad_long_flag = #{e.abroadLongFlag},</if>
+			<if test="e.othersFlag != null">others_flag = #{e.othersFlag},</if>
+			<if test="e.noOrdFlag != null">no_ord_flag = #{e.noOrdFlag},</if>
+			<if test="e.touringGroupType != null">touring_group_type = #{e.touringGroupType},</if>
+			<if test="e.signCity != null">sign_city = #{e.signCity},</if>
+			<if test="e.productCategory != null">productCategory = #{e.productCategory},</if>
+			<if test="e.comeFrom != null">come_from = #{e.comeFrom},</if>
+			<if test="e.payforOrder != null">payfor_order = #{e.payforOrder},</if>
+			<if test="e.guestLevel != null">guestLevel = #{e.guestLevel},</if>
+			update_time = CURRENT_TIMESTAMP
+		</set>
+		where id = #{e.id}
+		<if test="e.type != null">and type = #{e.type}</if>
+	</sql>
+
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	
+	<update id="updateLastAssignTime" parameterType="Integer" flushCache="true" statementType="PREPARED">
+		UPDATE ct_auto_assign SET last_assign_time=CURRENT_TIMESTAMP WHERE id=#{id}
+	</update>
+
+	<delete id="delete" parameterType="Map" >
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/> where id =#{id}
+	</delete>
+	
+	<insert id="insertCfgQc" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.tuniu.gt.complaint.entity.AutoAssignCfgQcEntity" flushCache="true" statementType="PREPARED">
+		INSERT INTO ct_auto_assign_cfgqc 
+		(
+			assign_id, 
+			dep_name, 
+			normal_dep_ids, 
+			special_dep_ids
+		)
+		VALUES
+		(
+			#{assignId},
+			#{depName},
+			#{depIds},
+			#{spDepIds}
+		)
+	</insert>
+	
+	<select id="getCfgQcList" parameterType="Map" resultMap="cfgQcEntity">
+		SELECT * FROM ct_auto_assign_cfgqc 
+		<where>
+			<if test="assignId != null">
+				and assign_id = #{assignId} 
+			</if>
+			<if test="secondaryDepId != null and secondaryDepId != ''">
+				and CONCAT(',',normal_dep_ids,',') like #{secondaryDepId} 
+			</if>
+		</where>
+	</select>
+	
+	<resultMap id="cfgQcEntity" type="com.tuniu.gt.complaint.entity.AutoAssignCfgQcEntity">
+		<result property="id" column="id" />
+		<result property="assignId" column="assign_id" />
+		<result property="depName" column="dep_name" />
+		<result property="depIds" column="normal_dep_ids" />
+		<result property="spDepIds" column="special_dep_ids" />
+	</resultMap>
+	
+	<select id="getQcPersonList" parameterType="Map" resultMap="listResultEntity">
+		SELECT t1.* FROM ct_auto_assign t1 LEFT JOIN ct_auto_assign_cfgqc t2 ON t1.id=t2.assign_id 
+		<where>
+		    t1.del_flag=0 AND t1.type=2 
+		    <if test="noOrdFlag == 1">
+				AND t1.no_ord_flag = 1 
+			</if>
+			<if test="secondaryDepId != null and secondaryDepId != ''">
+				AND CONCAT(',',t2.normal_dep_ids,',') LIKE #{secondaryDepId} 
+			</if>
+			<if test="secondarySpDepId != null and secondarySpDepId != ''">
+				AND CONCAT(',',t2.special_dep_ids,',') LIKE #{secondarySpDepId}
+			</if>
+		</where>
+	</select>
+	
+	<delete id="deleteCfgQc" parameterType="Map">
+		DELETE FROM ct_auto_assign_cfgqc WHERE assign_id = #{assignId}
+	</delete>
+	
+	<update id="updateLastAssignTimeByUser" parameterType="Map">
+		UPDATE ct_auto_assign SET last_assign_time=CURRENT_TIMESTAMP WHERE user_id=#{userId} AND tour_time_node=#{tourTimeNode}
+	</update>
+</mapper>

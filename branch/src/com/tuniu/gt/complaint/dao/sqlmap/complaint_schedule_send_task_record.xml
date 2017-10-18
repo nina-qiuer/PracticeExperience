@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintSendRecordMap">
+
+	<update id="updateTime" parameterType="Date">
+  		update ct_complaint_schedule_send_task_record 
+		set last_send_time=#{e.lastSendTime}
+		where id=1
+  </update>
+
+	<select id="getLastSendTime"  resultType="Date">
+		SELECT last_send_time
+		FROM ct_complaint_schedule_send_task_record 
+		WHERE id=1
+	</select>
+	
+	<select id="getCount"  resultType="Integer">
+		SELECT count(*)
+		FROM ct_complaint_schedule_send_task_record 
+		WHERE id=1
+	</select>
+	
+</mapper>

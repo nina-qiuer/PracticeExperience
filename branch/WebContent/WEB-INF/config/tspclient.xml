@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <!-- 用于获取Spring的ApplicationContex 不要修改 -->
+    <bean class="com.tuniu.operation.platform.tsg.client.common.AppContext"></bean>
+    
+    <!--监控中心配置 全局配置 -->
+	<bean id="monitor" class="com.tuniu.operation.platform.tsg.monitor.Monitor" destroy-method="stop">
+	       <property name="brokerURL" value="failover://(tcp://bj-tspmq-master.tuniu-cie.org:61616,tcp://bj-tspmq-slave-01.tuniu-cie.org:61616,tcp://bj-tspmq-slave-02.tuniu-cie.org:61616)?randomize=false&amp;jms.useAsyncSend=true"></property>
+	       <property name="queueName" value="queue.pla.tsp.monitor.log"></property>
+	       
+	 </bean>
+	 
+	 <!-- 注册中心配置 全局配置 -->
+	 <bean id="registerConfig" class="com.tuniu.operation.platform.tsg.client.config.RegisterConfig">
+	        <property name="registryAddress" value="10.10.30.105:9989,10.10.30.106:9989"></property> 
+	 </bean>
+	 
+	 <!-- 提供者配置 应用自行修改 -->
+	 
+	 <bean id="providerConfig" class="com.tuniu.operation.platform.tsg.client.config.ProviderConfig">
+	       <property name="subSystem" value="CMP"></property>
+	       <property name="packageName" value="ssi"></property>
+	       <property name="maintainer" value="fangyouming"></property>
+	       <property name="isScan" value="true"></property>
+	       <!-- <property name="provideService">
+	        <list>
+	           	如下配置是在isScan为false时起作用，若isScan为true如下可不配置
+	           <bean class="com.tuniu.operation.platform.tsg.client.config.ServiceConfig">
+	               <property name="name" value="PRD.NM.ProductController.queryProducts "></property>
+	               <property name="mapping" value=" /manage/product/query"></property>
+	               <property name="method" value="GET"></property>
+	               <property name="returnValue" value="void"></property>
+	               <property name="param" value="com.tuniu.scc.product.manage.common.product.vo.QueryProductVo"></property>
+	               <property name="description" value="查询产品"></property>
+	          </bean>
+	       </list>
+	       </property>-->
+	 </bean>
+	 
+	 <!-- 消费者配置 应用自行修改 -->
+	 <bean id="consumerConfig" class="com.tuniu.operation.platform.tsg.client.config.ConsumerConfig" lazy-init="false">
+	       <property name="refferenceService">
+	           <list>
+	               <value>BOH.NM.ProductController.queryCommonProductInfos</value>
+	               <value>BOH.NM.ProductController.queryMainRouteId</value>
+	               <value>TBS.Numerical.IntervalController.queryIntreval</value>
+	               <value>TOR.NM.TeamGuideController.batchQueryGroupAndGuideDetail</value>
+	               <value>ICS.sellincome.RefundController.queryRepEntityById</value>
+	               <value>ICS.purchasepay.AgencyReparationsController.insertAgencyReparations</value>
+	               <value>ICS.sellincome.RefundController.addRep</value>
+	               <value>ICS.nb.SupplierAgencyController.findAgencyInfo</value>
+	               <value>PCS.BFM.ProductController.changeProductStatus</value>
+	               <value>PLA.csp.Json2SoapController.invoke</value>
+	               <value>PLA.BAP.WeatherController.alarm</value>
+	               <value>PLA.EMAIL.EdmController.sendInternalEmail</value>
+	               <value>PLA.BAP.HolidayController.query</value>
+	               <value>PLA.SMS.SmsController.sendSms</value>
+	               <value>FBS.ID.CardInCompleteController.addInCompleteCard</value>
+	               <value>FBS.ID.CardInCompleteController.queryInCompleteCardByCardUniqueId</value>
+	               <value>NWS.OrderController.queryPeopleInfoByOrderId</value>
+	               <value>VND.ams.AgencyContactController.getAgencyContactList</value>
+	               <value>VND.ams.AgencyController.searchAgencyList</value>
+	               <value>PHX.VND.ams.AgencyContactController.getAgencyContactList</value>
+	               <value>PHX.VND.ams.AgencyController.searchAgencyList</value>
+	               <value>PGA.NWS.PipelineController.queryOrders</value>
+	               <value>BOH.PL.ProductTypeController.root</value>
+	               <value>BOH.PL.ProductTypeController.sub</value>
+	               <value>BOH.PL.ProductTypeController.destClass</value>
+	               <value>BOH.PL.DestClassController.destGroup</value>
+	               <value>NWS.OrderController.complaintQualityTesting</value>
+	               <value>CRM.CSR.SpecialListController.TR010104</value>
+	               <value>PGA.NWS.PipelineController.getAdaptedApiConf</value>
+	               <value>SOA.SOA.Flow2ResourceController.launchCollaborationForTspNoToken</value>
+	               <value>PGA.NWS.PipelineController.doService</value>
+	           </list>
+	       </property>
+	 </bean>
+	 
+	 <!-- TSP客户端配置 应用自行修改 -->
+	 <bean id="tspCommonClient" class="com.tuniu.operation.platform.tsg.client.proxy.tsg.TSPCommonClient" destroy-method="stop">
+	       <property name="consumerConfig" ref="consumerConfig"/>
+	       <property name="providerConfig" ref="providerConfig"/>
+	       <property name="registerConfig" ref="registerConfig"/>
+	       <property name="connectTimeout" value="2"></property><!-- 连接超时时间配置 应用可选配置，不配置将默认为2秒 -->
+	       <property name="socketTimeout" value="2"></property> <!-- Socket连接超时时间配置 应用可选配置，不配置将默认为2秒 -->
+	 </bean>
+	 
+</beans>

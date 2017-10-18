@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.DestcateStandardMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qs.model.DestcateStandard">
+		INSERT INTO qs_destcate_standard (
+			<if test="destCate != null">destCate,</if>
+			<if test="groupRichness != null">groupRichness,</if>
+			<if test="noticeTimeLimit != null">noticeTimeLimit,</if>
+			<if test="addPerson != null">addPerson,</if>
+			delFlag
+		) VALUES (
+			<if test="destCate != null">#{destCate},</if>
+			<if test="groupRichness != null">#{groupRichness},</if>
+			<if test="noticeTimeLimit != null">#{noticeTimeLimit},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qs_destcate_standard WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qs.model.DestcateStandard" flushCache="true" statementType="PREPARED">
+		UPDATE qs_destcate_standard 
+		<set>
+			<if test="destCate != null">destCate=#{destCate},</if>
+			<if test="groupRichness != null">groupRichness=#{groupRichness},</if>
+			<if test="noticeTimeLimit != null">noticeTimeLimit=#{noticeTimeLimit},</if>
+			<if test="updatePerson != null">updatePerson=#{updatePerson},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.DestcateStandard">
+		SELECT * FROM qs_destcate_standard WHERE id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.DestcateStandardDto" resultType="com.tuniu.qms.qs.model.DestcateStandard">
+		SELECT * FROM qs_destcate_standard WHERE delFlag = 0
+	</select>
+	
+</mapper>

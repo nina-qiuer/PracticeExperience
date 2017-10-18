@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.bi.dao.DataMapper">
+	
+	<select id="listPurchaseAmt" parameterType="Map" resultType="com.tuniu.qms.qs.model.SubstdPurchaseAmt">
+		SELECT 	id AS purchaseId, 
+				add_time AS ADDDATE, 
+				total_price AS price, 
+				IFNULL(add_person,'') AS addPerson, 
+				product_type AS TYPE, 
+				order_id AS ordId, 
+				sign_date AS signDate, 
+				back_time AS backDate, 
+				pay_flag AS payFlag, 
+				month_total_price AS monthTotalAmount, 
+				amount AS totalAmount, 
+				contract_amount AS contractAmount, 
+				Region AS businessUnit, 
+				Department AS prdDep, 
+				Groupname AS prdTeam, 
+				prd_manager_id AS prdManagerId, 
+				Charge AS prdManager, 
+				product_saler_id AS producterId, 
+				product_saler AS producter ,
+				start_date as groupDate,
+				IFNULL(main_route_id,0) as routeId
+		FROM qs_purchase_amt 
+		WHERE DATE_FORMAT(add_time,'%Y-%m-%d')=#{yesterday} LIMIT #{dataLimitStart}, #{pageSize}
+	</select>
+	
+	<select id="listContractAppendAmt" parameterType="Map" resultType="com.tuniu.qms.qs.model.SubstdContractAppendAmt">
+		SELECT 	id AS caId, 
+				sign_date AS signDate, 
+				add_time AS ADDDATE, 
+				amount AS price, 
+				IFNULL(add_person,'') AS addPerson, 
+				month_total_price AS monthTotalAmount, 
+				order_id AS ordId, 
+				Region AS businessUnit, 
+				Department AS prdDep, 
+				Groupname AS prdTeam, 
+				prd_manager_id AS prdManagerId, 
+				Charge AS prdManager, 
+				product_saler_id AS producterId, 
+				product_saler AS producter, 
+				manager_id AS customerManagerId, 
+				saler_manager AS customerManager, 
+				saler_id AS customerId, 
+				saler AS customer 
+		FROM qs_contract_append_amt 
+		WHERE DATE_FORMAT(add_time,'%Y-%m-%d')=#{yesterday} LIMIT #{dataLimitStart}, #{pageSize}
+	</select>
+	
+	<select id="listOrderAmt" parameterType="Map" resultType="com.tuniu.qms.qs.model.SubstdOrderAmt">
+		SELECT 	staticdate AS statisticDate, 
+				order_id AS ordId, 
+				sign_date AS signDate, 
+				back_time AS backDate,
+				IFNULL(collection_amount, 0) AS collectionAmount,
+				IFNULL(valid_amount, 0) AS validAmount,
+				IFNULL(non_collection_amount, 0) AS nonCollectionAmount,
+				IFNULL(contract_amount, 0) AS contractAmount,
+				Region AS businessUnit, 
+				Department AS prdDep, 
+				Groupname AS prdTeam, 
+				prd_manager_id AS prdManagerId, 
+				Charge AS prdManager, 
+				product_saler_id AS producterId, 
+				product_saler AS producter, 
+				manager_id AS customerManagerId, 
+				saler_manager AS customerManager, 
+				saler_id AS customerId, 
+				saler AS customer,
+				product_type_parent as productType,
+				product_dest_class as destName,
+				product_id as prdId,
+				IFNULL(main_route_id,0) as routeId
+		FROM qs_order_amt 
+		WHERE DATE_FORMAT(staticdate,'%Y-%m-%d')=#{yesterday} LIMIT #{dataLimitStart}, #{pageSize}
+	</select>
+	
+	<select id="listRefundAmt" parameterType="Map" resultType="com.tuniu.qms.qs.model.SubstdRefundAmt">
+		SELECT 	id AS refundId, 
+				refund_num AS refundNum, 
+				refund_add_time AS ADDDATE, 
+				refund_type AS refundType, 
+				refund_amount AS refundAmount, 
+				order_id AS ordId, 
+				cash_refund_amount AS cashRefundAmount, 
+				cash_collection_amount AS cashCollectionAmount, 
+				cash_beyond_amount AS cashBeyondAmount, 
+				order_refund_amount AS orderRefundAmount, 
+				IFNULL(order_collection_amount, 0) AS orderCollectionAmount,
+				IFNULL(order_beyond_amount, 0) AS orderBeyondAmount,
+				Region AS businessUnit, 
+				Department AS prdDep, 
+				Groupname AS prdTeam, 
+				prd_manager_id AS prdManagerId, 
+				Charge AS prdManager, 
+				product_saler_id AS producterId, 
+				product_saler AS producter, 
+				manager_id AS customerManagerId, 
+				saler_manager AS customerManager, 
+				saler_id AS customerId, 
+				saler AS customer
+		FROM qs_refund_amt 
+		WHERE DATE_FORMAT(refund_add_time,'%Y-%m-%d')=#{yesterday} LIMIT #{dataLimitStart}, #{pageSize}
+	</select>
+	
+	<select id="listCompStaisfy"  parameterType="Map" resultType="com.tuniu.qms.qs.model.CompSatisRateMonitor">
+	    
+	    SELECT statistic_year AS YEAR,
+	            CONCAT(statistic_year,statistic_quarter) AS yearQuarter,
+	      		CONCAT(statistic_year,statistic_month) AS yearMonth,
+	            statistic_date AS statisticDate,
+	         	(CASE region WHEN '空' THEN '' ELSE region END) AS  businessUnit,
+	       		(CASE department WHEN  '空' THEN '' ELSE  department  END)  AS  prdDep,
+	         	(CASE groupname WHEN   '空' THEN '' ELSE  groupname  END)  AS  prdTeam,
+	            TRIM(' ' FROM (IFNULL(charge,''))) AS prdManager,
+	            TRIM(' ' FROM (IFNULL(product_saler,''))) as prdSpecialist,
+	            IFNULL(complaint_count,0) AS cmpNum,
+	            IFNULL(complaint_base,0) AS ordNum,
+	            IFNULL(satisfy_count,0) AS commentNum,
+	            IFNULL(satisfy_sum,0) AS commentScore
+	    	FROM ol_qlt_product_satisfy  
+			WHERE  region!='空' AND  DATE_FORMAT(statistic_date,'%Y-%m-%d')=#{yesterday} LIMIT #{dataLimitStart}, #{pageSize}
+	</select>
+	
+	<select id="listCompStaisfyAll"  parameterType="Map" resultType="com.tuniu.qms.qs.model.CompSatisRateMonitor">
+	    
+	    SELECT statistic_year AS YEAR,
+	            CONCAT(statistic_year,statistic_quarter) AS yearQuarter,
+	      		CONCAT(statistic_year,statistic_month) AS yearMonth,
+	            statistic_date AS statisticDate,
+	         	(CASE region WHEN '空' THEN '' ELSE region END) AS  businessUnit,
+	       		(CASE department WHEN  '空' THEN '' ELSE  department  END)  AS  prdDep,
+	         	(CASE groupname WHEN   '空' THEN '' ELSE  groupname  END)  AS  prdTeam,
+	            TRIM(' ' FROM (IFNULL(charge,''))) AS prdManager,
+	            TRIM(' ' FROM (IFNULL(product_saler,''))) as prdSpecialist,
+	            IFNULL(complaint_count,0) AS cmpNum,
+	            IFNULL(complaint_base,0) AS ordNum,
+	            IFNULL(satisfy_count,0) AS commentNum,
+	            IFNULL(satisfy_sum,0) AS commentScore
+	    	FROM ol_qlt_product_satisfy  
+			WHERE  region!='空'  LIMIT #{dataLimitStart}, #{pageSize}
+	</select>
+	
+</mapper>

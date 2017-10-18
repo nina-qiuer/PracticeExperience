@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.QcBillMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcBill"  useGeneratedKeys="true" keyProperty="id"  keyColumn="id">
+		INSERT INTO qc_qc_bill (
+			<if test="prdId != null">prdId,</if>
+			<if test="groupDate != null">groupDate,</if>
+			<if test="ordId != null">ordId,</if>
+			<if test="cmpId != null">cmpId,</if>
+			<if test="jiraNum != null">jiraNum,</if>
+			<if test="groupFlag != null">groupFlag,</if>
+			<if test="qcTypeId != null">qcTypeId,</if>
+			<if test="qcAffairSummary != null">qcAffairSummary,</if>
+			<if test="qcAffairDesc != null">qcAffairDesc,</if>
+			<if test="remark != null">remark,</if>
+			<if test="lossAmount != null">lossAmount,</if>
+			<if test="state != null">state,</if>
+			<if test="addPersonId != null">addPersonId,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="importantFlag != null">importantFlag,</if>
+			<if test="verification != null">verification,</if>
+			<if test="evidence != null">evidence,</if>
+			<if test="userFlag != null">userFlag,</if>
+			<if test="qcPeriodEndTime != null">qcPeriodEndTime,</if>
+			<if test="qcPeriodBgnTime != null">qcPeriodBgnTime,</if>
+			<if test="qcPersonId != null">qcPersonId,</if>
+			<if test="qcPerson != null">qcPerson,</if>
+			delFlag
+		) VALUES (
+			<if test="prdId != null">#{prdId},</if>
+			<if test="groupDate != null">#{groupDate},</if>
+			<if test="ordId != null">#{ordId},</if>
+			<if test="cmpId != null">#{cmpId},</if>
+			<if test="jiraNum != null">#{jiraNum},</if>
+			<if test="groupFlag != null">#{groupFlag},</if>
+			<if test="qcTypeId != null">#{qcTypeId},</if>
+			<if test="qcAffairSummary != null">#{qcAffairSummary},</if>
+			<if test="qcAffairDesc != null">#{qcAffairDesc},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="lossAmount != null">#{lossAmount},</if>
+			<if test="state != null">#{state},</if>
+			<if test="addPersonId != null">#{addPersonId},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="importantFlag != null">#{importantFlag},</if>
+			<if test="verification != null">#{verification},</if>
+			<if test="evidence != null">#{evidence},</if>
+			<if test="userFlag != null">#{userFlag} ,</if>
+			<if test="qcPeriodEndTime != null">#{qcPeriodEndTime},</if>
+			<if test="qcPeriodBgnTime != null">#{qcPeriodBgnTime},</if>
+			<if test="qcPersonId != null">#{qcPersonId},</if>
+			<if test="qcPerson != null">#{qcPerson},</if>
+			0
+		)
+	</insert>
+	
+	<insert id="addQcBill" parameterType="com.tuniu.qms.qc.model.QcBill"  useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO qc_qc_bill (
+			<if test="prdId != null">prdId,</if>
+			<if test="groupDate != null">groupDate,</if>
+			<if test="ordId != null">ordId,</if>
+			<if test="cmpId != null">cmpId,</if>
+			<if test="jiraNum != null">jiraNum,</if>
+			<if test="groupFlag != null">groupFlag,</if>
+			<if test="qcTypeId != null">qcTypeId,</if>
+			<if test="qcAffairSummary != null">qcAffairSummary,</if>
+			<if test="qcAffairDesc != null">qcAffairDesc,</if>
+			<if test="remark != null">remark,</if>
+			<if test="lossAmount != null">lossAmount,</if>
+			<if test="state != null">state,</if>
+			<if test="addPersonId != null">addPersonId,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="qcPersonId != null">qcPersonId,</if>
+			<if test="qcPerson != null">qcPerson,</if>
+			<if test="importantFlag != null">importantFlag,</if>
+			<if test="verification != null">verification,</if>
+			<if test="evidence != null">evidence,</if>
+			<if test="userFlag != null">userFlag,</if>
+			<if test="finishTime != null">finishTime,</if>
+			<if test="qcPeriodEndTime != null">qcPeriodEndTime,</if>
+			<if test="qcPeriodBgnTime != null">qcPeriodBgnTime,</if>
+			delFlag
+		) VALUES (
+			<if test="prdId != null">#{prdId},</if>
+			<if test="groupDate != null">#{groupDate},</if>
+			<if test="ordId != null">#{ordId},</if>
+			<if test="cmpId != null">#{cmpId},</if>
+			<if test="jiraNum != null">#{jiraNum},</if>
+			<if test="groupFlag != null">#{groupFlag},</if>
+			<if test="qcTypeId != null">#{qcTypeId},</if>
+			<if test="qcAffairSummary != null">#{qcAffairSummary},</if>
+			<if test="qcAffairDesc != null">#{qcAffairDesc},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="lossAmount != null">#{lossAmount},</if>
+			<if test="state != null">#{state},</if>
+			<if test="addPersonId != null">#{addPersonId},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="qcPersonId != null">#{qcPersonId},</if>
+			<if test="qcPerson != null">#{qcPerson},</if>
+			<if test="importantFlag != null">#{importantFlag},</if>
+			<if test="verification != null">#{verification},</if>
+			<if test="evidence != null">#{evidence},</if>
+			<if test="userFlag != null">#{userFlag} ,</if>
+			<if test="finishTime != null">#{finishTime} ,</if>
+			<if test="qcPeriodEndTime != null">#{qcPeriodEndTime},</if>
+			<if test="qcPeriodBgnTime != null">#{qcPeriodBgnTime},</if>
+			#{delFlag}
+		)
+	</insert>
+	
+	
+	
+	<insert id="addBatch" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		insert into qc_qc_bill (
+			prdId, 
+			groupDate,
+			ordId, 
+			cmpId, 
+			jiraNum, 
+			groupFlag,
+			qcTypeId, 
+			qcAffairSummary, 
+			qcAffairDesc, 
+			remark,
+			state
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.prdId},
+            #{e.groupDate},
+			#{e.ordId},
+			#{e.cmpId},
+			#{e.jiraNum},
+			#{e.groupFlag},
+			#{e.qcTypeId},
+			#{e.qcAffairSummary},
+			#{e.qcAffairDesc},
+			'',
+			#{e.state}
+        )
+        </foreach>
+    </insert>
+	
+	<insert id="addOperateBatch"  parameterType="java.util.List" >
+		insert into qc_qc_bill (
+			prdId, 
+			ordId, 
+			groupFlag,
+			qcTypeId, 
+			qcAffairDesc, 
+			verification,
+			qcAffairSummary,
+			remark,
+			state
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.prdId},
+			#{e.ordId},
+			#{e.groupFlag},
+			#{e.qcTypeId},
+			#{e.qcAffairDesc},
+			#{e.verification},
+			#{e.qcAffairSummary},
+			#{e.remark},	
+			#{e.state}
+        )
+        </foreach>
+    </insert>
+	
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_qc_bill WHERE id=#{id}
+	</delete>
+	
+	<delete id="deleteBatch" parameterType="Map">
+		DELETE FROM qc_qc_bill WHERE cmpId IN (${cmpIds})
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcBill" flushCache="true" statementType="PREPARED">
+		UPDATE qc_qc_bill 
+		<set>
+			<if test="prdId != null">prdId=#{prdId},</if>
+			<if test="groupDate != null">groupDate=#{groupDate},</if>
+			<if test="ordId != null">ordId=#{ordId},</if>
+			<if test="cmpId != null">cmpId=#{cmpId},</if>
+			<if test="jiraNum != null">jiraNum=#{jiraNum},</if>
+			<if test="groupFlag != null">groupFlag=#{groupFlag},</if>
+			<if test="qcTypeId != null">qcTypeId=#{qcTypeId},</if>
+			<if test="qcAffairSummary != null">qcAffairSummary=#{qcAffairSummary},</if>
+			<if test="qcAffairDesc != null">qcAffairDesc=#{qcAffairDesc},</if>
+			<if test="remark != null">remark=#{remark},</if>
+			<if test="lossAmount != null">lossAmount=#{lossAmount},</if>
+			<if test="state != null">state=#{state},</if>
+			<if test="state != null and  state==3">finishTime='0000-00-00 00:00:00',</if>
+			<if test="qcPersonId != null">qcPersonId=#{qcPersonId},</if>
+			<if test="qcPerson != null">qcPerson=#{qcPerson},</if>
+			<if test="addPersonId != null">addPersonId=#{addPersonId},</if>
+			<if test="addPerson != null">addPerson=#{addPerson},</if>
+			<if test="distribTime != null">distribTime=#{distribTime},</if>
+			<if test="finishTime != null">finishTime=#{finishTime},</if>
+			<if test="updatePerson != null">updatePerson=#{updatePerson},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			<if test="importantFlag != null">importantFlag=#{importantFlag},</if>
+			<if test="verification != null">verification=#{verification},</if>
+			<if test="evidence != null">evidence=#{evidence},</if>
+	    	<if test="userFlag != null">userFlag=#{userFlag},</if>
+	    	<if test="qcPeriodBgnTime != null">qcPeriodBgnTime=#{qcPeriodBgnTime},</if>
+	    	<if test="qcPeriodEndTime != null">qcPeriodEndTime=#{qcPeriodEndTime},</if>
+	    	<if test="timeFlag == 1">qcPeriodBgnTime = '0000-00-00 00:00:00',</if>
+	    	<if test="timeFlag == 1">qcPeriodEndTime = '0000-00-00 00:00:00',</if>
+	    	<if test="subject != null">subject=#{subject},</if>
+	    	<if test="reAddrs != null">reAddrs=#{reAddrs},</if>
+	    	<if test="ccAddrs != null">ccAddrs=#{ccAddrs},</if>
+	    	<if test="returnFlag != null">returnFlag=#{returnFlag},</if>
+	    	<if test="cancelFlag != null">cancelFlag=#{cancelFlag},</if>
+	    	<if test="cancelTime != null">cancel_time=#{cancelTime},</if>
+	    	<if test="state != null and  state == 3">cancel_time='0000-00-00 00:00:00',</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultMap="qcMap">
+		SELECT * FROM qc_qc_bill WHERE id=#{id} and delFlag = 0
+	</select>
+
+	<sql id="listSql">
+		<where>
+			qc.delFlag=0 
+			<!-- qcbill condition -->
+			<if test="id != null and id!=''">AND qc.id=#{id}</if>
+			<if test="state != null and state != -1">AND qc.state=#{state}</if>
+			<if test="prdId != null">AND qc.prdId=#{prdId}</if>
+			<if test="orderId != null">AND qc.ordId=#{orderId}</if>
+			<if test="cmpId != null">AND qc.cmpId=#{cmpId}</if>
+			<if test="qcPerson != null and qcPerson !='' ">AND qc.qcPerson=#{qcPerson}</if>
+			<if test="lossAmountBgn != null">AND qc.lossAmount &gt;= #{lossAmountBgn}</if>
+			<if test="lossAmountEnd != null">AND qc.lossAmount &lt;= #{lossAmountEnd}</if>
+			<if test="addTimeFrom != null and addTimeFrom !=''" >AND qc.addTime &gt;=#{addTimeFrom}</if>
+			<if test="addTimeTo != null and addTimeTo !='' ">AND qc.addTime &lt;= concat(#{addTimeTo},' 23:59:59')</if>
+			<if test="distribTimeBgn != null and distribTimeBgn !=''" >AND qc.distribTime &gt;= #{distribTimeBgn}</if>
+			<if test="distribTimeEnd != null and distribTimeEnd !='' ">AND qc.distribTime &lt;=concat(#{distribTimeEnd},' 23:59:59')</if>
+			<if test="finishTimeBgn != null and finishTimeBgn !='' ">AND qc.finishTime &gt;= #{finishTimeBgn}</if>
+			<if test="finishTimeEnd != null and finishTimeEnd !='' ">AND qc.finishTime &lt;= concat(#{finishTimeEnd},' 23:59:59')</if>
+			<if test="qcCancelTimeBgn != null and qcCancelTimeBgn !='' ">AND qc.cancel_time &gt;= #{qcCancelTimeBgn}</if>
+			<if test="qcCancelTimeEnd != null and qcCancelTimeEnd !='' ">AND qc.cancel_time &lt;= concat(#{qcCancelTimeEnd},' 23:59:59')</if>
+			<if test="importantFlag != null "> AND qc.importantFlag = #{importantFlag}</if>
+			AND qc.cmpId &gt; 0
+			AND qc.groupFlag=1
+			<if test="impBillFlag != null and impBillFlag == 1">
+			 	AND EXISTS(SELECT 1 FROM qs_cmp_improve  WHERE delFlag = 0 AND cmpId = qc.cmpId)
+			</if>
+			<if test="impBillFlag != null and impBillFlag == 2">
+			 	AND NOT EXISTS(SELECT 1 FROM qs_cmp_improve  WHERE delFlag = 0 AND cmpId = qc.cmpId)
+			</if>
+			<!-- product condition -->
+			<if test="cateName != null and cateName !='' ">AND p.cateName=#{cateName}</if>
+			<if test="businessUnitName != null and businessUnitName !='' ">AND p.businessUnitName=#{businessUnitName}</if>
+			<if test="subCateName != null and subCateName !='' ">AND p.subCateName=#{subCateName}</if>
+			<if test="brandName != null and brandName !='' ">AND p.brandName=#{brandName}</if>
+			<if test="prdLineDestName != null and prdLineDestName !='' ">AND p.prdLineDestName=#{prdLineDestName}</if>
+		    <!-- order condition -->
+			<if test="departCity != null and departCity !='' ">AND o.departCity=#{departCity}</if>
+			<if test="prdAdultPriceBgn != null ">AND o.prdAdultPrice &gt;=#{prdAdultPriceBgn}</if>
+			<if test="prdAdultPriceEnd != null ">AND o.prdAdultPrice &lt;=#{prdAdultPriceEnd}</if>
+			<if test="departDateBgn != null  and departDateBgn !='' ">AND o.departDate &gt;=#{departDateBgn}</if>
+			<if test="departDateEnd != null  and departDateEnd !=''">AND o.departDate &lt;=concat(#{departDateEnd},' 23:59:59')</if>
+			<if test="returnDateBgn != null  and returnDateBgn !=''">AND o.returnDate &gt;=#{returnDateBgn}</if>
+			<if test="returnDateEnd != null  and returnDateEnd !=''">AND o.returnDate &lt;=concat(#{returnDateEnd},' 23:59:59')</if>
+			<if test="prdManager != null and prdManager !='' ">AND o.prdManager=#{prdManager}</if>
+			<if test="producter != null and producter !='' ">AND o.producter=#{producter}</if>
+			<if test="salerManagerName != null and salerManagerName !='' ">AND o.salerManagerName=#{salerManagerName}</if>
+			<if test="salerName != null and salerName !='' ">AND o.salerName=#{salerName}</if>
+			<!-- cmp condition -->
+			<if test="dealPerson != null and dealPerson !='' ">AND cmp.dealPerson=#{dealPerson}</if>
+			<if test="indemnifyAmountBgn != null ">AND cmp.indemnifyAmount &gt;=#{indemnifyAmountBgn}</if>
+			<if test="indemnifyAmountEnd != null ">AND cmp.indemnifyAmount &lt;=#{indemnifyAmountEnd}</if>
+			<if test="claimAmountBgn != null ">AND cmp.claimAmount &gt;=#{claimAmountBgn}</if>
+			<if test="claimAmountEnd != null ">AND cmp.claimAmount &lt;=#{claimAmountEnd}</if>
+			<if test="cmpLevel != null ">AND cmp.cmpLevel=#{cmpLevel}</if>
+			<if test="cmpState != null ">AND cmp.state=#{cmpState}</if>
+			<if test="comeFrom != null and comeFrom!=''">AND cmp.comeFrom=#{comeFrom}</if>
+			<if test="cmpAddTimeBgn != null and cmpAddTimeBgn!='' ">AND cmp.addTime &gt;=#{cmpAddTimeBgn}</if>
+			<if test="cmpAddTimeEnd != null and cmpAddTimeEnd!='' ">AND cmp.addTime &lt;=concat(#{cmpAddTimeEnd},' 23:59:59')</if>
+			<if test="cmpFinishTimeBgn != null and cmpFinishTimeBgn !='' ">AND cmp.finishTime &gt;=#{cmpFinishTimeBgn}</if>
+			<if test="cmpFinishTimeEnd != null and cmpFinishTimeEnd !='' ">AND cmp.finishTime &lt;=concat(#{cmpFinishTimeEnd},' 23:59:59')</if>
+			<if test="cancelFlag ==1">AND (cmp.indemnifyAmount-cmp.claimAmount-cmp.qualityToolAmount)>0</if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultMap="qcMap">
+		SELECT qc.*,p.prdName,p.cateName,p.subCateName,p.brandName,p.prdLineDestName,p.businessUnitName,
+		   o.departCity, o.prdAdultPrice,o.adultNum,o.childNum,o.departDate,o.returnDate,o.prdManager,o.producter,o.salerManagerName,o.salerName,
+		   cmp.cmpLevel,cmp.addTime AS cmpAddTime,cmp.finishTime AS cmpFinishTime,cmp.dealPerson,cmp.indemnifyAmount,cmp.claimAmount,
+		   cmp.comeFrom,
+		   <if test="impBillFlag == null or impBillFlag == 0">
+		   	   IF( ISNULL(qci.cmpId), 0, 1)  as isExistImpBill,
+		   </if>
+		   <if test="impBillFlag != null and impBillFlag == 1">
+		   	  1 as isExistImpBill,
+		   </if>
+		   <if test="impBillFlag != null and impBillFlag == 2">
+		   	   0 as isExistImpBill,
+		   </if>
+		   (cmp.indemnifyAmount-cmp.claimAmount-cmp.qualityToolAmount) as companyLose
+		FROM qc_qc_bill qc
+		LEFT JOIN cm_product p ON qc.prdId=p.id 
+		LEFT JOIN cm_order_bill o ON qc.ordId=o.id
+		LEFT JOIN cm_complaint_bill cmp ON qc.cmpId=cmp.id
+		<if test="impBillFlag == null or impBillFlag == 0">
+		   	LEFT JOIN (SELECT DISTINCT cmpId FROM qs_cmp_improve WHERE delFlag = 0) qci ON qci.cmpId = qc.cmpId  
+		</if>
+		<include refid="listSql" />
+		ORDER BY
+		<if test="orderDirect !=0">
+			<if test="orderField !=null">
+				${orderField}
+				<if test="orderDirect==1">
+					desc
+				</if>
+				<if test="orderField == 'prdId'">
+					,groupDate desc
+				</if>
+			</if>
+		</if>
+		<if test="orderDirect==0">
+			importantFlag DESC, id desc
+		</if>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="Integer">
+		SELECT COUNT(1)
+		FROM qc_qc_bill qc
+		LEFT JOIN cm_product p ON qc.prdId=p.id 
+		LEFT JOIN cm_order_bill o ON qc.ordId=o.id
+		LEFT JOIN cm_complaint_bill cmp ON qc.cmpId=cmp.id
+		<include refid="listSql" />
+		
+	</select>
+	
+	<resultMap type="com.tuniu.qms.qc.model.QcBill" id="qcMap">
+		<id column="id" property="id" />
+		<result column="prdId" property="prdId" />
+		<result column="groupDate" property="groupDate" />
+		<result column="ordId" property="ordId" />
+		<result column="cmpId" property="cmpId" />
+		<result column="groupFlag" property="groupFlag" />
+		<result column="qcTypeId" property="qcTypeId" />
+		<result column="qcAffairSummary" property="qcAffairSummary" />
+		<result column="qcAffairDesc" property="qcAffairDesc" />
+		<result column="remark" property="remark" />
+		<result column="lossAmount" property="lossAmount" />
+		<result column="state" property="state" />
+		<result column="qcPersonId" property="qcPersonId" />
+		<result column="qcPerson" property="qcPerson" />
+		<result column="distribTime" property="distribTime" />
+		<result column="finishTime" property="finishTime" />
+		<result column="addPersonId" property="addPersonId" />
+		<result column="addPerson" property="addPerson" />
+		<result column="addTime" property="addTime" />
+		<result column="updatePerson" property="updatePerson" />
+		<result column="updateTime" property="updateTime" />
+		<result column="importantFlag" property="importantFlag" />
+		<result column="verification" property="verification" />
+		<result column="evidence" property="evidence" />
+		<result column="userFlag" property="userFlag" />
+		<result column="delFlag" property="delFlag" />
+		<result column="qcPeriodEndTime" property="qcPeriodEndTime" />
+		<result column="qcPeriodBgnTime" property="qcPeriodBgnTime" />
+		<result column="subject" property="subject" />
+		<result column="reAddrs" property="reAddrs" />
+		<result column="ccAddrs" property="ccAddrs" />
+		<result column="returnFlag" property="returnFlag" />
+		<result column="cancelFlag" property="cancelFlag" />
+		<result column="isExistImpBill" property="isExistImpBill"/>
+		<result column="cancel_time" property="cancelTime"/>
+		<association property="product" javaType="com.tuniu.qms.common.model.Product">
+			<id property="id" column="prdId"/>
+			<result column="prdName" property="prdName" />
+			<result column="cateName" property="cateName" />
+			<result column="subCateName" property="subCateName" />
+			<result column="brandName" property="brandName" />
+			<result column="prdLineDestName" property="prdLineDestName" />
+			<result column="prdTeamId" property="prdTeamId" />
+			<result column="prdManagerId" property="prdManagerId" />
+			<result column="businessUnitName" property="businessUnitName" />
+		</association>
+		<association property="orderBill" javaType="com.tuniu.qms.common.model.OrderBill">
+			<id property="id" column="ordId"/>
+			<result column="departCity" property="departCity" />
+			<result column="prdAdultPrice" property="prdAdultPrice" />
+			<result column="adultNum" property="adultNum" />
+			<result column="childNum" property="childNum" />
+			<result column="departDate" property="departDate" />
+			<result column="returnDate" property="returnDate" />
+			<result column="flightPrice" property="flightPrice" />
+			<result column="personName" property="personName" />	
+			<result column="prdManager" property="prdManager" />
+			<result column="producter" property="producter" />
+			<result column="salerManagerName" property="salerManagerName" />	
+			<result column="salerName" property="salerName" />	
+		</association>
+		<association property="complaintBill"  javaType="com.tuniu.qms.common.model.ComplaintBill">
+			<id property="id" column="cmpId"/>
+			<result column="cmpLevel" property="cmpLevel" />
+			<result column="stateName" property="stateName" />
+			<result column="cmpAddTime" property="addTime" />
+			<result column="cmpFinishTime" property="finishTime" />
+			<result column="dealPerson" property="dealPerson" />
+			<result column="indemnifyAmount" property="indemnifyAmount" />
+			<result column="claimAmount" property="claimAmount" />
+			<result column="qualityToolAmount" property="qualityToolAmount" />
+			<result column="repVoucherAmount" property="repVoucherAmount" />
+			<result column="giftAmount" property="giftAmount" />
+			<result column="companyLose" property="companyLose" />
+			<result column="comeFrom" property="comeFrom" />
+		</association>
+	</resultMap>
+	
+	<update id="addQcRemark" parameterType="com.tuniu.qms.qc.model.QcBill" flushCache="true" statementType="PREPARED">
+		UPDATE qc_qc_bill SET remark=CONCAT(IFNULL(remark,''),'【投诉处理专员备注】：',#{remark}) 
+		WHERE cmpId=#{cmpId}
+	</update>
+	
+	<select id="getComplaintLevel" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcBill">
+	    select qc.*,cmp.cmpLevel  from qc_qc_bill qc
+		INNER JOIN cm_complaint_bill cmp ON qc.cmpId = cmp.id
+		where qc.id =#{qcId}
+	</select>
+	
+	<update id="updateCmpLevel" parameterType="com.tuniu.qms.qc.model.QcBill" >
+	    update cm_complaint_bill set cmpLevel=#{cmpLevel} where id=(select cmpId from qc_qc_bill where id=#{id})
+	</update>
+	
+	<select id="listNormalQcJob" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultMap="qcMap">
+		SELECT qc.id,qc.qcPerson,qc.prdId,qc.groupDate,
+			   p.brandName,p.prdLineDestName,p.businessUnitName,p.prdManager,
+			   cmp.cmpLevel, cmp.addTime AS cmpAddTime,cmp.finishTime AS cmpFinishTime,cmp.indemnifyAmount,cmp.claimAmount,
+			   o.salerManagerName
+		FROM qc_qc_bill qc
+		LEFT JOIN cm_product p ON qc.prdId=p.id 
+		LEFT JOIN cm_order_bill o ON qc.ordId=o.id
+		LEFT JOIN cm_complaint_bill cmp ON qc.cmpId=cmp.id
+		
+		<where>qc.state=3 AND qc.groupFlag=1
+			<if test="qcPersonId != null">AND qc.qcPersonId=#{qcPersonId}</if>
+			<if test="qcJobType == 'qcPoint'">AND qc.userFlag = 1</if>
+			<if test="qcJobType == 'companyPay'">AND (cmp.indemnifyAmount-cmp.claimAmount-cmp.qualityToolAmount)>0</if>
+			<if test="qcJobType == 'agencyPay'">AND cmp.claimAmount>0</if>
+			<if test="qcJobType == 'oneTwoLevelCmp'">AND cmp.cmpLevel IN (1,2)</if>
+			<if test="qcJobType == 'repVoucherGift'">AND (cmp.repVoucherAmount+cmp.giftAmount)>0</if>
+			AND qc.delFlag=0
+		</where>
+	</select>
+	
+	<select id="listWaitDistrib" resultMap="qcMap">
+		SELECT qc.id, qc.cmpId, prd.prdTeamId, prd.prdManagerId,   
+			IFNULL(cmp.cmpLevel, 0) AS cmpLevel,
+		  	IFNULL(cmp.indemnifyAmount, 0) AS indemnifyAmount, 
+		 	IFNULL(cmp.claimAmount, 0) AS claimAmount,
+		  	IFNULL(cmp.qualityToolAmount, 0) AS qualityToolAmount,
+		  	IFNULL(cmp.repVoucherAmount, 0) AS repVoucherAmount,
+		  	IFNULL(cmp.giftAmount, 0) AS giftAmount
+		FROM qc_qc_bill qc 
+		LEFT JOIN cm_complaint_bill cmp ON qc.cmpId=cmp.id AND cmp.delFlag=0
+		LEFT JOIN cm_product prd ON qc.prdId=prd.id
+		WHERE qc.state=2 
+			AND qc.groupFlag=1 
+			AND qc.ordId>0
+		ORDER BY qc.id DESC
+		limit 30
+	</select>
+	
+	<select id="listWaitDistribNonOrd" resultMap="qcMap">
+		SELECT qc.id, qc.cmpId, prd.prdTeamId, 
+			prd.prdManagerId,
+			IFNULL(cmp.cmpLevel, 0) AS cmpLevel,
+		  	IFNULL(cmp.indemnifyAmount, 0) AS indemnifyAmount, 
+		 	IFNULL(cmp.claimAmount, 0) AS claimAmount,
+		  	IFNULL(cmp.qualityToolAmount, 0) AS qualityToolAmount,
+		  	IFNULL(cmp.repVoucherAmount, 0) AS repVoucherAmount,
+		  	IFNULL(cmp.giftAmount, 0) AS giftAmount
+		FROM qc_qc_bill qc 
+		LEFT JOIN cm_complaint_bill cmp ON qc.cmpId=cmp.id AND cmp.delFlag=0 
+		LEFT JOIN cm_product prd ON qc.prdId=prd.id
+		WHERE qc.state=2 
+			AND qc.groupFlag=1 
+			AND qc.ordId=0
+		ORDER BY qc.id DESC 
+		LIMIT 10
+	</select>
+	
+	<select id="getQcBill" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="com.tuniu.qms.qc.model.QcBill">
+	
+	   select * from qc_qc_bill where cmpId = #{cmpId} and groupFlag = 1 and delFlag = 0 limit 1
+	</select>
+	
+	
+	<select id="getExpirationList" parameterType="java.util.Map" resultMap="qcMap">
+	    SELECT qc.id,qc.distribTime,cmp.id AS cmpId,cmp.finishTime AS cmpFinishTime 
+		from qc_qc_bill qc 
+	    inner join cm_complaint_bill cmp on qc.cmpId =cmp.id and cmp.delFlag = 0 and cmp.state = #{state}
+	    where qc.qcPeriodEndTime = '0000-00-00 00:00:00' 
+	    	and qc.qcPeriodBgnTime = '0000-00-00 00:00:00'
+	    	and qc.delFlag =0 
+	    	and qc.qcPersonId >0 
+	</select>
+	
+	<!-- 无投诉质检单中 没有质检期的单子 -->
+	<select id="getNoCmpExpirationList" resultMap="qcMap">
+		SELECT qc.id,qc.distribTime 
+		FROM qc_qc_bill qc 
+		WHERE qc.qcPeriodEndTime = '0000-00-00 00:00:00' 
+			 AND qc.qcPeriodBgnTime = '0000-00-00 00:00:00'
+			 AND  qc.delFlag = 0 
+			 AND  qc.qcPersonId > 0
+			 AND qc.cmpId = 0 AND qc.groupFlag = 1
+	</select>
+	
+	<select id="getOrderIsExist" parameterType="Map" resultType="int">
+	 
+	  select count(1) from qc_qc_bill where ordId =#{orderId} and delFlag = 0
+	
+	</select>
+	
+	<select id="listQcId" resultType="Integer">
+	 
+	     SELECT distinct(a.id) as id FROM  qc_qc_bill a INNER JOIN qc_quality_problem b ON a.id =b.qcId  and b.delFlag= 0
+	     INNER JOIN qc_inner_resp_bill c ON c.qpId =b.id and c.delFlag =0 where a.delFlag =0  
+	      and a.state = 4 and a.groupFlag =1 and a.finishTime >='2016-01-01 00:00:00'
+	</select>
+	
+	<select id="listQcAndQuality" resultType="Integer" >
+	
+	
+	   SELECT distinct(a.id) as id FROM  qc_qc_bill a INNER JOIN qc_quality_problem b ON a.id =b.qcId  and b.delFlag= 0
+	     
+	    where a.delFlag = 0 and a.state =4 and a.groupFlag =1 and a.finishTime >='2016-01-01 00:00:00'
+	</select>
+	
+	<select id="getGuideDetail" parameterType="com.tuniu.qms.qc.dto.QualityProblemDetailDto" resultType="com.tuniu.qms.qc.model.QualityProblemDetail">
+	
+	     select * from (
+	            SELECT  a.qcId,
+	              		DATE_FORMAT(a.groupDate,'%Y-%m-%d') as groupDate,
+			            a.ordId,
+			            a.cmpId,
+			            DATE_FORMAT(a.qcFinishTime,'%Y-%m-%d %H:%i:%s') as qcFinishTime,
+			            a.cmpLevel,
+			            DATE_FORMAT( a.cmpTime,'%Y-%m-%d %H:%i:%s') as cmpTime,
+			            b.description,
+		                a.guideId,
+		                b.problemId,
+		                b.problemType,
+		                b.touchRedFlag
+					   FROM (SELECT qc.id AS qcId,qc.groupDate,qc.ordId,qc.cmpId,qc.finishTime AS qcFinishTime,
+					   comp.cmpLevel,comp.addTime AS cmpTime ,cm.guideId
+					   FROM  qc_qc_bill qc INNER JOIN cm_order_bill cm ON qc.ordId = cm.id AND cm.guideId = #{guideId}
+					   LEFT JOIN cm_complaint_bill comp ON qc.cmpId = comp.id WHERE qc.groupFlag=1
+					 ) a  INNER  JOIN (
+					  SELECT qc.qcId,qc.description,qc.id AS problemId,qpt.name AS problemType,qpt.touchRedFlag FROM qc_quality_problem qc 
+					  INNER JOIN qc_quality_problem_type qpt ON qc.qptId = qpt.id AND qpt.cmpQcUse =1 AND qpt.delFlag =0 
+					  AND qpt.pid =(SELECT id FROM qc_quality_problem_type WHERE NAME='导游/领队问题' AND delFlag =0 )
+					  WHERE qc.delFlag =0 ) b ON a.qcId =b.qcId
+			  ) t order by t.guideId,t.qcId 
+			   limit #{start},#{limit}
+	</select>
+	
+		<select id="getGuideCount" parameterType="com.tuniu.qms.qc.dto.QualityProblemDetailDto" resultType="int">
+	
+	     select count(1) from (
+	            SELECT  a.qcId,
+	              		DATE_FORMAT(a.groupDate,'%Y-%m-%d') as groupDate,
+			            a.ordId,
+			            a.cmpId,
+			            DATE_FORMAT(a.qcFinishTime,'%Y-%m-%d %H:%i:%s') as qcFinishTime,
+			            a.cmpLevel,
+			            DATE_FORMAT( a.cmpTime,'%Y-%m-%d %H:%i:%s') as cmpTime,
+			            b.description,
+		                a.guideId,
+		                b.problemId,
+		                b.problemType,
+		                b.touchRedFlag
+					   FROM (SELECT qc.id AS qcId,qc.groupDate,qc.ordId,qc.cmpId,qc.finishTime AS qcFinishTime,
+					   comp.cmpLevel,comp.addTime AS cmpTime ,cm.guideId
+					   FROM  qc_qc_bill qc INNER JOIN cm_order_bill cm ON qc.ordId = cm.id AND cm.guideId = #{guideId}
+					   LEFT JOIN cm_complaint_bill comp ON qc.cmpId = comp.id WHERE qc.groupFlag=1
+					 ) a INNER  JOIN (
+					  SELECT qc.qcId,qc.description,qc.id AS problemId,qpt.name AS problemType,qpt.touchRedFlag FROM qc_quality_problem qc 
+					  INNER JOIN qc_quality_problem_type qpt ON qc.qptId = qpt.id AND qpt.cmpQcUse =1 AND qpt.delFlag =0 
+					  AND qpt.pid =(SELECT id FROM qc_quality_problem_type WHERE NAME='导游/领队问题' AND delFlag =0 )
+					  WHERE qc.delFlag =0 ) b ON a.qcId =b.qcId
+			  ) t 
+	</select>
+	
+	<select id="getGuideSateCount" parameterType="com.tuniu.qms.qc.dto.QualityProblemDetailDto" resultType="java.util.Map">
+	    
+				      SELECT  COUNT(DISTINCT( a.ordId) )AS orderNum,
+				              COUNT(b.problemId) AS problemNum,
+				              IFNULL(SUM(CASE WHEN b.touchRedFlag=1 THEN 1 ELSE 0 END ),0) AS touchRedNum
+							   FROM 
+							   (SELECT qc.id AS qcId,qc.ordId,cm.guideId
+							   FROM  qc_qc_bill qc INNER JOIN cm_order_bill cm ON qc.ordId = cm.id AND cm.guideId = #{guideId}
+							   WHERE qc.groupFlag=1 
+							   <if test="qcFinishTimeBgn!=''"> AND qc.finishTime &gt;= #{qcFinishTimeBgn}</if> 
+							   <if test="qcFinishTimeEnd!=''"> AND qc.finishTime &lt;= #{qcFinishTimeEnd}</if>
+							 ) a INNER  JOIN (
+							  SELECT qc.qcId,qc.id AS problemId,qpt.name AS problemType,qpt.touchRedFlag FROM qc_quality_problem qc 
+							  INNER JOIN qc_quality_problem_type qpt ON qc.qptId = qpt.id AND qpt.cmpQcUse =1 AND qpt.delFlag =0 
+							  AND qpt.pid =(SELECT id FROM qc_quality_problem_type WHERE NAME='导游/领队问题' AND delFlag =0 )
+							  WHERE qc.delFlag =0 ) b ON a.qcId =b.qcId
+
+	</select>
+	
+	<select id="getAirAndTraffic" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="com.tuniu.qms.qc.model.CmpAndInnerQcBill">
+		SELECT tt.qcId,
+			  tt.groupFlag,
+			  tt.finishTime,
+			  tt.qcPerson,                
+			  tt.qcAffairSummary,
+			  tt.orderId,
+			  tt.prdId,
+			  tt.description,
+			  tt.impAdvice,
+			  tt.respPersonName,
+			  tt.depId ,
+			  qpt.name  AS qptName,
+			  qpt.id  AS qptId,
+			  qb.depId AS punishDepId,
+			  IFNULL(qb.scorePunish,0) AS scorePunish,
+			  IFNULL(qb.economicPunish,0) AS economicPunish
+		FROM(	
+			(SELECT qc.id  AS qcId,
+			         qc.groupFlag,
+			  	qc.finishTime,
+			 	qc.qcPerson,                
+			         qc.qcAffairSummary,
+			         qc.ordId AS orderId,
+			         qc.prdId,
+				resp.respPersonName,
+				resp.depId ,
+			        qf.description,
+			         qf.impAdvice,
+			         qf.qptId AS qptId
+			FROM  qc_qc_bill qc 
+			INNER JOIN qc_quality_problem qf ON qc.id = qf.qcId  AND qf.delFlag = 0
+			INNER JOIN qc_inner_resp_bill resp  ON resp.qpId = qf.id  AND resp.delFlag = 0
+			WHERE qc.delFlag = 0
+				    AND qc.groupFlag = #{groupFlag}
+				    AND qc.state= #{state}
+				    AND qc.finishTime &gt;=#{finishTimeBgn}
+				    AND qc.finishTime &lt;=CONCAT(#{finishTimeEnd},' 23:59:59') )
+		UNION ALL 
+			(SELECT qc.id  AS qcId,
+			         qc.groupFlag,
+			  	qc.finishTime,
+			 	qc.qcPerson,                
+			         qc.qcAffairSummary,
+			         qc.ordId AS orderId,
+			         qc.prdId,
+				resp.respPersonName,
+				resp.depId ,
+			        qf.description,
+			        qf.impAdvice,
+			        qf.qptId AS qptId
+			 FROM  qc_qc_bill qc 
+			INNER JOIN qc_quality_problem qf ON qc.id = qf.qcId  AND qf.delFlag = 0
+			INNER JOIN qc_outer_resp_bill resp  ON resp.qpId = qf.id  AND resp.delFlag = 0
+			WHERE qc.delFlag = 0
+				    AND qc.groupFlag = #{groupFlag}
+				    AND qc.state= #{state}
+				    AND qc.finishTime &gt;=#{finishTimeBgn}
+				    AND qc.finishTime &lt;=CONCAT(#{finishTimeEnd},' 23:59:59') )
+		)tt
+		LEFT JOIN qc_quality_problem_type qpt  ON tt.qptId = qpt.id  AND qpt.delFlag = 0
+		LEFT JOIN qc_inner_punish_bill qb  ON tt.respPersonName = qb.punishPersonName AND qb.qcId = tt.qcId
+		ORDER BY tt.qcId
+	</select>
+	
+	<select id="getById" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcBill">
+	
+	  select * from qc_qc_bill where id =#{qcId}
+	</select>
+	
+	<!-- 获得待分配或质检中的投诉质检单 -->
+	<select id="getComplaintQcBill" parameterType="Map" resultType="com.tuniu.qms.qc.model.QcBill">
+		SELECT  id , cmpId
+		FROM qc_qc_bill
+		WHERE groupFlag = 1
+			AND state IN (2, 3)
+			AND delFlag = 0
+		LIMIT #{start}, #{limit}
+	</select>
+	
+	<!-- 撤销 对应的投诉为无赔偿、非低满意度、无申请质检的质检单 -->
+	<update id="cancelQcBill" parameterType="Integer">
+		UPDATE qc_qc_bill 
+		SET state = 5 , 
+			remark = '无赔偿、非低满意度、无申请质检的质检单，转持续改进跟进',
+			updateTime = CURRENT_TIMESTAMP
+		WHERE id = #{id}
+	</update>
+
+	<!-- 无订单投诉   start-->
+	<sql id="listSqlNoCmp">
+		<where>
+			qc.delFlag=0 
+			AND qc.cmpId = 0
+			<!-- qcbill condition -->
+			<if test="id != null and id!=''">AND qc.id=#{id}</if>
+			<if test="state != null and state != -1">AND qc.state=#{state}</if>
+			<if test="prdId != null">AND qc.prdId=#{prdId}</if>
+			<if test="orderId != null">AND qc.ordId=#{orderId}</if>
+			<if test="qcPerson != null and qcPerson !='' ">AND qc.qcPerson=#{qcPerson}</if>
+			<if test="lossAmountBgn != null">AND qc.lossAmount &gt;= #{lossAmountBgn}</if>
+			<if test="lossAmountEnd != null">AND qc.lossAmount &lt;= #{lossAmountEnd}</if>
+			<if test="addTimeFrom != null and addTimeFrom !=''" >AND qc.addTime &gt;=#{addTimeFrom}</if>
+			<if test="addTimeTo != null and addTimeTo !='' ">AND qc.addTime &lt;= concat(#{addTimeTo},' 23:59:59')</if>
+			<if test="distribTimeBgn != null and distribTimeBgn !=''" >AND qc.distribTime &gt;= #{distribTimeBgn}</if>
+			<if test="distribTimeEnd != null and distribTimeEnd !='' ">AND qc.distribTime &lt;=concat(#{distribTimeEnd},' 23:59:59')</if>
+			<if test="finishTimeBgn != null and finishTimeBgn !='' ">AND qc.finishTime &gt;= #{finishTimeBgn}</if>
+			<if test="finishTimeEnd != null and finishTimeEnd !='' ">AND qc.finishTime &lt;= concat(#{finishTimeEnd},' 23:59:59')</if>
+			<if test="qcCancelTimeBgn != null and qcCancelTimeBgn !='' ">AND qc.cancel_time &gt;= #{qcCancelTimeBgn}</if>
+			<if test="qcCancelTimeEnd != null and qcCancelTimeEnd !='' ">AND qc.cancel_time &lt;= concat(#{qcCancelTimeEnd},' 23:59:59')</if>
+			<if test="importantFlag != null "> AND qc.importantFlag = #{importantFlag}</if>
+			AND qc.groupFlag=1
+			<!-- product condition -->
+			<if test="cateName != null and cateName !='' ">AND p.cateName=#{cateName}</if>
+			<if test="businessUnitName != null and businessUnitName !='' ">AND p.businessUnitName=#{businessUnitName}</if>
+			<if test="subCateName != null and subCateName !='' ">AND p.subCateName=#{subCateName}</if>
+			<if test="brandName != null and brandName !='' ">AND p.brandName=#{brandName}</if>
+			<if test="prdLineDestName != null and prdLineDestName !='' ">AND p.prdLineDestName=#{prdLineDestName}</if>
+		    <!-- order condition -->
+			<if test="departCity != null and departCity !='' ">AND o.departCity=#{departCity}</if>
+			<if test="prdAdultPriceBgn != null ">AND o.prdAdultPrice &gt;=#{prdAdultPriceBgn}</if>
+			<if test="prdAdultPriceEnd != null ">AND o.prdAdultPrice &lt;=#{prdAdultPriceEnd}</if>
+			<if test="departDateBgn != null  and departDateBgn !='' ">AND o.departDate &gt;=#{departDateBgn}</if>
+			<if test="departDateEnd != null  and departDateEnd !=''">AND o.departDate &lt;=concat(#{departDateEnd},' 23:59:59')</if>
+			<if test="returnDateBgn != null  and returnDateBgn !=''">AND o.returnDate &gt;=#{returnDateBgn}</if>
+			<if test="returnDateEnd != null  and returnDateEnd !=''">AND o.returnDate &lt;=concat(#{returnDateEnd},' 23:59:59')</if>
+			<if test="prdManager != null and prdManager !='' ">AND o.prdManager=#{prdManager}</if>
+			<if test="producter != null and producter !='' ">AND o.producter=#{producter}</if>
+			<if test="salerManagerName != null and salerManagerName !='' ">AND o.salerManagerName=#{salerManagerName}</if>
+			<if test="salerName != null and salerName !='' ">AND o.salerName=#{salerName}</if>
+		</where>
+	</sql>
+	
+	<select id="listNoCmp" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultMap="qcMap">
+		SELECT qc.*,p.prdName,p.cateName,p.subCateName,p.brandName,p.prdLineDestName,p.businessUnitName,
+			   o.departCity, o.prdAdultPrice,o.adultNum,o.childNum,o.departDate,o.returnDate,o.prdManager,o.producter,o.salerManagerName,o.salerName
+		FROM qc_qc_bill qc
+		LEFT JOIN cm_product p ON qc.prdId=p.id 
+		LEFT JOIN cm_order_bill o ON qc.ordId=o.id
+		<include refid="listSqlNoCmp" />
+		ORDER BY
+		<if test="orderDirect !=0">
+			<if test="orderField !=null">
+				${orderField}
+				<if test="orderDirect==1">
+					desc
+				</if>
+				<if test="orderField == 'prdId'">
+					,groupDate desc
+				</if>
+			</if>
+		</if>
+		<if test="orderDirect==0">
+			importantFlag DESC, id desc
+		</if>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="countNoCmp" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="Integer">
+		SELECT COUNT(1)
+		FROM qc_qc_bill qc
+		LEFT JOIN cm_product p ON qc.prdId=p.id 
+		LEFT JOIN cm_order_bill o ON qc.ordId=o.id
+		<include refid="listSqlNoCmp" />
+	</select>
+	
+	<!-- 无订单投诉   end-->
+	
+	<!-- 修改质检等级 -->
+	<update id="updateQcLevel" parameterType="com.tuniu.qms.qc.dto.QcBillDto"> 
+		update qc_qc_bill
+		set importantFlag = #{importantFlag}
+		where id in 
+			<foreach collection="qcBillIds" item="item" index="index" open="(" close=")" separator=",">
+			 	${item}
+			</foreach>
+	</update>
+	
+	<select id="getQcLevelsById" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="Integer">
+		select count(1) 
+		from qc_qc_bill 
+		where id in 
+			<foreach collection="qcBillIds" item="item" index="index" open="(" close=")" separator=",">
+			 	${item}
+			</foreach>
+			and importantFlag = 2
+	</select>
+</mapper>

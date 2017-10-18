@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.satisfaction.dao.sqlmap.imap.ISignSatisfactionMsgReplyMap">
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		tel_no,
+		
+		<if test="e.msg!= null">msg,</if>
+
+		create_time,
+		
+		update_satis_id
+		
+		) values (
+
+		#{e.telNo},
+
+		<if test="e.msg!= null">#{e.msg},</if>
+
+		#{e.createTime},
+		
+		#{e.updateSatisId}
+
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="telNo" column="tel_no" />
+
+		<result property="msg" column="msg" />
+
+		<result property="createTime" column="create_time" />
+
+		<result property="updateSatisId" column="update_satis_id" />
+
+	</resultMap>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.satisfaction.entity.SignSatisfactionMsgReplyEntity">
+
+		<result property="telNo" column="tel_no" />
+
+		<result property="msg" column="msg" />
+
+		<result property="createTime" column="create_time" />
+
+		<result property="updateSatisId" column="update_satis_id" />
+		
+	</resultMap>
+	
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		
+	</sql>
+	
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+	
+	<select id="fixSatisfactionSocre" >
+		update ct_sign_satisfaction
+		set face_sale_satisfaction = #{faceSaleSatisfaction} 
+		where id = #{id} 
+	</select>
+	
+</mapper>

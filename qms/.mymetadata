@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="qms"
+  id="myeclipse.1382805464463"
+  context-root="/qms"
+  j2ee-spec="6.0"
+  archive="qms.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+

@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IAttachMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			del_flag = 1
+			<if test="tableName!=null">
+				and table_name=#{tableName}
+			</if>
+			<if test="connectionId!=null">
+				and connection_id=#{connectionId}
+			</if>
+			<if test="complaintId!=null">
+				and complaint_id=#{complaintId}
+			</if>
+			<if test="id!=null">
+				and id=#{id}
+			</if>
+			<if test="tableName=='ct_qc'">
+				order by add_time desc
+			</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	
+	<!-- and table_name != 'improveBill' 为了区分改进报告的附件 -->
+	<select id="fetchQcList" parameterType="Map" resultMap="listResultEntity">
+	 
+	  select * from ct_qc_attach where 
+	       del_flag = 1
+	       <if test="tableName == null">
+				and table_name != 'improveBill'
+			</if>
+	  		<if test="tableName!=null">
+				and table_name=#{tableName}
+			</if>
+			<if test="connectionId!=null">
+				and connection_id=#{connectionId}
+			</if>
+			<if test="complaintId!=null">
+				and complaint_id=#{complaintId}
+			</if>
+			<if test="id!=null">
+				and id=#{id}
+			</if>
+			<if test="tableName=='ct_qc'">
+				order by add_time desc
+			</if>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</select>
+	
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.AttachEntity">  
+		
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="name" column="name" />
+		
+		<result property="connectionId" column="connection_id" />
+		
+		<result property="path" column="path" />
+		
+		<result property="updateTime" column="update_time" />
+		
+		<result property="tableName" column="table_name" />
+		
+		<result property="complaintId" column="complaint_id" />
+		
+		<result property="addPerson" column="add_person" />
+		
+		<result property="addTime" column="add_time" />
+		
+		<result property="descript" column="descript" />
+		
+		<result property="type" column="type" />
+		
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="delFlag" column="del_flag"/>
+		
+		<result property="name" column="name"/>
+		
+		<result property="connectionId" column="connection_id"/>
+		
+		<result property="path" column="path"/>
+		
+		<result property="updateTime" column="update_time"/>
+		
+		<result property="tableName" column="table_name"/>
+		
+		<result property="complaintId" column="complaint_id" />
+		
+		<result property="addPerson" column="add_person" />
+		
+		<result property="addTime" column="add_time"/>
+		
+		<result property="descript" column="descript"/>
+		
+		<result property="type" column="type"/>
+		
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<select id="getQcAttach" parameterType="Map" resultMap="listResultEntity">
+	
+	   select * from ct_qc_attach where id=#{id} limit 1
+	 
+	</select>
+	
+	<update id="updateQcAttach" parameterType="com.tuniu.gt.complaint.entity.AttachEntity">
+	
+	 update ct_qc_attach 
+	 <set>
+	 	       <if test="delFlag != null">del_flag=#{delFlag},</if>
+			
+				<if test="name != null">name=#{name},</if>
+			
+				<if test="connectionId != null">connection_id=#{connectionId},</if>
+			
+				<if test="path != null">path=#{path},</if>
+			
+				<if test="tableName != null">table_name=#{tableName},</if>
+				
+				<if test="complaintId != null">complaint_id=#{complaintId},</if>
+			
+				<if test="addPerson != null">add_person=#{addPerson},</if>
+			
+				<if test="addTime != null">add_time=#{addTime},</if>
+			
+				<if test="descript != null">descript=#{descript},</if>
+			
+				<if test="type != null">type=#{type},</if>
+				
+				update_time=CURRENT_TIMESTAMP
+	   </set>
+	 where id = #{id}
+	</update>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  del_flag,
+		 
+		  name,
+		 
+		  connection_id,
+		 
+		  complaint_id,
+		 
+		  path,
+		  
+		  update_time,
+		 
+		  table_name,
+		  
+		  add_person,
+		 
+		  add_time,
+		 
+		  descript,
+		 
+		  type
+		 
+		) values  (
+		
+		  #{e.delFlag}, 
+		 
+		  #{e.name}, 
+		 
+		  #{e.connectionId}, 
+		  
+		  #{e.complaintId}, 
+		 
+		  #{e.path}, 
+		 
+		  #{e.updateTime}, 
+		 
+		  #{e.tableName}, 
+		  
+		  #{e.addPerson},
+		 
+		  #{e.addTime}, 
+		 
+		  #{e.descript}, 
+		 
+		  #{e.type} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	
+	<insert id="insertQcAttach" parameterType="com.tuniu.gt.complaint.entity.AttachEntity" useGeneratedKeys="true" keyProperty="id" flushCache="true" statementType="PREPARED" >
+	   
+	   insert into ct_qc_attach (
+	   
+	       	del_flag,
+			 
+			   name,
+			 
+			  connection_id,
+			 
+			  complaint_id,
+			 
+			  path,
+			  
+			  update_time,
+			 
+			  table_name,
+			  
+			  add_person,
+			 
+			  add_time,
+			 
+			  descript,
+			 
+			  type
+		  
+	   )values(
+	   
+	      #{delFlag}, 
+		 
+		  #{name}, 
+		 
+		  #{connectionId}, 
+		  
+		  #{complaintId}, 
+		 
+		  #{path}, 
+		 
+		  #{updateTime}, 
+		 
+		  #{tableName}, 
+		  
+		  #{addPerson},
+		 
+		  #{addTime}, 
+		 
+		  #{descript}, 
+		 
+		  #{type} 
+		  
+	   )
+	
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			
+				<if test="e.name != null">name=#{e.name},</if>
+			
+				<if test="e.connectionId != null">connection_id=#{e.connectionId},</if>
+			
+				<if test="e.path != null">path=#{e.path},</if>
+			
+				<if test="e.updateTime != null">update_time=#{e.updateTime},</if>
+			
+				<if test="e.tableName != null">table_name=#{e.tableName},</if>
+				
+				<if test="e.complaintId != null">complaint_id=#{e.complaintId},</if>
+			
+				<if test="e.addPerson != null">add_person=#{e.addPerson},</if>
+			
+				<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			
+				<if test="e.descript != null">descript=#{e.descript},</if>
+			
+				<if test="e.type != null">type=#{e.type}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	
+	<delete id="delete">
+		update ct_attach set del_flag =0  ,
+		     update_time=CURRENT_TIMESTAMP
+		 where id=#{id}
+	</delete>
+	
+	<!-- 删除改进报告下的附件 -->
+	<delete id="deleteImproveAttach" parameterType="Map">
+		DELETE FROM ct_qc_attach 
+		WHERE table_name = #{tableName} AND complaint_id = #{complaintId}
+	</delete>
+</mapper>

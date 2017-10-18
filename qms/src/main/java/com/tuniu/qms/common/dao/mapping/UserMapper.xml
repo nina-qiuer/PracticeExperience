@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.UserMapper">
+	<insert id="add" parameterType="com.tuniu.qms.common.model.User">
+		INSERT INTO uc_user (
+			<if test="id != null">id,</if>
+			<if test="userName != null">userName,</if>
+			<if test="realName != null">realName,</if>
+			<if test="email != null">email,</if>
+			<if test="extension != null">extension,</if>
+			<if test="workNum != null">workNum,</if>
+			<if test="depId != null">depId,</if>
+			<if test="positionId != null">positionId,</if>
+			<if test="jobId != null">jobId,</if>
+			<if test="addTime != null">addTime,</if>
+			delFlag
+		) VALUES (
+			<if test="id != null">#{id},</if>
+			<if test="userName != null">#{userName},</if>
+			<if test="realName != null">#{realName},</if>
+			<if test="email != null">#{email},</if>
+			<if test="extension != null">#{extension},</if>
+			<if test="workNum != null">#{workNum},</if>
+			<if test="depId != null">#{depId},</if>
+			<if test="positionId != null">#{positionId},</if>
+			<if test="jobId != null">#{jobId},</if>
+			<if test="addTime != null">#{addTime},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM uc_user WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.User" flushCache="true" statementType="PREPARED">
+		UPDATE uc_user 
+		<set>
+			<if test="userName != null">userName=#{userName},</if>
+			<if test="realName != null">realName=#{realName},</if>
+			<if test="email != null">email=#{email},</if>
+			<if test="extension != null">extension=#{extension},</if>
+			<if test="workNum != null">workNum=#{workNum},</if>
+			<if test="depId != null">depId=#{depId},</if>
+			<if test="positionId != null">positionId=#{positionId},</if>
+			<if test="jobId != null">jobId=#{jobId},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.common.model.User">
+		SELECT * FROM uc_user WHERE id=#{id}
+	</select>
+	
+	<select id="getUserByUserName" parameterType="String" resultMap="userMap">
+		SELECT t1.id AS userId, t1.*, t2.id AS roleId, t2.name AS roleName, t2.type, t4.id AS resourceId, t4.* 
+		FROM uc_user t1 LEFT JOIN cm_role t2 ON t1.roleId=t2.id
+			LEFT JOIN cm_role_resource_rel t3 ON t2.id=t3.roleId
+			LEFT JOIN cm_resource t4 ON t3.resourceId=t4.id
+		WHERE t1.userName=#{userName} AND t1.delFlag=0
+	</select>
+	
+	<select id="getUserByRealName" parameterType="String" resultType="com.tuniu.qms.common.model.User">
+		SELECT  u.id,
+		        u.realName,
+		        u.email,
+		        u.extension,
+				u.depId AS depId,
+				dep.name AS depName,
+				job.name AS jobName,
+				u.jobId  AS jobId 
+		FROM uc_user u LEFT JOIN uc_department dep ON u.depId=dep.id
+		LEFT JOIN uc_job job ON u.jobId= job.id
+		WHERE u.realName=#{realName} 
+		limit 1
+	</select>
+	
+	<select id="getUsersByDepId" parameterType="Integer" resultMap="userMap">
+		SELECT t3.id AS userId, t3.* FROM (
+			SELECT id FROM uc_department_job WHERE depId=#{depId} AND delFlag=0
+		)t1 
+		INNER JOIN uc_user_depjob t2 ON t1.id = t2.depjobId AND t2.delFlag =0
+		INNER JOIN  uc_user t3 ON t3.id = t2.userId AND t3.delFlag =0
+	</select>
+	
+	<select id="getUsersByJobName" parameterType="String" resultMap="userMap">
+	    SELECT t4.id AS userId, t4.*   FROM 
+		(
+		 SELECT id FROM uc_job WHERE NAME=#{jobName} AND delFlag=0
+		)t1 
+		INNER JOIN uc_department_job t2 ON t2.jobId=t1.id AND t2.delFlag =0
+		INNER JOIN uc_user_depjob t3 ON t3.depjobId =t2.id AND t3.delFlag =0
+		INNER JOIN uc_user t4 ON t4.id =t3.userId AND t4.delFlag =0
+		
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.UserDto" resultType="com.tuniu.qms.common.model.User">
+		SELECT  id,userName,realName,email,depId,workNum,jobId,positionId,roleId,extension FROM uc_user 
+		<where>1=1
+			<if test="roleId != null">AND roleId=#{roleId}</if>
+			<if test="workNum != null and workNum!=''">AND workNum=#{workNum}</if>
+			<if test="realName != null and realName!=''">AND realName=#{realName}</if>
+			AND delFlag = 0
+		</where>
+	</select>
+	
+	
+	<select id="listUnUse" parameterType="com.tuniu.qms.common.dto.UserDto" resultType="com.tuniu.qms.common.model.User">
+		SELECT id, userName,realName,email,depId,workNum,jobId,positionId,roleId,extension FROM uc_user 
+		where delFlag !=0
+	</select>
+	
+	<select id="countUserRole" parameterType="com.tuniu.qms.common.dto.UserDto" resultType="Integer">
+		SELECT count(1) FROM uc_user t1 INNER JOIN cm_role t2 ON t1.roleId=t2.id
+		WHERE t1.delFlag=0 AND t2.delFlag=0
+		<if test="roleId!=null and roleId!=''">AND t2.id =#{roleId}</if>
+		<if test="roleType!=null and roleType!=''">AND t2.type =#{roleType}</if>
+		<if test="realName!=null and realName!=''">AND t1.realName =#{realName}</if>
+		<if test="workNum!=null and workNum!=''">AND t1.workNum =#{workNum} </if>
+	</select>
+	
+	<select id="listUserRole" parameterType="com.tuniu.qms.common.dto.UserDto" resultMap="userMap">
+		SELECT t1.id AS userId, t1.*, t2.id AS roleId, t2.name AS roleName,t2.*
+		FROM uc_user t1 INNER JOIN cm_role t2 ON t1.roleId=t2.id
+		WHERE t1.delFlag=0 AND t2.delFlag=0
+		<if test="roleId!=null and roleId!=''">AND t2.id =#{roleId}</if>
+		<if test="roleType!=null and roleType!=''">AND t2.type =#{roleType}</if>
+		<if test="realName!=null and realName!=''">AND t1.realName =#{realName}</if>
+		<if test="workNum!=null and workNum!=''">AND t1.workNum =#{workNum} </if>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<resultMap type="com.tuniu.qms.common.model.User" id="userMap">
+		<id column="userId" property="id" />
+		<result column="userName" property="userName" />
+		<result column="realName" property="realName" />
+		<result column="email" property="email" />
+		<result column="extension" property="extension" />
+		<result column="workNum" property="workNum" />
+		<result column="depId" property="depId" />
+		<result column="positionId" property="positionId" />
+		<result column="jobId" property="jobId" />
+		<result column="addTime" property="addTime" />
+		<result column="updateTime" property="updateTime" />
+		<result column="delFlag" property="delFlag" />
+		<association property="role" javaType="com.tuniu.qms.common.model.Role">
+			<id column="roleId" property="id" />
+			<result column="roleName" property="name" />
+			<result column="type" property="type" />
+			<collection property="resourceList" javaType="ArrayList" ofType="com.tuniu.qms.common.model.Resource">
+				<id column="resourceId" property="id" />
+				<result column="pid" property="pid" />
+				<result column="name" property="name" />
+				<result column="widgetCode" property="widgetCode" />
+				<result column="url" property="url" />
+				<result column="menuFlag" property="menuFlag" />
+				<result column="operType" property="operType" />
+			</collection>
+		</association>
+	</resultMap>
+	
+	<insert id="addUserDepjob" parameterType="com.tuniu.qms.common.dto.UserDepjobDto">
+		INSERT INTO uc_user_depjob (
+			<if test="id != null">id,</if>
+			<if test="userId != null">userId,</if>
+			<if test="depjobId != null">depjobId,</if>
+			<if test="corType != null">corType,</if>
+			<if test="addTime != null">addTime,</if>
+			delFlag
+		) VALUES (
+			<if test="id != null">#{id},</if>
+			<if test="userId != null">#{userId},</if>
+			<if test="depjobId != null">#{depjobId},</if>
+			<if test="corType != null">#{corType},</if>
+			<if test="addTime != null">#{addTime},</if>
+			0
+		)
+	</insert>
+	
+	<update id="updateUserDepjob" parameterType="com.tuniu.qms.common.dto.UserDepjobDto" flushCache="true" statementType="PREPARED">
+		UPDATE uc_user_depjob 
+		<set>
+			<if test="userId != null">userId=#{userId},</if>
+			<if test="depjobId != null">depjobId=#{depjobId},</if>
+			<if test="corType != null">corType=#{corType},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<update id="assignRole" parameterType="com.tuniu.qms.common.dto.UserDto" flushCache="true" statementType="PREPARED">
+		UPDATE uc_user SET roleId=#{roleId}, updateTime=CURRENT_TIMESTAMP
+		WHERE id IN (${userIdStr})
+	</update>
+	
+	
+	<select id="listByDepId" parameterType="Map" resultMap="userMap">
+	  
+	 SELECT t3.id AS userId, t3.* FROM 
+		(SELECT id FROM uc_department_job WHERE depId IN 
+		<foreach collection="depIds" item="depId" open="(" close=")" separator=",">
+			#{depId}
+		</foreach> AND delFlag=0) t1 
+		INNER JOIN uc_user_depjob t2 ON t2.delFlag=0 AND t1.id=t2.depjobId 
+		INNER JOIN uc_user t3 ON t3.delFlag=0 AND t3.workNum!='' AND t2.userId=t3.id
+	  
+	</select>
+
+    <select id="listQcUser" resultType="com.tuniu.qms.common.model.User">
+    
+         	SELECT uc.id, uc.userName,uc.realName,uc.workNum FROM uc_user uc  
+         	inner join qc_assign_config_cmp qa on uc.id = qa.qcPersonId and qa.delFlag =0
+         	where uc.delFlag =0
+         	
+    </select>
+
+    <select id="listByRealName" parameterType="java.util.Map" resultType="com.tuniu.qms.common.model.User">
+    
+        select distinct id,realName,email from uc_user where realName in
+        <foreach collection="nameList" item="name"
+		      open="(" close=")" separator=",">
+			   #{name}
+		 </foreach>
+    
+    </select>
+
+ 
+</mapper>

@@ -1,0 +1,2 @@
+root_path=G:\java\workspace\ssi\
+app_name=supply

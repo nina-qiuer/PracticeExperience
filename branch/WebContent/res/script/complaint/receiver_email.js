@@ -1,0 +1,43 @@
+function receiver_email_check_form(){
+	var valid_obj = {
+		user_name:{
+			title:"姓名",
+			max_len:"50",
+			auto_func:{
+				type_func:"check_length"
+			}
+		},
+		receiver_type:{
+			title:"0为收件人，1为抄送人",
+			auto_func:{
+				type_func:"is_int"
+			}
+		},
+		department_id:{
+			title:"所在部门id",
+			auto_func:{
+				type_func:"is_int"
+			}
+		},
+		departmengt_name:{
+			title:"部门名称",
+			max_len:"50",
+			auto_func:{
+				type_func:"check_length"
+			}
+		},
+		user_id:{
+			title:"人员id",
+			auto_func:{
+				type_func:"is_int"
+			}
+		},
+		type:{
+			title:"收件类别，1~5对应1到5级投诉，6质检",
+			auto_func:{
+				type_func:"is_int"
+			}
+		}
+	};
+	return check_form(valid_obj);
+}

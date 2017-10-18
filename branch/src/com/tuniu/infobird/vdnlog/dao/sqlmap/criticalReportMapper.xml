@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.infobird.vdnlog.dao.sqlmap.imap.CriticalReportMapper">
+   
+   <select id="queryIfWork" parameterType="java.util.Map" resultType="int">
+   
+        select count(1) from AgentStatusLog where  StatisticDate &gt;=#{startTime} AND StatisticDate &lt;= #{endTime}
+        and  CallDir = #{callDir} AND STATUS = #{status} AND CallType = #{callType}
+   
+   </select>
+	
+	
+	<select id="queryIfCommit" parameterType="java.util.Map" resultType="int">
+	
+	  select count(1) from AgentStatusLog where  StatisticDate &gt;=#{followTime} AND StatisticDate &lt;=(select DATEADD(MINUTE, 30,#{followTime} ))
+	  and CallDir = #{callDir} AND STATUS = #{status} AND CallType = #{callType}
+	  and CalleeID like '%${contactPhone}' and  CallerID =#{extension}
+	
+	</select>
+	
+	
+	<select id="queryNextDayTime" parameterType="java.util.Map" resultType="int">
+	
+	    	SELECT
+			    COUNT(1)
+			    FROM AgentStatusLog
+				WHERE 
+				CallerID =#{extension}
+				AND CallDir = #{callDir} 
+				AND STATUS = #{status} 
+				AND CallType = #{callType}
+				AND CalleeID like '%${contactPhone}'
+				AND
+				StatisticDate &gt;= 
+				(SELECT
+                        MIN(StatisticDate)
+                        FROM AgentStatusLog
+                        WHERE AgentNo = #{extension}
+                            AND StatisticDate &gt;= #{nextTimeStart}
+                            AND StatisticDate &lt;= #{nextTimeEnd})
+  					  AND StatisticDate &lt;= (select DATEADD(MINUTE , 30,
+                       (SELECT
+                        MIN(StatisticDate) as StatisticDate
+                        FROM AgentStatusLog
+                        WHERE AgentNo = #{extension}
+                            AND StatisticDate &gt;= #{nextTimeStart}
+                            AND StatisticDate  &lt;= #{nextTimeEnd})))
+                        
+	
+	</select>
+	
+	<select id="queryLastTime" parameterType="java.util.Map" resultType="int">
+	    
+	                   SELECT COUNT(1) FROM  
+	                     AgentStatusLog WHERE   
+	                     StatisticDate &gt;=#{lastTime} AND StatisticDate &lt;=
+                      	(select DATEADD(MINUTE, 30, (select DATEADD(SECOND ,-log.StatisticTime,log.StatisticDate) 
+                       from  (select * from AgentStatusLog where StatisticDate =(select MIN(StatisticDate) as  StatisticDate
+                       FROM AgentStatusLog WHERE StatisticDate &gt;=#{lastTime}  AND  AgentNo = #{extension} AND STATUS =  #{status} GROUP BY STATUS)
+						and  AgentNo = #{extension} AND STATUS = #{status}) log)))
+                        AND  AgentNo = #{extension} and   CallerID = #{extension}  AND CallDir = #{callDir}  and CallType=#{callType}  AND CalleeID  like '%${contactPhone}'
+	
+	</select>
+	
+</mapper>

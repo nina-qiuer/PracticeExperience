@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.ICcEmailMap"> 
+	<sql id="list">
+		SELECT t1.*,t2.cmid,t2.comp_level,t2.order_states,t2.come_froms,t2.is_media 
+		FROM ct_cc_email t1 LEFT JOIN ct_cc_email_cfg t2 ON t1.id=t2.cmid 
+		<where>
+			t1.del_flag=0 AND t2.del_flag=0 
+		</where>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.CcEmailEntity">  
+		<result property="id" column="id" />
+		<result property="emailName" column="email_name" />
+		<result property="emailAddress" column="email_address" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+		<collection property="cfgList" javaType="ArrayList" ofType="com.tuniu.gt.complaint.entity.CcEmailCfgEntity">
+			<result property="cmid" column="cmid" />
+			<result property="compLevel" column="comp_level" />
+			<result property="orderStates" column="order_states" />
+			<result property="comeFroms" column="come_froms" />
+			<result property="isMedia" column="is_media" />
+		</collection>
+	</resultMap>
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	
+	<resultMap id="listResultMap" type="Map">
+		<result property="id" column="id" />
+		<result property="emailName" column="email_name" />
+		<result property="emailAddress" column="email_address" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+		<collection property="cfgList" javaType="ArrayList" ofType="Map">
+			<result property="cmid" column="cmid" />
+			<result property="compLevel" column="comp_level" />
+			<result property="orderStates" column="order_states" />
+			<result property="comeFroms" column="come_froms" />
+			<result property="isMedia" column="is_media" />
+		</collection>
+	</resultMap>
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  email_name,
+		  email_address
+		) values (
+		  #{e.emailName},
+		  #{e.emailAddress}
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED"> 
+		<include refid="insert"/>
+	</insert>
+	
+	<delete id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/> where id =#{id}
+	</delete>
+	
+	<select id="getCcEmails" parameterType="Map" resultType="String">
+		SELECT email_address FROM ct_cc_email WHERE del_flag=0 AND id IN (
+			SELECT cmid FROM ct_cc_email_cfg 
+			WHERE del_flag = 0 
+			<if test="compLevel != null">
+				AND comp_level = #{compLevel} 
+			</if>
+			<if test="orderStates != null and order_states != ''">
+				AND order_states LIKE #{orderStates} 
+			</if>
+			<if test="comeFroms != null and comeFroms != ''">
+				AND come_froms LIKE #{comeFroms} 
+			</if>
+			<if test="isMedia != null and isMedia != ''">
+				AND is_media = #{isMedia}
+			</if>
+		)
+	</select>
+	
+</mapper>

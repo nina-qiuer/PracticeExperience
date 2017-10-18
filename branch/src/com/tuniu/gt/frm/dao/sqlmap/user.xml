@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.IUserMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>1=1
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="userName != null">
+				and user_name = #{userName}
+			</if>
+			<if test="realName != null">
+				and real_name = #{realName}
+			</if>
+			<if test="depId != null">
+				and dep_id = #{depId}
+			</if>
+			<!--根据用户职务查询  -->
+			<if test="job_id != null">
+				and job_id = #{job_id}
+			</if>
+			<!--根据用户职务查询  -->
+			<if test="job_ids != null">
+				and job_id in (${job_ids})
+			</if>
+			<!--根据用户ids查询  -->
+			<if test="ids != null">
+				and id in (${ids})
+			</if>			
+			<!--根据用户自动匹配  -->
+			<if test="matchq != null and matchq != ''">
+				and (user_name like "%${matchq}%" or real_name like "%${matchq}%")  
+			</if>
+			<!--根据用户职位查询  -->
+			<if test="position_ids != null">
+				and position_id in (${position_ids})
+			</if>
+			<!--根据多个用户名查询  -->
+			<if test="realNames != null and realNames!=''">
+				and real_name in (${realNames})
+			</if>
+			<if test="depIdStr != null and depIdStr != ''">
+				and dep_id in (${depIdStr})
+			</if>
+			<if test="delFlag != null">and del_flag=#{delFlag}</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.frm.entity.UserEntity">  
+		
+		<result property="mobile" column="mobile" />
+		
+		<result property="tel" column="tel" />
+		
+		<result property="email" column="email" />
+		
+		<result property="password" column="password" />
+		
+		<result property="realName" column="real_name" />
+		
+		<result property="userName" column="user_name" />
+		
+		<result property="jobId" column="job_id" />
+		
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="positionId" column="position_id" />
+		
+		<result property="depId" column="dep_id" />
+		
+		<result property="locationId" column="location_id" />
+		
+		<result property="canAdmin" column="can_admin" />
+		
+		<result property="salt" column="salt" />
+		
+		<result property="blackberryCode" column="blackberry_code" />
+		
+		<result property="sourcePassword" column="source_password" />
+		
+		<result property="mainDepSeq" column="main_dep_seq" />
+		
+		<result property="updateTime" column="update_time" />
+		
+		<result property="extension" column="extension" />
+		
+		<result property="worknum" column="worknum" />
+		
+		<result property="addTime" column="add_time" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="mobile" column="mobile"/>
+		
+		<result property="tel" column="tel"/>
+		
+		<result property="email" column="email"/>
+		
+		<result property="password" column="password"/>
+		
+		<result property="realName" column="real_name"/>
+		
+		<result property="userName" column="user_name"/>
+		
+		<result property="jobId" column="job_id"/>
+		
+		<result property="delFlag" column="del_flag"/>
+		
+		<result property="positionId" column="position_id"/>
+		
+		<result property="depId" column="dep_id"/>
+		
+		<result property="locationId" column="location_id"/>
+		
+		<result property="canAdmin" column="can_admin"/>
+		
+		<result property="salt" column="salt"/>
+		
+		<result property="blackberryCode" column="blackberry_code"/>
+		
+		<result property="sourcePassword" column="source_password"/>
+		
+		<result property="mainDepSeq" column="main_dep_seq"/>
+		
+		<result property="updateTime" column="update_time"/>
+		
+		<result property="extension" column="extension"/>
+		
+		<result property="worknum" column="worknum"/>
+		
+		<result property="addTime" column="add_time"/>
+		
+	</resultMap>
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<select id="getUserByRealName" parameterType="String" resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where real_name like #{realName} limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		
+		 <if test="e.id != null">
+				id,
+		 </if>
+			
+		  mobile,
+		 
+		  tel,
+		 
+		  email,
+		 
+		  password,
+		 
+		  real_name,
+		 
+		  user_name,
+		 
+		  job_id,
+		 
+		  del_flag,
+		 
+		  position_id,
+		 
+		  dep_id,
+		 
+		  location_id,
+		 
+		  can_admin,
+		 
+		  salt,
+		 
+		  blackberry_code,
+		 
+		  source_password,
+		 
+		  main_dep_seq,
+		 
+		  update_time,
+		 
+		  extension,
+		 
+		  worknum,
+		 
+		  add_time
+		 
+		) values  (
+		
+		<if test="e.id != null">
+			 #{e.id}, 
+		 </if>
+		
+		  #{e.mobile}, 
+		 
+		  #{e.tel}, 
+		 
+		  #{e.email}, 
+		 
+		  #{e.password}, 
+		 
+		  #{e.realName}, 
+		 
+		  #{e.userName}, 
+		 
+		  #{e.jobId}, 
+		 
+		  #{e.delFlag}, 
+		 
+		  #{e.positionId}, 
+		 
+		  #{e.depId}, 
+		 
+		  #{e.locationId}, 
+		 
+		  #{e.canAdmin}, 
+		 
+		  #{e.salt}, 
+		 
+		  #{e.blackberryCode}, 
+		 
+		  #{e.sourcePassword}, 
+		 
+		  #{e.mainDepSeq}, 
+		 
+		  #{e.updateTime}, 
+		 
+		  #{e.extension}, 
+		 
+		  #{e.worknum}, 
+		 
+		  #{e.addTime} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.mobile != null">mobile=#{e.mobile},</if>
+			
+				<if test="e.tel != null">tel=#{e.tel},</if>
+			
+				<if test="e.email != null">email=#{e.email},</if>
+			
+				<if test="e.password != null">password=#{e.password},</if>
+			
+				<if test="e.realName != null">real_name=#{e.realName},</if>
+			
+				<if test="e.userName != null">user_name=#{e.userName},</if>
+			
+				<if test="e.jobId != null">job_id=#{e.jobId},</if>
+			
+				<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			
+				<if test="e.positionId != null">position_id=#{e.positionId},</if>
+			
+				<if test="e.depId != null">dep_id=#{e.depId},</if>
+			
+				<if test="e.locationId != null">location_id=#{e.locationId},</if>
+			
+				<if test="e.canAdmin != null">can_admin=#{e.canAdmin},</if>
+			
+				<if test="e.salt != null">salt=#{e.salt},</if>
+			
+				<if test="e.blackberryCode != null">blackberry_code=#{e.blackberryCode},</if>
+			
+				<if test="e.sourcePassword != null">source_password=#{e.sourcePassword},</if>
+			
+				<if test="e.mainDepSeq != null">main_dep_seq=#{e.mainDepSeq},</if>
+			
+				<if test="e.updateTime != null">update_time=#{e.updateTime},</if>
+			
+				<if test="e.extension != null">extension=#{e.extension},</if>
+			
+				<if test="e.worknum != null">worknum=#{e.worknum},</if>
+			
+				<if test="e.addTime != null">add_time=#{e.addTime}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	 
+	<select id="getUsersByDepartmentTreeFatherId" parameterType="String"  resultMap="listResultEntity">
+		SELECT a.* FROM frm_user a, uc_department b 
+		WHERE a.dep_id=b.id and a.del_flag=0  AND a.dep_id IN 
+			(SELECT id FROM uc_department WHERE CONCAT(tree_father_id, tree_id) like concat(#{treeFatherId},'%')) 
+	</select>
+	
+	<select id="getUsersByDepartmentId" parameterType="String"  resultMap="listResultEntity">
+		SELECT a.* FROM frm_user a
+		WHERE a.dep_id=#{dep_id} AND a.del_flag=0
+	</select>
+	
+	<select id="getManageByDepartmentId" parameterType="String"  resultMap="listResultEntity">
+		SELECT a.* FROM frm_user a
+		LEFT JOIN uc_depuser_map b ON  a.id=b.user_id 
+		WHERE b.dep_id=#{dep_id} AND b.is_manage=1 AND a.del_flag=0;
+	</select>
+	
+	<select id="getManageByDepartmentName" parameterType="String"  resultMap="listResultEntity">
+		SELECT a.* FROM frm_user a 
+		LEFT JOIN uc_depuser_map b ON  a.id=b.user_id
+		LEFT JOIN uc_department c ON c.id = b.dep_id
+		WHERE a.del_flag=0 AND c.dep_name=#{dep_name} AND b.is_manage=1;
+	</select>
+	
+	<select id="getManageByFatherDepId" parameterType="String"  resultMap="listResultEntity">
+		SELECT DISTINCT fu.* FROM frm_user fu
+		LEFT JOIN uc_depuser_map udp ON  fu.id= udp.user_id 
+		INNER JOIN uc_department ud ON ud.id=udp.dep_id
+		WHERE  ud.father_id=#{dep_id} AND  udp.is_manage=1 AND fu.del_flag=0 AND ud.del_flag=0;
+	</select>
+	
+	<select id="getUserDepartmentVoByUserId" 
+		parameterType="Integer" resultType="com.tuniu.gt.uc.vo.UserDepartmentVo">
+		SELECT
+		fu.id AS userId,
+		fu.real_name AS realName,
+		fu.user_name AS userName,
+		fu.worknum AS workNum,
+		fu.dep_id AS depId,
+		ud1.id AS groupId,
+		ud1.dep_name AS groupName,
+		IFNULL(ud2.id,0) AS departmentId,
+		IFNULL(ud2.dep_name,'') AS departmentName,
+		IFNULL(ud3.id,0) AS businessUnitId,
+		IFNULL(ud3.dep_name,'') AS businessUnitName
+		FROM frm_user fu
+		INNER JOIN uc_department ud1 ON ud1.id=fu.dep_id
+		LEFT JOIN uc_department ud2 ON ud2.id=ud1.father_id
+		LEFT JOIN uc_department ud3 ON ud3.id=ud2.father_id
+		WHERE fu.id = #{userId}
+	</select>
+	
+	<!-- 获得没有被删除的员工信息 -->
+	<select id="getAllUsersWithoutDel" resultMap="userMap">
+		select id,
+			real_name,
+			user_name from frm_user where del_flag=0
+	</select>
+	
+	<resultMap id="userMap" type="Map">
+		<result property="id" column="id"/>
+		<result property="realName" column="real_name"/>
+		<result property="userName" column="user_name"/>
+	</resultMap>
+	
+	<select id="getSameDepUsersWithoutSelf"
+		parameterType="Integer"  resultMap="listResultEntity">
+		SELECT
+		fu_other.*
+		FROM frm_user fu
+		INNER JOIN frm_user fu_other
+		ON fu.dep_id = fu_other.dep_id
+		AND fu_other.del_flag = 0
+		WHERE fu.id = #{userId}
+		AND fu_other.id != #{userId}
+	</select>
+</mapper>

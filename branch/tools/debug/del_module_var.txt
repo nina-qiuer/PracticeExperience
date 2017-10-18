@@ -1,0 +1,7 @@
+root_path=G:\java\workspace\ssi\
+app_name=frm
+module_dir=log\
+module_name=log
+upper_module_name=log
+del_dir=1
+module_root_dir=log\

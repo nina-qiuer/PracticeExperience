@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<!-- 规则 中划线前为namespace -->	
+	
+	<package name="warning-warning" extends="apply-default" namespace="/warning/action"> 
+		<action name="*-*" class="warning_action-{1}" method="{2}">
+			<result name="wether_keyword_set">/WEB-INF/html/warning/warning_main_list/wether_keyword_set.jsp</result>
+			<result name="early_warning_add">/WEB-INF/html/warning/warning_main_list/early_warning_add.jsp</result>
+			<result name="early_warning_list">/WEB-INF/html/warning/warning_main_list/early_warning_list.jsp</result>
+			<result name="ew_order_list">/WEB-INF/html/warning/warning_main_list/ew_order_list.jsp</result>
+			<result name="early_warning_update">/WEB-INF/html/warning/warning_main_list/early_warning_update.jsp</result>
+		</action>		
+	</package>
+</struts>

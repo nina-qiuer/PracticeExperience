@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.QualityProblemMapper">
+
+
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QualityProblem">
+		INSERT INTO qc_quality_problem (
+			<if test="qcId != null">qcId,</if>
+			<if test="qptId != null">qptId,</if>
+			<if test="description != null">description,</if>
+			<if test="verifyBasis != null">verifyBasis,</if>
+			<if test="impAdvice != null">impAdvice,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="lowSatisDegree != null">lowSatisDegree,</if>
+			<if test="qptLv1Id != null">qptLv1Id,</if>
+			delFlag
+		) VALUES (
+			<if test="qcId != null">#{qcId},</if>
+			<if test="qptId != null">#{qptId},</if>
+			<if test="description != null">#{description},</if>
+			<if test="verifyBasis != null">#{verifyBasis},</if>
+			<if test="impAdvice != null">#{impAdvice},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="lowSatisDegree != null">#{lowSatisDegree},</if>
+			<if test="qptLv1Id != null">#{qptLv1Id},</if>
+			0
+		)
+	</insert>
+	
+	<insert id="addCopyQpBill" parameterType="com.tuniu.qms.qc.model.QualityProblem" useGeneratedKeys="true" keyProperty="id"  keyColumn="id">
+	
+	   insert into qc_quality_problem
+	   (
+		   qcId,
+		   qptId,
+		   description,
+		   verifyBasis,
+		   lowSatisDegree,
+		   impAdvice,
+		   addPerson,
+		   delFlag,
+		   qptLv1Id
+	   )
+	   select #{qcId},
+	           b.qptId,
+			   b.description,
+			   b.verifyBasis,
+			   b.lowSatisDegree,
+			   b.impAdvice,
+			   #{addPerson},
+			   b.delFlag,
+			   b.qptLv1Id
+	    from qc_quality_problem b where b.id =#{oldQpId} and b.delFlag =0 
+	
+	</insert>
+	
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_quality_problem WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QualityProblem" flushCache="true" statementType="PREPARED">
+		UPDATE qc_quality_problem 
+		<set>
+			<if test="qptId != null">qptId=#{qptId},</if>
+			<if test="description != null">description=#{description},</if>
+			<if test="verifyBasis != null">verifyBasis=#{verifyBasis},</if>
+			<if test="impAdvice != null">impAdvice=#{impAdvice},</if>
+			<if test="updatePerson != null">updatePerson=#{updatePerson},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			<if test="lowSatisDegree != null">lowSatisDegree=#{lowSatisDegree},</if>
+			<if test="qptLv1Id != null">qptLv1Id=#{qptLv1Id},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QualityProblem">
+		SELECT *  FROM qc_quality_problem WHERE delFlag =0 and id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QualityProblemDto" resultType="com.tuniu.qms.qc.model.QualityProblem">
+		SELECT * FROM qc_quality_problem  
+		 where delFlag =0
+		 <if test="qcId != null"> and qcId=#{qcId}</if>
+		 <if test="qptLv1Id != null"> and qptLv1Id=#{qptLv1Id}</if>
+	</select>
+
+   <select id="getQpByQcId" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QualityProblem">
+        select * from qc_quality_problem where delFlag =0 and qcId=#{qcId}
+   </select>
+   
+   <select id="getImpPersonByQcId" parameterType="Integer" resultType="java.util.Map">
+      SELECT cp.prdManager,cp.prdManagerId 
+      FROM qc_qc_bill qb 
+	  INNER JOIN cm_product cp ON qb.prdId = cp.id
+	  where qb.id =#{qcId}
+   </select>
+   
+   	<select id="getRespInfoByQpId" parameterType="Integer" resultType="com.tuniu.qms.qc.dto.RespPunishRelationDto">
+   		SELECT id AS respId, 2 AS respType FROM qc_outer_resp_bill WHERE qpId = #{qpId}
+		UNION ALL
+		SELECT id AS respId, 1 AS respType FROM qc_inner_resp_bill WHERE qpId = #{qpId}
+   	</select>
+</mapper>

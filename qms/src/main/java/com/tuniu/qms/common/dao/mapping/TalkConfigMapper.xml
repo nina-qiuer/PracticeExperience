@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.TalkConfigMapper">
+    <insert id="add" parameterType="com.tuniu.qms.common.model.TalkConfig" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into cm_talk_config (
+        <if test="content != null and content !=''">content,</if>
+        <if test="type != null and type !=''">type,</if>
+        delFlag
+    ) VALUES (
+        <if test="content != null and content !=''">#{content},</if>
+        <if test="type != null and type !=''">#{type},</if>
+        0
+    )
+    </insert>
+
+    <delete id="delete" parameterType="Integer">
+        DELETE FROM cm_talk_config WHERE id=#{id}
+    </delete>
+
+<update id="update" parameterType="com.tuniu.qms.common.model.TalkConfig" >
+UPDATE cm_talk_config
+<set>
+        <if test="content != null and content !=''">content=#{content},</if>
+        <if test="type != null and type !=''">type=#{type},</if>
+</set>
+WHERE id=#{id}
+</update>
+
+<select id="get" parameterType="Integer" resultType="com.tuniu.qms.common.model.TalkConfig">
+SELECT * FROM cm_talk_config WHERE id=#{id}
+</select>
+
+    <select id="list" parameterType="com.tuniu.qms.common.dto.TalkConfigDto" resultType="com.tuniu.qms.common.model.TalkConfig">
+      SELECT * from  cm_talk_config talk
+        ORDER BY talk.id
+        <if test="dataLimitStart != null">
+        limit #{dataLimitStart}
+        <if test="pageSize != null">
+            ,#{pageSize}
+        </if>
+    </if>
+    </select>
+
+ <select id="getByType" parameterType="com.tuniu.qms.common.dto.TalkConfigDto" resultType="com.tuniu.qms.common.model.TalkConfig">
+ 
+    select * from cm_talk_config where type=#{type} and delFlag =0 limit 1
+    
+ 
+ </select>
+
+</mapper>

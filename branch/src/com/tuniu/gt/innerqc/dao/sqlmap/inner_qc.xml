@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.innerqc.dao.sqlmap.imap.InnerQcMap">
+	<sql id="whereSql">
+		<where>1=1
+			<if test="iqcId != null and iqcId != ''">
+				and id = #{iqcId}
+			</if>
+			<if test="state != null and state != ''">
+				and state = #{state}
+			</if>
+			<if test="relBillType != null and relBillType != ''">
+				and rel_bill_type = #{relBillType}
+			</if>
+			<if test="relBillNum != null and relBillNum != ''">
+				and rel_bill_num = #{relBillNum}
+			</if>
+			<if test="typeId != null and typeId != ''">
+				and type_id = #{typeId}
+			</if>
+			<if test="addPersonId != null and addPersonId != ''">
+				and add_person_id = #{addPersonId}
+			</if>
+			<if test="addPersonName != null and addPersonName != '' and (addPersonId==null or addPersonId=='')">
+				and add_person_id = (select id from frm_user where  real_name = #{addPersonName} AND del_flag =0)
+			</if>
+			<if test="dealPersonId != null and dealPersonId != ''">
+				and deal_person_id = #{dealPersonId}
+			</if>
+			<if test="dealPersonName != null and dealPersonName != '' and (dealPersonId==null or dealPersonId=='')">
+				and deal_person_id = (select id from frm_user where  real_name = #{dealPersonName} AND del_flag =0)
+			</if>
+			<if test="personIdStr != null and personIdStr != ''">
+				and (add_person_id in (${personIdStr}) OR deal_person_id in (${personIdStr}))
+			</if>
+			<if test="addTimeBgn != null and addTimeBgn != ''">
+				and add_time >= #{addTimeBgn}
+			</if>
+			<if test="addTimeEnd != null and addTimeEnd != ''">
+				and #{addTimeEnd} >= add_time
+			</if>
+			and del_flag = 0 order by id desc
+		</where>
+	</sql>
+
+    <sql id="limitSql">
+		<if test="start != -1">
+			limit #{start}
+			<if test="pageSize > 0">
+				,#{pageSize}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="getTotal" parameterType="com.tuniu.gt.innerqc.vo.InnerQcPage" resultType="Long">
+		SELECT COUNT(1) AS totalRecords FROM qc_inner_qc
+		<include refid="whereSql" />
+	</select>
+	
+	<select id="getInnerQcList" parameterType="com.tuniu.gt.innerqc.vo.InnerQcPage" resultMap="listResultEntity">
+		SELECT *,
+			(SELECT real_name FROM frm_user WHERE id=qc_inner_qc.add_person_id) AS add_person_name,
+			(SELECT real_name FROM frm_user WHERE id=qc_inner_qc.deal_person_id) AS deal_person_name,
+			(SELECT name FROM qc_inner_qc_type WHERE id=qc_inner_qc.type_id) AS type_name
+		FROM qc_inner_qc
+		<include refid="whereSql" />
+		<include refid="limitSql" />
+	</select>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.innerqc.entity.InnerQcEntity">
+		<result property="id" column="id" />
+		<result property="relBillType" column="rel_bill_type" />
+		<result property="relBillNum" column="rel_bill_num" />
+		<result property="lossAmount" column="loss_amount" />
+		<result property="typeId" column="type_id" />
+		<result property="typeName" column="type_name" />
+		<result property="qcEventSummary" column="qc_event_summary" />
+		<result property="qcEventDesc" column="qc_event_desc" />
+		<result property="remark" column="remark" />
+		<result property="state" column="state" />
+		<result property="addPersonId" column="add_person_id" />
+		<result property="addPersonName" column="add_person_name" />
+		<result property="dealPersonId" column="deal_person_id" />
+		<result property="dealPersonName" column="deal_person_name" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		rel_bill_type, 
+		rel_bill_num, 
+		loss_amount, 
+		type_id,
+		qc_event_summary, 
+		qc_event_desc, 
+		remark, 
+		add_person_id, 
+		state
+		) values (
+		#{e.relBillType},
+		#{e.relBillNum},
+		#{e.lossAmount},
+		#{e.typeId},
+		#{e.qcEventSummary},
+		#{e.qcEventDesc},
+		#{e.remark},
+		#{e.addPersonId},
+		#{e.state}
+		)
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.relBillType != null">rel_bill_type=#{e.relBillType},</if>
+			<if test="e.relBillNum != null">rel_bill_num=#{e.relBillNum},</if>
+			<if test="e.lossAmount != null">loss_amount=#{e.lossAmount},</if>
+			<if test="e.typeId != null">type_id=#{e.typeId},</if>
+			<if test="e.qcEventSummary != null">qc_event_summary=#{e.qcEventSummary},</if>
+			<if test="e.qcEventDesc != null">qc_event_desc=#{e.qcEventDesc},</if>
+			<if test="e.remark != null">remark=#{e.remark},</if>
+			<if test="e.state != null">state=#{e.state},</if>
+			<if test="e.dealPersonId != null">deal_person_id=#{e.dealPersonId},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+		where id=#{e.id}
+	</sql>
+	
+	<select id="get" parameterType="Map" resultMap="listResultEntity">
+		SELECT *,
+			(SELECT real_name FROM frm_user WHERE id=qc_inner_qc.add_person_id) AS add_person_name,
+			(SELECT real_name FROM frm_user WHERE id=qc_inner_qc.deal_person_id) AS deal_person_name,
+			(SELECT name FROM qc_inner_qc_type WHERE id=qc_inner_qc.type_id) AS type_name
+		FROM qc_inner_qc WHERE id=#{id} limit 1
+	</select>
+	
+	<delete id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/> where id =#{id}
+	</delete>
+	
+</mapper>

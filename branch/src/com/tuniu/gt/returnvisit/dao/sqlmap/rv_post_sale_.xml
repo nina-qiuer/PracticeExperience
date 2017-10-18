@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.returnvisit.dao.sqlmap.imap.IPostSaleReturnVisitMap">
+
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+
+		<if test="e.complaintId != null">complaintId,</if>
+		
+		<if test="e.orderId != null">orderId,</if>
+		
+		<if test="e.prdName!= null">prdName,</if>
+		
+		<if test="e.dealDepart != null">dealDepart,</if>
+		
+		<if test="e.dealName != null">dealName,</if>
+
+		<if test="e.dealManagerName != null">dealManagerName,</if>
+		
+		<if test="e.tel != null">tel,</if>
+		
+		<if test="e.businessUnitName!= null">businessUnitName,</if>
+
+		<if test="e.departmentName != null">departmentName,</if>
+
+		<if test="e.groupName!= null">groupName,</if>
+		
+		<if test="e.returnVisitDate!= null">returnVisitDate,</if>
+
+		delFlag
+
+		) values (
+		
+		<if test="e.complaintId!= null">#{e.complaintId},</if>
+		
+		<if test="e.orderId!= null">#{e.orderId},</if>
+		
+		<if test="e.prdName!= null">#{e.prdName},</if>
+		
+		<if test="e.dealDepart != null">#{e.dealDepart},</if>
+		
+		<if test="e.dealName != null">#{e.dealName},</if>
+		
+		<if test="e.dealManagerName != null">#{e.dealManagerName},</if>
+		
+		<if test="e.tel != null">#{e.tel},</if>
+		
+		<if test="e.businessUnitName!= null">#{e.businessUnitName},</if>
+
+		<if test="e.departmentName != null">#{e.departmentName},</if>
+
+		<if test="e.groupName!= null">#{e.groupName},</if>
+		
+		<if test="e.returnVisitDate!= null">#{e.returnVisitDate},</if>
+
+		0
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.returnvisit.entity.PostSaleReturnVisitEntity" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+
+			<if test="e.score!= null">score=#{e.score},</if>
+			
+			<if test="e.unsatisfyReason != null">unsatisfyReason=#{e.unsatisfyReason},</if>
+			
+			<if test="e.updateTime != null">updateTime=#{e.updateTime},</if>
+			
+			<if test="e.delFlag != null">delFlag=#{e.delFlag}</if>
+			
+		</set>
+		where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="com.tuniu.gt.returnvisit.entity.PostSaleReturnVisitEntity" flushCache="true"
+		statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	
+	<select id="get" parameterType="int" resultType="com.tuniu.gt.returnvisit.entity.PostSaleReturnVisitEntity">
+		select * from rv_post_sale where id=#{id}
+	</select>
+	
+	<!-- 触发回访前检查，统一个订单和处理岗只一次回访 -->
+	<select id="getCount"  parameterType="map" resultType="int">
+			select count(*) from rv_post_sale
+			<where>
+					<if test="complaintId != null ">complaintId = #{complaintId}</if>
+					<if test="orderId != null ">orderId = #{orderId}</if>
+					<if test="dealDepart != null">and dealDepart = #{dealDepart}</if>
+			</where>
+	</select>
+	
+	<select id="getIdByParam"  parameterType="map" resultType="int">
+			select id from rv_post_sale
+			<where>
+					<if test="tel!=null">tel=#{tel}</if>
+					<if test="complaintId">and complaintId=#{complaintId}</if>
+						<if test="returnType!=null">
+							<choose>
+								<when test="returnType == 'satisfaction'">
+									and addTime >date_add(#{receiveTime}, interval -1 hour)
+									and score=-1
+								</when>
+								<when test="returnType=='reason'">
+									and updateTime >date_add(#{receiveTime}, interval -1 hour)
+									and score=0  
+									and unsatisfyReason = 0
+								</when>
+								<otherwise>
+									
+								</otherwise>
+							</choose>
+						</if>
+			</where>
+			limit 0,1
+	</select>
+	
+	
+	<select id="fetchListMap" parameterType="Map" resultType="map">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<include refid="list" />
+	</select>
+	
+	<select id="fetchList" parameterType="Map" resultType="map">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<include refid="list" />
+	</select>
+	
+	<sql id="list">
+		<where>
+					<if test="complaintId!=null and complaintId!=0">complaintId=#{complaintId}</if>
+					<if test="orderId!=null and orderId!=0">and orderId=#{orderId}</if>
+					<if test="dealDepart!=null and dealDepart!=''">and dealDepart=#{dealDepart}</if>
+					<if test="dealName!=null and dealName!=''">and dealName=#{dealName}</if>
+					<if test="dealManagerName!=null and dealManagerName!=''">and dealManagerName=#{dealManagerName}</if>
+					<if test="score !=null and score != -1">and score=#{score}</if>
+					<if test="unsatisfyReason != nul">and unsatisfyReason=#{unsatisfyReason}</if>
+					<if test="returnVisitDateBgn != null and  returnVisitDateBgn != '' ">and returnVisitDate &gt;=#{returnVisitDateBgn}</if>
+					<if test="returnVisitDateEnd != null and  returnVisitDateEnd != '' ">and returnVisitDate &lt;=#{returnVisitDateEnd}</if>
+					and delFlag=0
+		</where>
+		order by returnVisitDate desc
+					<if test="dataLimitStart != null">
+						limit #{dataLimitStart}
+						<if test="dataLimitEnd != null">
+							,#{dataLimitEnd}
+						</if>
+					</if>
+	</sql>
+	
+	<select id="getReport" parameterType="map" resultType="com.tuniu.gt.returnvisit.vo.ReportResultSetVo">
+		SELECT
+			  ${fields},
+			  CONCAT(ROUND((IFNULL(SUM(score)/(COUNT(id)*3.0),0)*100),2),'%') AS 'data.comprehensiveSatisfaction',
+			  CONCAT(ROUND((IFNULL((SUM(CASE unsatisfyReason WHEN 1 THEN 1 ELSE 0 END)+SUM(CASE unsatisfyReason WHEN 2 THEN 1 ELSE 0 END))/(SUM(CASE WHEN score = 0  THEN 1 ELSE 0 END)+0.0),0)*100),2),'%') AS 'data.serviceSatisfaction',
+			  CONCAT(ROUND(IFNULL(SUM(CASE unsatisfyReason WHEN 3 THEN 1 ELSE 0 END)/(SUM(CASE WHEN score = 0  THEN 1 ELSE 0 END)+0.0),0)*100,2),'%') AS 'data.planSatisfaction',
+			  SUM(CASE score WHEN 3 THEN 1 ELSE 0 END) AS 'data.satisfactionCount',
+			  SUM(CASE score WHEN 2 THEN 1 ELSE 0 END) AS 'data.normalCount',
+			  SUM(CASE score WHEN 0 THEN 1 ELSE 0 END) AS 'data.unsatisfactionCount',
+			  SUM(CASE unsatisfyReason WHEN 1 THEN 1 ELSE 0 END) AS 'data.attitudeReason',
+			  SUM(CASE unsatisfyReason WHEN 3 THEN 1 ELSE 0 END) AS 'data.planReason',
+			  SUM(CASE unsatisfyReason WHEN 2 THEN 1 ELSE 0 END) AS 'data.followNotInTimeReason',
+			  SUM(CASE unsatisfyReason WHEN 4 THEN 1 ELSE 0 END) AS 'data.notProfessionalReason',
+			  SUM(CASE WHEN score = 0 AND unsatisfyReason = 0 THEN 1 ELSE 0 END) AS 'data.noReason'
+			FROM rv_post_sale
+			WHERE score >  - 1
+			<if test="returnVisitDateBgn !=null and returnVisitDateBgn != ''">and returnVisitDate &gt;=#{returnVisitDateBgn}</if>
+			<if test="returnVisitDateEnd !=null and returnVisitDateEnd != ''">and returnVisitDate &lt;=#{returnVisitDateEnd}</if>
+			GROUP BY ${fields}
+	</select>
+	
+	<select id="getComplaintList" parameterType="map" resultMap="compListResultEntity">
+			select c.id,c.assign_time,c.finish_date,cr.type,cr.second_type,cr.type_descript,cs.descript from 
+			rv_post_sale ps 
+			left join  ct_complaint c on ps.complaintId=c.id
+			left join ct_complaint_solution cs on c.id=cs.complaint_id
+			left join ct_complaint_reason cr on c.id=cr.complaint_id
+			<where>
+				<if test="businessUnitName != null and businessUnitName != ''">ps.businessUnitName=#{businessUnitName}</if>
+				<if test="departmentName != null and departmentName != ''">and ps.departmentName=#{departmentName}</if>
+				<if test="groupName != null and groupName != ''">and ps.groupName=#{groupName}</if>
+				<if test="dealName != null and dealName != ''">and ps.dealName=#{dealName}</if>
+				<if test="score != null">and ps.score=#{score}</if>
+				<if test="unsatisfyReason != null">and ps.unsatisfyReason=#{unsatisfyReason}</if>
+				<if test="returnVisitDateBgn !=null and returnVisitDateBgn != ''">and ps.returnVisitDate &gt;=#{returnVisitDateBgn}</if>
+				<if test="returnVisitDateEnd !=null and returnVisitDateEnd != ''">and ps.returnVisitDate &lt;=#{returnVisitDateEnd}</if>
+				and c.del_flag=0 and  cs.del_flag=1 and cr.del_flag=1
+			</where> 
+	</select>
+	
+	<resultMap id="compListResultEntity" type="com.tuniu.gt.complaint.entity.ComplaintEntity">
+		<result property="id" column="id" />
+		<result property="assignTime" column="assign_time" />
+		<result property="finishDate" column="finish_date" />
+		<association property="compSolution" javaType="com.tuniu.gt.complaint.entity.ComplaintSolutionEntity">
+			<result property="descript" column="descript" />
+		</association>
+		<collection property="reasonList" javaType="ArrayList" ofType="com.tuniu.gt.complaint.entity.ComplaintReasonEntity">
+			<result property="type" column="type" />
+			<result property="secondType" column="second_type" />
+			<result property="typeDescript" column="type_descript" />
+		</collection>
+	</resultMap>
+</mapper>

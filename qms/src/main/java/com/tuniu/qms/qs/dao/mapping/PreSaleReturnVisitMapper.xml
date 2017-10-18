@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.PreSaleReturnVisitMapper">
+
+	<insert id="add" parameterType="com.tuniu.qms.qs.model.PreSaleReturnVisit">
+		INSERT INTO qs_pre_sale_rv (
+			<if test="ordId != null">ordId,</if>
+			<if test="prdName != null">prdName,</if>
+			<if test="customer != null">customer,</if>
+			<if test="customerLeader != null">customerLeader,</if>
+			<if test="extension != null">extension,</if>
+			<if test="tel != null">tel,</if>
+			<if test="businessUnitName != null">businessUnitName,</if>
+			<if test="departmentName != null">departmentName,</if>
+			<if test="groupName != null">groupName,</if>
+			<if test="score != null">score,</if>
+			<if test="beginDate != null">beginDate,</if>
+			<if test="unsatisfyReason != null">unsatisfyReason,</if>
+			<if test="returnVisitDate != null">returnVisitDate,</if>
+			delFlag
+			
+		) VALUES (
+			<if test="ordId != null">#{ordId},</if>
+			<if test="prdName != null">#{prdName},</if>
+			<if test="customer != null">#{customer},</if>
+			<if test="customerLeader != null">#{customerLeader},</if>
+			<if test="extension != null">#{extension},</if>
+			<if test="tel != null">#{tel},</if>
+			<if test="businessUnitName != null">#{businessUnitName},</if>
+			<if test="departmentName != null">#{departmentName},</if>
+			<if test="groupName != null">#{groupName},</if>
+			<if test="score != null">#{score},</if>
+			<if test="beginDate != null">#{beginDate},</if>
+			<if test="unsatisfyReason != null">#{unsatisfyReason},</if>
+			<if test="returnVisitDate != null">#{returnVisitDate},</if>
+			0
+		)
+	</insert>
+	
+	<insert id="addBatch" parameterType="java.util.List">
+		insert into qs_pre_sale_rv (
+			ordId, 
+			prdName, 
+			customer, 
+			customerLeader, 
+			extension,
+			tel, 
+			businessUnitName, 
+			departmentName, 
+			groupName, 
+			returnVisitDate,
+			orderTime,
+			beginDate,
+			signDate,
+			isCancel,
+			all_person_phone
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.ordId},
+            #{e.prdName},
+			#{e.customer},
+			#{e.customerLeader},
+			#{e.extension},
+			#{e.tel},
+		    #{e.businessUnitName},
+			#{e.departmentName},
+			#{e.groupName},
+			#{e.returnVisitDate},
+			#{e.orderTime},
+			#{e.beginDate},
+			#{e.signDate},
+		    #{e.isCancel},
+		    #{e.allPersonPhone}
+        )
+        </foreach>
+    </insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qs_pre_sale_rv WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qs.model.PreSaleReturnVisit" flushCache="true" statementType="PREPARED">
+		UPDATE qs_pre_sale_rv 
+		<set>
+			<if test="score != null">score=#{score},</if>
+			<if test="unsatisfyReason != null">unsatisfyReason=#{unsatisfyReason},</if>
+			<if test="isSign != null">isSign=#{isSign},</if>	
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			<if test="sendTime != null">sendTime=#{sendTime},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.PreSaleReturnVisit">
+		SELECT * FROM qs_pre_sale_rv WHERE id=#{id}
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qs.dto.PreSaleReturnVisitDto" resultType="Integer">
+		SELECT COUNT(1) FROM (<include refid="listSql"/>) t
+	</select>
+	
+	<sql id="listSql">
+		SELECT  ordId,
+				prdName,
+				customer,
+				customerLeader,
+				businessUnitName,
+				departmentName,
+				groupName,
+				score,
+				unsatisfyReason,
+				returnVisitDate
+		 FROM qs_pre_sale_rv 
+		<where> delFlag = 0
+			<if test="ordId != null and ordId != ''">AND ordId=#{ordId}</if>
+			<if test="customer != null and customer!=''">AND customer=#{customer}</if>
+			<if test="customerLeader != null and customerLeader!=''">AND customerLeader=#{customerLeader}</if>
+			<if test="score != null and score !=''">AND score=#{score}</if>
+			<if test="unsatisfyReason !=null and unsatisfyReason!=''">AND unsatisfyReason=#{unsatisfyReason}</if>
+			<if test="returnVisitDateBgn != null and returnVisitDateBgn != ''">AND returnVisitDate &gt;= #{returnVisitDateBgn}</if>
+			<if test="returnVisitDateEnd != null and returnVisitDateEnd != ''">AND returnVisitDate &lt;= #{returnVisitDateEnd}</if>
+		</where>
+	</sql>
+
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.PreSaleReturnVisitDto" resultType="com.tuniu.qms.qs.model.PreSaleReturnVisit">
+		<include refid="listSql"/>
+		ORDER BY returnVisitDate DESC
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">,#{pageSize}</if>
+		</if>
+	</select>
+	
+	
+	<select id="needRvList" parameterType="java.util.Map" resultType="com.tuniu.qms.qs.model.PreSaleReturnVisit">
+	
+		SELECT qs.id,qs.ordId,qs.prdName,qs.customer,qs.extension,qs.tel ,qs.orderTime,qs.signDate,qs.all_person_phone as allPersonPhone
+		FROM (
+			SELECT t.id,t.ordId 
+			FROM (SELECT  MAX(id) AS id, ordId FROM qs_pre_sale_rv
+				  WHERE returnVisitDate= #{returnVisitDate} GROUP BY ordId )t  
+			WHERE NOT EXISTS (SELECT ordId FROM qc_qc_bill qc WHERE qc.ordId =t.ordId) )t 
+		INNER JOIN  qs_pre_sale_rv qs ON t.id = qs.id
+			AND qs.isSign= 0 
+			AND qs.delFlag = 0 
+			AND qs.isCancel = 1
+			AND LENGTH(qs.tel)=11
+			AND qs.extension!=''
+			AND qs.returnVisitDate &lt;=qs.beginDate	
+
+	</select>
+	
+	
+	<select id="getValidVistByParam"  parameterType="map" resultType="com.tuniu.qms.qs.model.PreSaleReturnVisit">
+			select * from qs_pre_sale_rv
+			<where>
+					<if test="tel!=null">tel=#{tel}</if>
+						<if test="returnType!=null">
+							<choose>
+								<when test="returnType == 'satisfaction'">
+									and sendTime >date_add(#{receiveTime}, interval -3 DAY)
+									and score=-1
+									and delFlag = 0 
+				 					and isCancel = 1
+				 					and LENGTH(tel)=11
+				 					and extension!=''
+								</when>
+								<when test="returnType=='reason'">
+									and updateTime >date_add(#{receiveTime}, interval -3 DAY)
+									and score=0  
+									and unsatisfyReason = 0
+									and delFlag = 0 
+				 					and isCancel = 1
+				 					and LENGTH(tel)=11
+				 					and extension!=''
+								</when>
+								<otherwise>
+									
+								</otherwise>
+							</choose>
+						</if>
+					order by id desc limit 1
+			</where>
+	</select>
+	
+	
+</mapper>

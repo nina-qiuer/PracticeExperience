@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.DevUpLoadAttachMapper">
+
+   <resultMap type="com.tuniu.qms.qc.model.DevUpLoadAttach" id="upLoadMap">
+        <result property="id" column="id"  />
+        <result property="devId" column="devId"  />
+        <result property="path" column="path"  />
+        <result property="name" column="name"  />
+        <result property="type" column="type"  />
+        <result property="addPerson" column="addPerson"  />
+        <result property="updatePerson" column="updatePerson"  />
+        <result property="addTime" column="addTime"  />
+        <result property="updateTime" column="updateTime"  />
+        <result property="delFlag" column="delFlag"  />
+    </resultMap>
+  
+	
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.DevUpLoadAttach" >
+	
+	  insert into qc_dev_fault_attach
+	  (
+	   	 <if test="devId != null">devId,</if>
+		 <if test="path != null">path,</if>
+		 <if test="name != null">name,</if>
+		 <if test="type != null">type,</if>
+		 <if test="addPerson != null">addPerson,</if> 
+		 <if test="updatePerson != null">updatePerson,</if>
+		 <if test="delFlag != null">delFlag,</if>
+		 addTime,
+		 updateTime
+	 )
+	 values(
+	 
+	     <if test="devId != null"> #{devId},</if>
+		 <if test="path != null">#{path},</if>
+		 <if test="name != null">#{name},</if>
+		 <if test="type != null"> #{type},</if>
+		 <if test="addPerson != null"> #{addPerson},</if> 
+		 <if test="updatePerson != null"> #{updatePerson},</if>
+		 <if test="delFlag != null">#{delFlag},</if>
+	     CURRENT_TIMESTAMP() ,
+	     CURRENT_TIMESTAMP() 
+	 )
+	
+	</insert>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.DevUpLoadAttachDto" resultType="com.tuniu.qms.qc.model.DevUpLoadAttach">
+		SELECT *  FROM qc_dev_fault_attach 
+		where  delFlag =0 and devId =#{devId}
+	</select>
+	
+	<delete id="delete" parameterType="Integer">
+	
+		DELETE FROM qc_dev_fault_attach WHERE id=#{id}
+		
+	</delete>
+	
+	<delete id="deleteAttach" parameterType="Integer">
+	   
+	     delete from qc_dev_fault_attach  where devId =#{devId}
+	   
+	</delete>
+</mapper>

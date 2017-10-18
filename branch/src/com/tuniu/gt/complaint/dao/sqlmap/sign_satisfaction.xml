@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.satisfaction.dao.sqlmap.imap.ISignSatisfactionMap">
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		order_id,
+		
+		<if test="e.faceSaleId!= null">face_sale_id,</if>
+
+		<if test="e.faceSaleName!= null">face_sale_name,</if>
+
+		<if test="e.signType!= null">sign_type,</if>
+
+		<if test="e.customerLeaderId!= null">customer_leader_id,</if>
+
+		<if test="e.customerLeader!= null">customer_leader,</if>
+		
+		<if test="e.productLeaderId!= null">product_leader_id,</if>
+		
+		<if test="e.productLeader!= null">product_leader,</if>
+		
+		<if test="e.routeId!= null">route_id,</if>
+		
+		<if test="e.outDate!= null">out_date,</if>
+		
+		<if test="e.backDate!= null">back_date,</if>
+		
+		<if test="e.customName!= null">custom_name,</if>
+		
+		<if test="e.telNo!= null">tel_no,</if>
+		
+		<if test="e.createTime!= null">create_time,</if>
+		
+		<if test="e.lastModifyTime!= null">last_modify_time,</if>
+		
+		<if test="e.bookCityCode!= null">book_city_code,</if>
+		
+		<if test="e.bookCity!= null">book_city,</if>
+		
+		<if test="e.startCityCode!= null">start_city_code,</if>
+		
+		<if test="e.startCity!= null">start_city,</if>
+		
+		<if test="e.desCityCode!= null">des_city_code,</if>
+		
+		<if test="e.desCity!= null">des_city,</if>
+		
+		order_type
+		
+		) values (
+
+		#{e.orderId},
+
+		<if test="e.faceSaleId!= null">#{e.faceSaleId},</if>
+
+		<if test="e.faceSaleName!= null">#{e.faceSaleName},</if>
+
+		<if test="e.signType!= null">#{e.signType},</if>
+
+		<if test="e.customerLeaderId!= null">#{e.customerLeaderId},</if>
+
+		<if test="e.customerLeader!= null">#{e.customerLeader},</if>
+		
+		<if test="e.productLeaderId!= null">#{e.productLeaderId},</if>
+		
+		<if test="e.productLeader!= null">#{e.productLeader},</if>
+
+		<if test="e.routeId!= null">#{e.routeId},</if>
+		
+		<if test="e.outDate!= null">#{e.outDate},</if>
+		
+		<if test="e.backDate!= null">#{e.backDate},</if>
+		
+		<if test="e.customName!= null">#{e.customName},</if>
+		
+		<if test="e.telNo!= null">#{e.telNo},</if>
+		
+		<if test="e.createTime!= null">#{e.createTime},</if>
+		
+		<if test="e.lastModifyTime!= null">#{e.lastModifyTime},</if>
+		
+		<if test="e.bookCityCode!= null">#{e.bookCityCode},</if>
+		
+		<if test="e.bookCity!= null">#{e.bookCity},</if>
+		
+		<if test="e.startCityCode!= null">#{e.startCityCode},</if>
+		
+		<if test="e.startCity!= null">#{e.startCity},</if>
+		
+		<if test="e.desCityCode!= null">#{e.desCityCode},</if>
+		
+		<if test="e.desCity!= null">#{e.desCity},</if>
+
+		#{e.orderType}
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			1=1
+			<if test="bookCity != null and bookCity != ''">
+				and book_city = #{bookCity}
+			</if>
+			<if test="startCity != null and startCity != ''">
+				and start_city = #{startCity}
+			</if>
+			<if test="desCity != null and desCity != ''">
+				and des_city = #{desCity}
+			</if>
+			<if test="orderId != null and orderId != ''">
+				and order_id = #{orderId}
+			</if>
+			<if test="routeId != null and routeId != ''">
+				and route_id = #{routeId}
+			</if>
+			<if test="faceSaleName != null and faceSaleName != ''">
+				and face_sale_name like '%${faceSaleName}%'
+			</if>
+			<if test="orderType != null and orderType != ''">
+				and order_type = #{orderType}
+			</if>
+			<if test="signType != null and signType != ''">
+				and sign_type = #{signType}
+			</if>
+			<if test="outDateBegin != null and outDateBegin != ''">
+				and out_date >= #{outDateBegin}
+			</if>
+			<if test="outDateEnd != null and outDateEnd != ''">
+			<![CDATA[
+				and out_date <= #{outDateEnd}
+				]]>
+			</if>
+			<if test="backDateBegin != null and backDateBegin != ''">
+				and back_date >= #{backDateBegin}
+			</if>
+			<if test="backDateEnd != null and backDateEnd != ''">
+			<![CDATA[
+				and back_date <= #{backDateEnd}
+				]]>
+			</if>
+			<if test="customerLeader != null and customerLeader != '' ">
+				and customer_leader = #{customerLeader}
+			</if>
+			<if test="productLeader != null and productLeader != '' ">
+				and product_leader_id = #{productLeader}
+			</if>
+			<if test="customName != null and customName != ''">
+				and custom_name like '%${customName}%'
+			</if>
+			<if test="lastModifyTime != null and lastModifyTime != ''">
+				and last_modify_time like  '${lastModifyTime}%'
+			</if>
+		</where>
+		order by id desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+	
+	<select id="fetchListMap" parameterType="Map" resultMap="listResultMap">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="orderId" column="order_id" />
+
+		<result property="faceSaleId" column="face_sale_id" />
+
+		<result property="faceSaleName" column="face_sale_name" />
+
+		<result property="faceSaleSatisfaction" column="face_sale_satisfaction" />
+
+		<result property="signType" column="sign_type" />
+
+		<result property="customerLeaderId" column="customer_leader_id" />
+		
+		<result property="customerLeader" column="customer_leader" />
+		
+		<result property="productLeaderId" column="product_leader_id" />
+		
+		<result property="productLeader" column="product_leader" />
+
+		<result property="orderType" column="order_type" />
+
+		<result property="routeId" column="route_id" />
+		
+		<result property="outDate" column="out_date" />
+
+		<result property="backDate" column="back_date" />
+
+		<result property="customName" column="custom_name" />
+
+		<result property="telNo" column="tel_no" />
+		
+		<result property="createTime" column="create_time" />
+		
+		<result property="lastModifyTime" column="last_modify_time" />
+		
+		<result property="bookCityCode" column="book_city_code" />
+		
+		<result property="bookCity" column="book_city" />
+		
+		<result property="startCityCode" column="start_city_code" />
+		
+		<result property="startCity" column="start_city" />
+		
+		<result property="desCityCode" column="des_city_code" />
+		
+		<result property="desCity" column="des_city" />
+		
+	</resultMap>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.satisfaction.entity.SignSatisfactionEntity">
+
+		<result property="orderId" column="order_id" />
+
+		<result property="faceSaleId" column="face_sale_id" />
+
+		<result property="faceSaleName" column="face_sale_name" />
+
+		<result property="faceSaleSatisfaction" column="face_sale_satisfaction" />
+
+		<result property="signType" column="sign_type" />
+
+		<result property="customerLeaderId" column="customer_leader_id" />
+		
+		<result property="customerLeader" column="customer_leader" />
+		
+		<result property="productLeaderId" column="product_leader_id" />
+		
+		<result property="productLeader" column="product_leader" />
+
+		<result property="orderType" column="order_type" />
+
+		<result property="routeId" column="route_id" />
+		
+		<result property="outDate" column="out_date" />
+
+		<result property="backDate" column="back_date" />
+
+		<result property="customName" column="custom_name" />
+
+		<result property="telNo" column="tel_no" />
+		
+		<result property="createTime" column="create_time" />
+		
+		<result property="lastModifyTime" column="last_modify_time" />
+		
+		<result property="bookCityCode" column="book_city_code" />
+		
+		<result property="bookCity" column="book_city" />
+		
+		<result property="startCityCode" column="start_city_code" />
+		
+		<result property="startCity" column="start_city" />
+		
+		<result property="desCityCode" column="des_city_code" />
+		
+		<result property="desCity" column="des_city" />
+		
+	</resultMap>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+		
+			<if test="e.faceSaleId != null">face_sale_id=#{e.faceSaleId},</if>
+			
+			<if test="e.faceSaleName != null">face_sale_name=#{e.faceSaleName},</if>
+			
+			<if test="e.signType != null">sign_type=#{e.signType},</if>
+			
+			<if test="e.customerLeaderId != null">customer_leader_id=#{e.customerLeaderId},</if>
+			
+			<if test="e.customerLeader != null">customer_leader=#{e.customerLeader},</if>
+			
+			<if test="e.productLeaderId != null">product_leader_id=#{e.productLeaderId},</if>
+			
+			<if test="e.productLeader != null">product_leader=#{e.productLeader},</if>
+			
+			<if test="e.orderType != null">order_type=#{e.orderType},</if>
+			
+			<if test="e.faceSaleSatisfaction != null">face_sale_satisfaction=#{e.faceSaleSatisfaction},</if>
+			
+			<if test="e.routeId!= null">route_id=#{e.routeId},</if>
+			
+			<if test="e.outDate!= null">out_date=#{e.outDate},</if>
+			
+			<if test="e.backDate!= null">back_date=#{e.backDate},</if>
+			
+			<if test="e.customName!= null">custom_name=#{e.customName},</if>
+			
+			<if test="e.telNo!= null">tel_no=#{e.telNo},</if>
+			
+			<if test="e.createTime!= null">create_time=#{e.createTime},</if>
+			
+			<if test="e.bookCityCode!= null">book_city_code=#{e.bookCityCode},</if>
+			
+			<if test="e.bookCity!= null">book_city=#{e.bookCity},</if>
+			
+			<if test="e.startCityCode!= null">start_city_code=#{e.startCityCode},</if>
+			
+			<if test="e.startCity!= null">start_city=#{e.startCity},</if>
+			
+			<if test="e.desCityCode!= null">des_city_code=#{e.desCityCode},</if>
+			
+			<if test="e.desCity!= null">des_city=#{e.desCity},</if>
+			
+			<if test="e.faceSaleSatisfaction != null">face_sale_satisfaction=#{e.faceSaleSatisfaction},</if>
+			
+			<if test="e.lastModifyTime != null">last_modify_time=#{e.lastModifyTime}</if>
+
+		</set>
+		where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true"
+		statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	
+	<select id="getLastestEntityByTelNo" parameterType="String" resultMap="listResultEntity">
+		SELECT * FROM ct_sign_satisfaction WHERE tel_no=#{telNo} ORDER BY create_time DESC LIMIT 1;
+	</select>
+	
+	<select id="getCountByOrderId" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM ct_sign_satisfaction 
+		WHERE order_id=#{orderId}
+	</select>
+	
+	<select id="getDistinctBookCityList"  resultType="String">
+		SELECT DISTINCT(book_city) FROM ct_sign_satisfaction WHERE book_city!='';
+	</select>
+	
+	<select id="getDistinctStartCityList"  resultType="String">
+		SELECT DISTINCT(start_city) FROM ct_sign_satisfaction WHERE start_city!='';
+	</select>
+	
+	<select id="getDistinctDesCityList"  resultType="String">
+		SELECT DISTINCT(des_city) FROM ct_sign_satisfaction WHERE des_city!='';
+	</select>
+	
+</mapper>

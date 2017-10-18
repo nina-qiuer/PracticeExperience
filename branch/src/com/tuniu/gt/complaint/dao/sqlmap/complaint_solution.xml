@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintSolutionMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			del_flag=1
+			<if test="complaintId != null">
+				AND complaint_id=#{complaintId}
+			</if>
+			<if test="solutionId != null">
+				AND solution_id=#{solutionId}
+			</if>
+			<if test="submitFlag != null">
+				AND submit_flag=#{submitFlag}
+			</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.ComplaintSolutionEntity">
+		<result property="id" column="id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="orderId" column="order_id" />
+		<result property="userName" column="username" />
+		<result property="phone" column="phone" />
+		<result property="compPersonId" column="comp_person_id" />
+		<result property="cash" column="cash" />
+		<result property="payment" column="payment" />
+		<result property="receiver" column="receiver" />
+		<result property="idCardNo" column="id_card_no" />
+		<result property="collectionUnit" column="collection_unit" />
+		<result property="bigBank" column="bigBank" />
+		<result property="bankProvince" column="bankProvince" />
+		<result property="bankCity" column="bankCity" />
+		<result property="bank" column="bank" />
+		<result property="account" column="account" />
+		<result property="toOrderId" column="to_order_id" />
+		<result property="touristBook" column="tourist_book" />
+		<result property="replaceBook" column="replace_book" />
+		<result property="gift" column="gift" />
+		<result property="appointedTime" column="appointed_time" />
+		<result property="descript" column="descript" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+		<result property="submitFlag" column="submit_flag" />
+		<result property="submitTime" column="submit_time" />
+		<result property="dealId" column="deal_id" />
+		<result property="dealName" column="deal_name" />
+		<result property="auditFlag" column="audit_flag" />
+		<result property="auditTime" column="audit_time" />
+		<result property="confirmFlag" column="confirm_flag" />
+		<result property="refundId" column="refund_id" />
+		<result property="satisfactionFlag" column="satisfactionFlag" />
+	</resultMap>
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		<result property="id" column="id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="orderId" column="order_id" />
+		<result property="userName" column="username" />
+		<result property="phone" column="phone" />
+		<result property="cash" column="cash" />
+		<result property="payment" column="payment" />
+		<result property="receiver" column="receiver" />
+		<result property="idCardNo" column="id_card_no" />
+		<result property="collectionUnit" column="collection_unit" />
+		<result property="bigBank" column="bigBank" />
+		<result property="bankProvince" column="bankProvince" />
+		<result property="bankCity" column="bankCity" />
+		<result property="bank" column="bank" />
+		<result property="account" column="account" />
+		<result property="toOrderId" column="to_order_id" />
+		<result property="touristBook" column="tourist_book" />
+		<result property="replaceBook" column="replace_book" />
+		<result property="gift" column="gift" />
+		<result property="appointedTime" column="appointed_time" />
+		<result property="descript" column="descript" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+		<result property="submitFlag" column="submit_flag" />
+		<result property="submitTime" column="submit_time" />
+		<result property="dealId" column="deal_id" />
+		<result property="dealName" column="deal_name" />
+		<result property="auditFlag" column="audit_flag" />
+		<result property="auditTime" column="audit_time" />
+		<result property="confirmFlag" column="confirm_flag" />
+		<result property="satisfactionFlag" column="satisfactionFlag" />
+	</resultMap>
+	
+	<select id="get" parameterType="Map" resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<select id="getByComplaintId" parameterType="Integer" resultMap="listResultEntity">
+		SELECT * FROM ct_complaint_solution WHERE del_flag=1 and complaint_id=#{complaintId} limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  complaint_id,
+		  order_id,
+		  username,
+		  phone,
+		  cash,
+		  payment,
+		  <if test="e.receiver != null">
+		  receiver,
+		  </if>
+		  id_card_no,
+		  <if test="e.collectionUnit != null">
+		  collection_unit,
+		  </if>
+		  cardUniqueId,
+		  to_order_id,
+		  tourist_book,
+		  replace_book,
+		  gift,
+		  <if test="e.appointedTime != null">appointed_time,</if>
+		  <if test="e.compPersonId != null">comp_person_id,</if>
+		  descript,
+		  satisfactionFlag
+		) values  (
+		  #{e.complaintId},
+		  #{e.orderId},
+		  #{e.userName},
+		  #{e.phone},
+		  #{e.cash},
+		  #{e.payment},
+		  <if test="e.receiver != null">
+		  #{e.receiver},
+		  </if>
+		  #{e.idCardNo},
+		  <if test="e.collectionUnit != null">
+		  #{e.collectionUnit},
+		  </if>
+		  #{e.cardUniqueId},
+		  #{e.toOrderId},
+		  #{e.touristBook},
+		  #{e.replaceBook},
+		  #{e.gift},
+		  <if test="e.appointedTime != null">#{e.appointedTime},</if>
+		  <if test="e.compPersonId != null">#{e.compPersonId},</if>
+		  #{e.descript},
+		  #{e.satisfactionFlag}
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			<if test="e.orderId != null">order_id=#{e.orderId},</if>
+			<if test="e.userName != null">username=#{e.userName},</if>
+			<if test="e.phone != null">phone=#{e.phone},</if>
+			<if test="e.compPersonId != null">comp_person_id=#{e.compPersonId},</if>
+			<if test="e.cash != null">cash=#{e.cash},</if>
+			<if test="e.payment != null">payment=#{e.payment},</if>
+			<if test="e.receiver != null">receiver=#{e.receiver},</if>
+			<if test="e.idCardNo != null">id_card_no=#{e.idCardNo},</if>
+			<if test="e.collectionUnit != null">collection_unit=#{e.collectionUnit},</if>
+			<if test="e.bigBank != null">bigBank=#{e.bigBank},</if>
+			<if test="e.bankProvince != null">bankProvince=#{e.bankProvince},</if>
+			<if test="e.bankCity != null">bankCity=#{e.bankCity},</if>
+			<if test="e.bank != null">bank=#{e.bank},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			<if test="e.account != null">account=#{e.account},</if>
+			<if test="e.toOrderId != null">to_order_id=#{e.toOrderId},</if>
+			<if test="e.touristBook != null">tourist_book=#{e.touristBook},</if>
+			<if test="e.replaceBook != null">replace_book=#{e.replaceBook},</if>
+			<if test="e.gift != null">gift=#{e.gift},</if>
+			<if test="e.appointedTime != null">appointed_time=#{e.appointedTime},</if>
+			<if test="e.descript != null">descript=#{e.descript},</if>
+			<if test="e.submitFlag != null">submit_flag=#{e.submitFlag},</if>
+			<if test="e.submitTime != null">submit_time=#{e.submitTime},</if>
+			<if test="e.dealId != null">deal_id=#{e.dealId},</if>
+			<if test="e.dealName != null">deal_name=#{e.dealName},</if>
+			<if test="e.auditFlag != null">audit_flag=#{e.auditFlag},</if>
+			<if test="e.auditTime != null">audit_time=#{e.auditTime},</if>
+			<if test="e.confirmFlag != null">confirm_flag=#{e.confirmFlag},</if>
+			<if test="e.refundId != null">refund_id=#{e.refundId},</if>
+			<if test="e.satisfactionFlag != null">satisfactionFlag=#{e.satisfactionFlag},</if>
+			<if test="e.cardUniqueId != null">cardUniqueId=#{e.cardUniqueId},</if>
+			<if test="e.auditName != null">auditName=#{e.auditName},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<select id="getNeedRepairList" parameterType="Integer" resultMap="listResultEntity">
+	<![CDATA[
+ 		SELECT t1.* FROM ct_complaint_solution t1,ct_complaint t2 
+		WHERE t1.complaint_id=t2.id AND t2.del_flag=0 AND t2.state!=9 AND t1.id<#{scope} 
+		AND t1.del_flag=1 AND t1.order_id=0 ORDER BY t1.id DESC LIMIT 10000
+ 	]]>
+	</select>
+	
+	<select id="getCmpSolutionByCmpId" parameterType="java.util.Map" resultType="com.tuniu.gt.complaint.entity.ComplaintSolutionEntity">
+	
+	     SELECT ct.complaint_id AS complaintId,b.order_id AS orderId,ct.descript ,
+	     
+	     (CASE  b.state  WHEN '1' THEN '投诉待处理' WHEN '2' THEN '投诉处理中' WHEN '3' THEN '投诉已待结' 
+	           WHEN '4' THEN '投诉已完成' WHEN '5' THEN '投诉待指定' 
+	           WHEN '6' THEN '投诉待指定(提交售后填写分担方案)' WHEN '7' THEN '投诉待指定(升级售前)' 
+	           WHEN '9' THEN '已撤销' WHEN '10' THEN '投诉待指定(升级客服中心售后)' 
+	         END)  cmpState
+	      FROM  ct_complaint_solution  ct INNER JOIN 
+			( 			
+			 SELECT  MAX(t.id) AS id FROM(
+				  SELECT a.id,a.complaint_id FROM ct_complaint_solution a INNER JOIN (
+				
+				  SELECT id FROM ct_complaint WHERE del_flag =0 AND order_id IN
+				  <foreach collection="ordIds" item="ordId"
+			      open="(" close=")" separator=",">
+			  	 #{ordId}
+		  		 </foreach>
+				) b ON a.complaint_id=b.id WHERE a.del_flag =1
+				)t
+				GROUP BY t.complaint_id
+			  ) t	ON ct.id = t.id 
+		   INNER JOIN ct_complaint b ON ct.complaint_id =b.id AND  b.del_flag =0
+	</select>
+	
+	<select id="getNeedSynchSolution" parameterType="java.util.Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintSolutionEntity">
+				  <if test="payment != 3">
+				  SELECT
+			      id,
+			      complaint_id AS complaintId,
+			      receiver,
+			      bigBank,
+			      bankProvince,
+			      bankCity,
+			      bank,
+			      account,
+			      cardUniqueId
+			      FROM ct_complaint_solution
+			      WHERE payment = 2
+			      <if test="audit_flag_list != null">
+			      AND audit_flag IN
+					<foreach collection="audit_flag_list" item="audit_flag_ele" open="(" close=")"
+						separator=",">
+						#{audit_flag_ele}
+					</foreach>
+				  </if>
+				  <if test="audit_flag != null">
+			      AND audit_flag = #{audit_flag}
+			      AND del_flag = 1
+			      </if>
+			      <if test="idBgn != null">
+			      AND id &gt;= #{idBgn}
+			      </if>
+			      <if test="idEnd != null">
+			      AND id &lt;= #{idEnd}
+			      </if>
+			      </if>
+			      <if test="payment != 2 and payment != 3">
+			      UNION 
+			      </if>
+			      <if test="payment != 2">
+			      SELECT id, complaint_id AS complaintId, 
+			      collection_unit AS receiver, 
+			      bigBank, 
+			      bankProvince, 
+			      bankCity, 
+			      bank, 
+			      account, 
+			      cardUniqueId 
+     			  FROM ct_complaint_solution 
+     			  WHERE 
+     			  payment = 3
+     			  <if test="audit_flag_list != null">
+			      AND audit_flag IN
+					<foreach collection="audit_flag_list" item="audit_flag_ele" open="(" close=")"
+						separator=",">
+						#{audit_flag_ele}
+					</foreach>
+				  </if>
+				  <if test="audit_flag != null">
+			      AND audit_flag = #{audit_flag}
+			      AND del_flag = 1
+			      </if>
+     			  </if>
+	</select>
+	
+	<update id="updateCardUniqueId">
+		UPDATE ct_complaint_solution SET cardUniqueId= #{cardUniqueId} where id=#{id}
+	</update>
+	
+	<select id="getComplaintIdByReFundId" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintSolutionEntity">
+		SELECT
+  		complaint_id AS complaintId,
+		refund_id    AS refundId
+		FROM ct_complaint_solution
+		WHERE del_flag = 1
+    	AND audit_flag in (-1,4)
+    	AND submit_flag = 1
+    	AND refund_id = #{refund_id}
+    	AND order_id = #{order_id}
+	</select>
+</mapper>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<!-- 规则 中划线前为namespace -->	
+	
+	<package name="complaint-complaint" extends="apply-default" namespace="/complaint/action"> 
+		<action name="*-*" class="complaint_action-{1}" method="{2}">
+			<result name="form">/WEB-INF/html/complaint/complaint_main_list/complaint_form.jsp</result>  
+			<result name="list">/WEB-INF/html/complaint/complaint_main_list/complaint_list.jsp</result>
+			<result name="complaint_list_query">/WEB-INF/html/complaint/complaint_main_list/complaint_list_query.jsp</result>
+			<result name="searchList">/WEB-INF/html/complaint/complaint_main_list/complaint_search_list.jsp</result>
+			<result name="repeatOrderIdComplaintList">/WEB-INF/html/complaint/complaint_main_list/repeat_complaint_list.jsp</result> 
+			<!-- 支持用户自定义指定jsp页面 -->
+			<result name="*">/WEB-INF/html/complaint/{1}_${jspTpl}.jsp</result>
+			<!-- 发起投诉列表页面 -->
+			<result name="add_list">/WEB-INF/html/complaint/complaint_add/complaint_add_list.jsp</result>
+			<result name="add_email">/WEB-INF/html/complaint/complaint_add/complaint_send_email.jsp</result>
+			<result name="comgplaint_note">/WEB-INF/html/complaint/complaint_add/complaint_note.jsp</result>
+			<!-- 发起投诉投诉单页面 -->
+			<result name="add_add">/WEB-INF/html/complaint/complaint_add/complaint_add_add.jsp</result>
+			<result name="non_order_complaint_add">/WEB-INF/html/complaint/complaint_add/non_order_complaint_add.jsp</result>
+			<result name="complaint_add_batch">/WEB-INF/html/complaint/complaint_add/complaint_add_batch.jsp</result>
+			<!-- 发起投诉原因页面 -->
+			<result name="add_reason">/WEB-INF/html/complaint/complaint_add/complaint_add_reason.jsp</result>
+			<!-- 投诉处理单 -->
+			<result name="bill">/WEB-INF/html/complaint/complaint_main_list/complaint_bill.jsp</result>
+			<result name="comp_detail">/WEB-INF/html/complaint/complaint_main_list/comp_detail.jsp</result>
+			<result name="search_bill">/WEB-INF/html/complaint/complaint_main_list/complaint_search_bill.jsp</result>
+			<result name="call_record">/WEB-INF/html/complaint/complaint_main_list/call_record.jsp</result>
+			
+			<!-- 回呼 -->
+			<result name="complaint_callback_detail">/WEB-INF/html/complaint/complaint_main_list/complaint_callback_detail.jsp</result>
+			<result name="complaint_task_reminder">/WEB-INF/html/complaint/complaint_main_list/complaint_task_reminder_list.jsp</result>
+			<result name="choose_callback_type">/WEB-INF/html/complaint/complaint_main_list/choose_callback_type.jsp</result>
+			
+			<!-- 第三方投诉查询 -->
+			<result name="complaint_third_list">/WEB-INF/html/complaint/third/complaint_third_list.jsp</result>
+			<result name="complaint_third_deal">/WEB-INF/html/complaint/third/complaint_third_deal.jsp</result>
+			
+			<!--供应商沟通页面-->
+			<result name="supplier_commit">/WEB-INF/html/complaint/complaint_main_list/supplier_commit.jsp</result>		
+			
+			<!--质检点页面-->
+			<result name="qc_point">/WEB-INF/html/complaint/complaint_main_list/qc_point.jsp</result>
+			
+			<!-- 处理优先级 -->
+			<result name="complaint_priority">/WEB-INF/html/complaint/complaint_main_list/complaint_priority_form.jsp</result>
+			
+			<!-- 点评修改申请 -->
+			<result name="complaint_reviewApply">/WEB-INF/html/complaint/complaint_main_list/complaint_review_apply_form.jsp</result>
+			
+			<!--追加沟通页面-->
+			<result name="add_supplier_commit">/WEB-INF/html/complaint/complaint_main_list/add_supplier_commit.jsp</result>	
+			<!-- 修改沟通类型页面 -->
+			<result name="update_commit">/WEB-INF/html/complaint/complaint_main_list/update_commit_type.jsp</result>			
+			<!--查看某个会话页面-->
+			<result name="commit_list">/WEB-INF/html/complaint/complaint_main_list/commit_list.jsp</result>	
+			<!-- 修改投诉来源 -->
+			<result name="change_come">/WEB-INF/html/complaint/complaint_main_list/come_from_change.jsp</result>
+			<!-- 修改投诉等级 -->
+			<result name="change_levl">/WEB-INF/html/complaint/complaint_main_list/levl_change.jsp</result>			
+			<!-- 跟进信息页面 -->
+			<result name="follow_time">/WEB-INF/html/complaint/follow_time/follow_time.jsp</result>
+			<!-- 本次跟进页面 -->
+			<result name="follow_up_record">/WEB-INF/html/complaint/follow_up_record/follow_up_record.jsp</result>
+			<!-- 编辑投诉事宜页面 -->
+			<result name="edit_reason">/WEB-INF/html/complaint/reason/complaint_reason_edit.jsp</result>
+			<result name="to_add_reason" type="chain">complaint_reason-addComplaint</result>
+			<!-- 发起投诉编辑投诉事宜页面 -->
+			<result name="add_edit_reason">/WEB-INF/html/complaint/reason/complaint_reason_add_edit.jsp</result>
+			<!-- 编辑投诉理据页面 -->
+			<result name="edit_payout_base">/WEB-INF/html/complaint/payout_base_edit.jsp</result>
+			<!-- 编辑发送核实请求页面 -->
+			<result name="send_email">/WEB-INF/html/complaint/check_email/check_email.jsp</result>
+			<!-- 核实请求反馈页面 -->
+			<result name="send_email_reply">/WEB-INF/html/complaint/check_email/reply.jsp</result>
+			<!-- 添加解决方案页面 -->
+			<result name="solution_add">/WEB-INF/html/complaint/solution_add.jsp</result>
+			<result name="solution_info">/WEB-INF/html/complaint/solution_info.jsp</result>
+			<result name="solution_update">/WEB-INF/html/complaint/solution_update.jsp</result>
+			
+			<!-- 添加分担方案页面 -->
+			<result name="share_solution_add">/WEB-INF/html/complaint/share_solution_add.jsp</result>
+			<result name="share_solution_update">/WEB-INF/html/complaint/share_solution_update.jsp</result>
+			<result name="share_solution_info">/WEB-INF/html/complaint/share_solution_info.jsp</result>
+			
+			<!-- 查看供应商赔款通知单页面 -->
+			<result name="refund_notice">/WEB-INF/html/complaint/share_solution/refund_notice.jsp</result>
+			<!-- 赔款审核页面 -->
+			<result name="reparation_audit">/WEB-INF/html/complaint/claims_audit/reparation_audit_list.jsp</result>
+			<result name="reparation_audit_bill">/WEB-INF/html/complaint/claims_audit/reparation_audit_bill.jsp</result>
+			<result name="amount_summary">/WEB-INF/html/complaint/claims_audit/amount_summary.jsp</result>
+			<!-- 礼品申请页面 -->
+			<result name="gift_note">/WEB-INF/html/complaint/gift_note_add.jsp</result>
+			<!-- 执行确认页面 -->
+			<result name="confirm">/WEB-INF/html/complaint/complaint_confirm.jsp</result>
+			<!-- 分配负责人列表 -->
+			<result name="appoint_manager_list">/WEB-INF/html/complaint/appoint_manager/appoint_manager_list.jsp</result>
+			<!-- 分配负责人-编辑 -->
+			<result name="appoint_manager_edit">/WEB-INF/html/complaint/appoint_manager/appoint_manager_edit.jsp</result>
+			<!-- 自动分单列表 -->
+			<result name="auto_assign_list">/WEB-INF/html/complaint/auto_assign/auto_assign_list.jsp</result>
+			<result name="auto_assign_detail">/WEB-INF/html/complaint/auto_assign/auto_assign_detail.jsp</result>
+			<!-- 自动分单列表-新增 -->
+			<result name="auto_assign_add">/WEB-INF/html/complaint/auto_assign/auto_assign_add.jsp</result>
+			<!-- 自动分单列表-配置部门 -->
+			<result name="set_dapt">/WEB-INF/html/complaint/auto_assign/set_dapt.jsp</result>
+			<!-- 自动分单列表-修改 -->
+			<result name="auto_assign_modify">/WEB-INF/html/complaint/auto_assign/auto_assign_modify.jsp</result>
+			<result name="auto_assign_modify_qc">/WEB-INF/html/complaint/auto_assign/auto_assign_modify_qc.jsp</result>
+			
+			<!-- 设置邮件收件人列表 -->
+			<result name="receiver_email_list">/WEB-INF/html/complaint/receiver_email/list.jsp</result>
+			<!-- 设置邮件收件人 -->
+			<result name="receiver_email_edit">/WEB-INF/html/complaint/receiver_email/edit.jsp</result>
+			<!-- 设置邮件组 -->
+			<result name="receiver_email_group">/WEB-INF/html/complaint/receiver_email/edit_group.jsp</result>
+			
+			<result name="cc_email_list">/WEB-INF/html/complaint/receiver_email/cc_email_list.jsp</result>
+			<result name="cc_email_add">/WEB-INF/html/complaint/receiver_email/cc_email_add.jsp</result>
+			
+			<!-- 设置投诉处理部门 -->
+			<result name="add_department">/WEB-INF/html/complaint/appoint_manager/add_department.jsp</result>
+			
+			<!-- 质量工具 -->
+			<result name="quality_tool_list">/WEB-INF/html/complaint/quality_tool/quality_tool_list.jsp</result>
+			<result name="quality_tool_edit">/WEB-INF/html/complaint/quality_tool/quality_tool_edit.jsp</result>
+			
+			<!-- qcList -->
+			<result name="qc_list">/WEB-INF/html/complaint/qc/complaint_qc_list.jsp</result>
+			<result name="qc_input">/WEB-INF/html/complaint/qc/complaint_qc_form.jsp</result>
+			<result name="qc_view">/WEB-INF/html/complaint/qc/complaint_qc_detail.jsp</result>
+			<result name="qc_note">/WEB-INF/html/complaint/qc/complaint_qc_note.jsp</result>
+			
+			<!-- begin supportShare -->
+				<result name="support_share_list">/WEB-INF/html/complaint/support_share/complaint_supp_share_list.jsp</result>
+			<!-- end supportShare -->
+			
+			<!-- begin employeeShare -->
+				<result name="employee_share_list">/WEB-INF/html/complaint/employee_share/complaint_employ_share_list.jsp</result>
+			<!-- end employeeShare -->
+			
+			<!-- 质量工具 -->
+			<result name="kissy">/WEB-INF/html/complaint/kiss_me_baby.jsp</result>
+			
+			<!-- 错误页面 -->
+			<result name="error">/WEB-INF/html/error.jsp</result> 
+			
+			<!-- 满意度调查 -->
+			<result name="pre_sale_satisfaction_list">/WEB-INF/html/complaint/satisfaction_main_list/pre_sale_satisfaction_list.jsp</result>
+			<result name="pre_sale_satisfaction_socre_add">/WEB-INF/html/complaint/satisfaction_main_list/pre_sale_satisfaction_socre_add.jsp</result>
+			<result name="pre_sale_satisfaction_socre_update">/WEB-INF/html/complaint/satisfaction_main_list/pre_sale_satisfaction_socre_update.jsp</result>
+			<result name="pre_sale_satisfaction_ucconstruts">/WEB-INF/html/complaint/satisfaction_main_list/pre_sale_satisfaction_ucconstruts.jsp</result>
+			
+			<result name="showLeftDept">/WEB-INF/html/complaint/satisfaction_main_list/left.jsp</result>
+			<result name="showRightPerson">/WEB-INF/html/complaint/satisfaction_main_list/right.jsp</result>
+			
+			<result name="sign_satisfaction_list">/WEB-INF/html/complaint/satisfaction_main_list/sign_satisfaction_list.jsp</result>
+			
+			<result name="msg_reply_test">/WEB-INF/html/complaint/satisfaction_main_list/msg_reply_test.jsp</result>
+			<result name="fix_satisfaction_data_list">/WEB-INF/html/complaint/satisfaction_main_list/fix_satisfaction_data_list.jsp</result>
+			
+			<!-- 统计报表 -->
+			<result name="twice_consuming_report_list">/WEB-INF/html/complaint/twice_consuming_report_list/twice_consuming_report_list.jsp</result>
+			
+			<!-- Add by WangMingFang for 投诉量统计 on 20140228 Begin -->
+			<result name="complaintNum_list">/WEB-INF/html/complaint/complaintNum_stat/complaintNum_list.jsp</result>
+			<!-- Add by WangMingFang for 投诉量统计 on 20140228 Begin -->
+			
+			<!-- 投诉质检汇总列表页面 -->
+			<result name="complaintCollect_list">/WEB-INF/html/complaint/complaintNum_collect/complaintCollect_list.jsp</result>
+			
+			<!-- 售后中心业务关键指标报表 -->
+			<result name="cirticalReport_list">/WEB-INF/html/complaint/critical_report/cirticalReport_list.jsp</result>
+			
+			<!-- 排班 add by chenhaitao 20150512-->
+			<result name="shiftSystem_list">/WEB-INF/html/complaint/shiftsystem_plan/calendar.jsp</result>
+			
+			<!-- 投诉表数据修补custId -->
+			<result name="fix_cust_id_4_complaint">/WEB-INF/html/complaint/fix_cust_id_4_complaint.jsp</result>
+			
+			<!-- 供应商赔付确认信息 -->
+			<result name="agency_confirm_list">/WEB-INF/html/complaint/agency_confirm/agency_confirm_list.jsp</result>
+			
+			<!-- 供应商赔付确认信息 -->
+			<result name="agency_payout_bill">/WEB-INF/html/complaint/agency_confirm/agency_payout_bill.jsp</result>
+			
+			<!-- 供应商申诉信息 -->
+			<result name="agency_appeal_bill">/WEB-INF/html/complaint/agency_confirm/agency_appeal_bill.jsp</result>
+			
+			<!-- 签约满意度数据修补 -->
+			<result name="fix_sign_satisfaction">/WEB-INF/html/complaint/fix_sign_satisfaction.jsp</result>
+			
+			<!-- 质检人员工作量综合统计 -->
+			<result name="qc_work_list">/WEB-INF/html/complaint/qc/qc_work_list.jsp</result>
+			
+			<!-- 上传文件 -->
+			<result name="upload_list">/WEB-INF/html/complaint/upload/upload_list.jsp</result>
+			<result name="qc_note_attach">/WEB-INF/html/complaint/upload/qc_note_attach.jsp</result>
+			<result name="qc_upload_list">/WEB-INF/html/complaint/upload/qc_upload_list.jsp</result>
+			<!-- 退款申请 -->
+			<result name="refund_apply_form">/WEB-INF/html/complaint/refund_apply/refund_apply_form.jsp</result>
+			
+			<!-- 售后报表 -->			
+			<result name="after_sale_report">/WEB-INF/html/complaint/after_sale_report/after_sale_report.jsp</result>
+			<result name="undone_cmplist_report">/WEB-INF/html/complaint/after_sale_report/undone_cmplist_report.jsp</result>
+			<result name="undone_cmplist_report_travel_consultant">/WEB-INF/html/complaint/after_sale_report/undone_cmplist_report_travel_consultant.jsp</result>
+			<result name="complaint_detail_list">/WEB-INF/html/complaint/after_sale_report/complaint_detail_list.jsp</result>
+			<result name="complete_cmplist_report">/WEB-INF/html/complaint/after_sale_report/complete_cmplist_report.jsp</result>
+			<result name="order_list">/WEB-INF/html/complaint/after_sale_report/order_list.jsp</result>
+			<result name="launch_count_report">/WEB-INF/html/complaint/after_sale_report/launch_count_report.jsp</result>
+			<result name="launch_list">/WEB-INF/html/complaint/after_sale_report/launch_list.jsp</result>
+			<result name="sp_event_count_report">/WEB-INF/html/complaint/after_sale_report/sp_event_count_report.jsp</result>
+			<result name="handover_report">/WEB-INF/html/complaint/after_sale_report/handover_report.jsp</result>
+			<result name="complaint_id_list">/WEB-INF/html/complaint/after_sale_report/complaint_id_list.jsp</result>
+			<result name="sp_event_detail">/WEB-INF/html/complaint/after_sale_report/sp_event_detail.jsp</result>
+
+			<!-- 抢单页面 -->
+			<result name="rob_complaint_index">/WEB-INF/html/complaint/robComplaint/rob_complaint_index.jsp</result>
+			<result name="rob_complaint_rob">/WEB-INF/html/complaint/robComplaint/rob_complaint_rob.jsp</result>
+			<result name="rob_complaint_statistics">/WEB-INF/html/complaint/robComplaint/rob_complaint_statistics.jsp</result>
+			
+			<!-- 银行分行列表 -->
+			<result name="finance_subbank_list">/WEB-INF/html/complaint/finance/finance_subbank_list.jsp</result>
+			<result name="synch_subbank_task">/WEB-INF/html/complaint/finance/synch_subbank_task.jsp</result>
+
+
+			<result name="complaint_point_edit">/WEB-INF/html/complaint/point/complaint_point_edit.jsp</result>
+			<result name="complaint_point_preview">/WEB-INF/html/complaint/point/complaint_point_preview.jsp</result>
+			
+			<!-- 投诉处理赔付数据统计报表 -->
+			<result name="complaint_dt_report">/WEB-INF/html/complaint/complaint_dt/complaint_dt_report.jsp</result>	
+			<result name="complaint_dt_detail">/WEB-INF/html/complaint/complaint_dt/complaint_dt_detail.jsp</result>
+			<result name="complaint_dt_charts">/WEB-INF/html/complaint/complaint_dt/complaint_dt_charts.jsp</result>
+			<result name="complaint_dt_analyse">/WEB-INF/html/complaint/complaint_dt/complaint_dt_analyse.jsp</result>
+			<result name="complaint_dt_total">/WEB-INF/html/complaint/complaint_dt/complaint_dt_total.jsp</result>
+				
+			<!-- 交接填写跟进记录页面 -->
+			<result name="follow_handover">/WEB-INF/html/complaint/follow_up_record/follow_handover.jsp</result>
+			
+			<!-- 投诉改进报告页面 -->
+			<result name="improve_bill">/WEB-INF/html/complaint/cmp_improve/improve_bill.jsp</result>
+			<result name="improve_bill_upload">/WEB-INF/html/complaint/cmp_improve/improve_bill_upload.jsp</result>
+			
+			<result name="updateError">/WEB-INF/html/updateError.jsp</result>
+			
+			<!-- 升级投诉单选择原因 -->
+			<result name="upgrade_reason">/WEB-INF/html/complaint/complaint_upgrade/upgrade_reason.jsp</result>
+			
+			<!-- 非nb供应商赔付申诉列表 -->
+			<result name="nonb_share_appeal">/WEB-INF/html/complaint/agency_confirm/nonb_share_appeal.jsp</result>
+			
+			<!-- 邮件配置相关 -->
+			<result name="email_config">/WEB-INF/html/complaint/email_config/email_config_list.jsp</result>
+			<result name="email_config_add">/WEB-INF/html/complaint/email_config/email_config_add.jsp</result>
+			
+			<!-- 投诉升级第三方 -->
+			<result name="upgrade_list">/WEB-INF/html/complaint/upgrade_third_part/upgrade_list.jsp</result>
+			<result name="upgrade_bill">/WEB-INF/html/complaint/upgrade_third_part/upgrade_bill.jsp</result>
+		</action>		
+	</package>
+	
+</struts>

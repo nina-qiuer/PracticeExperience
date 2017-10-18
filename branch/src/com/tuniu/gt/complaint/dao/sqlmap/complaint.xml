@@ -1,0 +1,2623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+	"-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintMap">
+	<sql id="whereSql">
+		<where>
+			<if test="id != null and id != '' ">
+				and id = #{id}
+			</if>
+			<if test="orderId != null and orderId != ''">
+				and order_id = #{orderId}
+			</if>
+			<if test="routeId != null and routeId != ''">
+				and route_id = #{routeId}
+			</if>
+			<if test="custId != null">
+				and cust_id = #{custId}
+			</if>
+			
+			<if test="state != null and state!='' and repeatOrderIdComplaint==null">
+				and state in (${state})
+			</if>
+			<if test="priority != null and priority!=-1 ">
+				and priority = #{priority}
+			</if>
+			<if test="deal != null and deal != '' and deal != 0">
+				and (deal=#{deal} or associater=#{deal})
+			</if>
+			<if test="associater != null and associater != '' and associater != 0">
+				and associater=#{associater} and associater != deal and associater_name !=''
+			</if>
+			<if test="orDeal != null and orDeal != ''">
+				and (deal=#{orDeal} or associater=#{orDeal} or customer_leader=#{orDealName})
+			</if>
+			<if test="dealName != null and dealName != ''">
+				and deal_name =  #{dealName}
+			</if>
+			<if test="startBuildDate != null and startBuildDate != ''">
+				and build_date >= #{startBuildDate}
+			</if>
+			<if test="endBuildDate != null and endBuildDate != ''">
+			<![CDATA[
+				and build_date <= #{endBuildDate}
+				]]>
+			</if>
+			<if test="startTimeBegin != null and startTimeBegin != ''">
+				and start_time >= #{startTimeBegin}
+			</if>
+			<if test="startTimeEnd != null and startTimeEnd != ''">
+			<![CDATA[
+				and start_time <= #{startTimeEnd}
+				]]>
+			</if>
+			<if test="startFinishDate != null and startFinishDate != ''">
+				and finish_date >= #{startFinishDate}
+			</if>
+			<if test="endFinishDate != null and endFinishDate != ''">
+			<![CDATA[
+				and finish_date <= #{endFinishDate}
+			]]>
+			</if>
+			<if test="startAssignTime != null and startAssignTime != ''">
+				and assign_time >= #{startAssignTime}
+			</if>
+			<if test="endAssignTime != null and endAssignTime != ''">
+			<![CDATA[
+				and assign_time <= #{endAssignTime}
+			]]>
+			</if>
+			<if test="secondWorkdayOvertime != null and secondWorkdayOvertime != '' ">
+				and second_workday_overtime &lt; #{secondWorkdayOvertime} and second_workday_overtime != '0000-00-00 00:00:00'
+			</if>
+			<if test="firstWorkdayOvertime != null and firstWorkdayOvertime != '' ">
+				and first_workday_overtime &lt; #{firstWorkdayOvertime}  and first_workday_overtime != '0000-00-00 00:00:00'
+			</if>
+			<if test="inProcessState != null and inProcessState != '' ">
+				and in_process_state = #{inProcessState} and build_date > '2014-05-26 18:00:00'
+			</if>
+			<if test="isSticky != null and isSticky != '' ">
+				and is_sticky in (${isSticky})
+			</if>
+			<if test="followTime != null and followTime != '' ">
+				and follow_time = #{followTime}
+			</if>
+			<if test="minFollowTime != null and minFollowTime != '' ">
+				and min_follow_time &lt; #{minFollowTime} and min_follow_time != '0000-00-00 00:00:00'
+			</if>
+			<if test="normal != null and normal != '' ">
+				and id not in (${canUseIds})
+			</if>
+			<if test="insurance != null and insurance != '' ">
+				and id in (${canUseIds})
+			</if>
+			<if test="returnGood != null and returnGood != '' ">
+				and id in (${canUseIds})
+			</if>
+			<if test="route != null and route != ''">
+				and route like '%${route}%'
+			</if>
+			<if test="comeFrom != null and comeFrom != ''">
+				and come_from=#{comeFrom}
+			</if>
+			<if test="startCity != null and startCity != ''">
+				and start_city=#{startCity}
+			</if>
+			<if test="ownerName != null and ownerName != ''">
+				and owner_name=#{ownerName}
+			</if>
+			<if test="endCity != null and endCity != ''">
+				and end_city=#{endCity}
+			</if>
+			<if test="signCity != null and signCity != ''">
+				and sign_city=#{signCity}
+			</if>
+			<if test="leader != null and leader == 'all'">
+				and associater > 0 and associater != deal and associater_name !=''
+			</if>
+			<if test="managerName != null and managerName != ''">
+				and manager_name like '%${managerName}%'
+			</if>
+			<if test="manager != null and manager != '' and manager != 0">
+				and manager = #{manager}
+			</if>
+			<if test="agencyName != null and agencyName != ''">
+				and agency_name like '%${agencyName}%'
+			</if>
+			<if test="level != null and level != '' ">
+				and level = #{level}
+			</if>
+			<if test="customerLeader != null and customerLeader != '' ">
+				and customer_leader = #{customerLeader}
+			</if>
+			<if test="productLeader != null and productLeader != '' ">
+				and product_leader = #{productLeader}
+			</if>
+			<if test="ownerId != null ">
+				and owner_id = #{ownerId}
+			</if>
+
+			<if test="dealDepartTemp != null and dealDepartTemp != '' ">
+				and (deal_depart in (${dealDepartTemp})
+
+					<choose >
+						<when test="beforeFlag == null">or</when>
+					    <otherwise>and</otherwise>
+					</choose>
+
+					(manager = #{managerIdOr} or customer_leader=#{managerIdOrName}
+
+					<if test="customerNames!=null and customerNames!=''">
+						or customer in (${customerNames})
+					</if>
+					<if test="dealNames!=null and dealNames!=''">
+						or deal_name in (${dealNames})
+					</if>
+					)
+				)
+			</if>
+			<if test="dealBusDep!=null and dealBusDep!=''">
+			  and bdp_name=#{dealBusDep}
+			</if>
+			<if test="notInTime != null and notInTime !='' ">
+				and add_time &lt; #{notInTime}
+			</if>
+			<if test="notInState != null and notInState !='' ">
+				and state not in (${notInState})
+			</if>
+			<if test="routeType != null and routeType !='' ">
+				and route_type in (${routeType})
+			</if>
+			<if test="notInRouteType != null and notInRouteType !='' ">
+				and route_type not in (${notInRouteType})
+			</if>
+
+			<if test="contactPerson != null ">
+				and contact_person = #{contactPerson}
+			</if>
+
+			<if test="contactPhone != null and contactPhone != ''">
+				and contact_phone = #{contactPhone}
+			</if>
+			
+			<if test="cmpPhone != null and cmpPhone !=''">
+				and cmp_phone = #{cmpPhone}
+			</if>
+
+			<if test="contactMail != null ">
+				and contact_mail = #{contactMail}
+			</if>
+
+			<if test="createType != null ">
+				and create_type = #{createType}
+			</if>
+
+			<if test="dealDepart != null and dealDepart != '' ">
+				and deal_depart = #{dealDepart}
+			</if>
+
+			<if test=" notInTimeIds !=null">
+				and id  in
+				<foreach item="item" index="index" collection="notInTimeIds" open="(" separator="," close=")">
+                   #{item}
+            	</foreach>
+			</if>
+			<if test="orderStateTemp!=null and orderStateTemp!='' ">
+				and order_state =#{orderStateTemp}
+			</if>
+			<if test="buildDateOfNotAssignDeal=='usedByRTX' ">
+			<![CDATA[
+				and build_date < DATE_SUB(CURDATE(),INTERVAL 3 DAY)
+			]]>
+			</if>
+			<if test="chgFlightFlag!=null and chgFlightFlag!='' ">
+				and chg_flight_flag =#{chgFlightFlag}
+			</if>
+			<if test="compCity!=null and compCity!='' ">
+				and comp_city =#{compCity}
+			</if>
+			<if test="compTimeThBgn != null and compTimeThBgn != ''">
+				and comp_time_th >= #{compTimeThBgn}
+			</if>
+			<if test="compTimeThEnd != null and compTimeThEnd != ''">
+			<![CDATA[
+				and comp_time_th <= #{compTimeThEnd}
+			]]>
+			</if>
+			<if test="releaseName != null and releaseName != ''">
+				and release_name = #{releaseName}
+			</if>
+			<if test="repeatOrderIdComplaint != null and repeatOrderIdComplaint==1">
+				and id in (select distinct(a.id) from ct_complaint a, ct_complaint b where a.order_id=b.order_id and a.id!=b.id and a.del_flag = 0 order by a.order_id,a.id)
+			</if>
+			<if test="custAgreeFlag != null">
+				and cust_agree_flag = #{custAgreeFlag}
+			</if>
+			<if test="isReparations != null and isReparations != ''">
+				and is_reparations = #{isReparations}
+			</if>
+
+			<if test="isNoOrder != null and isNoOrder != ''">
+			<choose>
+				<when test="isNoOrder == 0">and order_id >0 </when>
+				<when test="isNoOrder == 1">and order_id = 0 </when>
+			</choose>
+			</if>
+
+			<if test="destCategoryName != null and destCategoryName != ''">
+				and dest_category_name = #{destCategoryName}
+			</if>
+			
+			<!-- 发起时间n分钟后 -->
+			<if test="moreMinutesAfterBuildTime != null and moreMinutesAfterBuildTime != 0">
+				and build_date &lt; date_add(now(), interval -#{moreMinutesAfterBuildTime} minute)
+			</if>
+			
+			<!-- 发起时间n分钟内 -->
+			<if test="lessMinutesAfterBuildTime != null and lessMinutesAfterBuildTime != 0">
+				and build_date &gt; date_add(now(), interval -#{lessMinutesAfterBuildTime} minute)
+			</if>
+			
+			<if test="touringGroupType != null and touringGroupType != 0">
+				and touring_group_type = #{touringGroupType}
+			</if>
+			
+			<if test="levels != null ">
+				and level in
+				<foreach collection="levels" item="level" open="(" close=")" separator="," >
+					 #{level}
+				</foreach>
+			</if>
+			
+			<if test="destCategoryNamesInOrNotFlag != null">
+				and dest_category_name
+				<if test="destCategoryNamesInOrNotFlag == 1">
+					not
+				</if>
+				in
+				<foreach collection="destCategoryNames" item="destCategoryName" open="(" separator="," close=")">
+					#{destCategoryName}
+				</foreach>
+					
+			</if>
+			
+			<if test="routeTypeSps !=null">
+				and route_type_sp in
+				<foreach collection="routeTypeSps" item="routeTypeSp" open="(" close=")" separator="," >
+					 #{routeTypeSp}
+				</foreach>
+			</if>
+			
+			<if test="guestLevel !='' and guestLevel=='vip'">
+				and guest_level_num &gt;=5
+			</if>
+			<if test="guestLevel !='' and guestLevel=='normal'">
+				and guest_level_num &lt;5
+			</if>
+			<if test="noCommentComeFrom != null">
+				and (come_from != '点评' OR repeate_time !=0)
+			</if>
+			<if test="isDistribute != null and isDistribute != ''">
+				<choose>
+					<when test="isDistribute == 0">
+						and route_type != '机票'
+					</when>
+					<when test="isDistribute == 1">
+						and route_type = '机票'
+					</when>
+				</choose>
+			</if>
+			and del_flag=0
+		</where>
+	</sql>
+
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<include refid="whereSql" />
+		<choose>
+			<when test="third == 'third'">
+			<choose>
+				<when test="compCitys == '\'All\''">and comp_city != '' </when>
+				<when test="compCitys == '\'Others\''">and comp_city NOT IN ('',${distCitys}) </when>
+				<otherwise>and comp_city IN (${compCitys}) </otherwise>
+			</choose>
+			order by th_finish_flag
+			</when>
+			<when test="histroyDealer != null and histroyDealer != ''"> order by id desc </when>
+			<otherwise>order by is_sticky desc,repeate_time desc,id desc</otherwise>
+		</choose>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+
+	<select id="getComplaintIdByParameter" parameterType="Map" resultType="Integer">
+
+			select id from ct_complaint
+			<where>
+			del_flag = 0<!-- 0表示未删除 -->
+			<if test="secondWorkdayOvertime != null and secondWorkdayOvertime != '' ">
+				and second_workday_overtime = #{secondWorkdayOvertime}
+			</if>
+			<if test="firstWorkdayOvertime != null and firstWorkdayOvertime != '' ">
+				and first_workday_overtime = #{firstWorkdayOvertime}
+			</if>
+			<if test="inProcessState != null and inProcessState != '' ">
+				and in_process_state = #{inProcessState}
+			</if>
+			<if test="isAssigned != null">
+			 	and assign_time != '0000-00-00 00:00:00' <!--表示已分配处理人 -->
+			</if>
+			<if test="guestLevel != null and guestLevel != '' ">
+				and guest_level in (${guestLevel})
+			</if>
+			<if test="notInGuestLevel != null and notInGuestLevel != '' ">
+				and guest_level not in (${notInGuestLevel})
+			</if>
+			<if test="id != null and id != '' ">
+				and id = #{id}
+			</if>
+			<if test="state != null and state!='' and repeatOrderIdComplaint==null">
+				and state in (${state})
+			</if>
+			<if test="orderId != null and orderId != ''">
+				and order_id = #{orderId}
+			</if>
+			<if test="routeId != null and routeId != ''">
+				and route_id = #{routeId}
+			</if>
+			<if test="route != null and route != ''">
+				and route like '%${route}%'
+			</if>
+			<if test="comeFrom != null and comeFrom != ''">
+				and come_from=#{comeFrom}
+			</if>
+			<if test="startCity != null and startCity != ''">
+				and start_city=#{startCity}
+			</if>
+			<if test="endCity != null and endCity != ''">
+				and end_city=#{endCity}
+			</if>
+			<if test="startBuildDate != null and startBuildDate != ''">
+				and build_date >= #{startBuildDate}
+			</if>
+			<if test="endBuildDate != null and endBuildDate != ''">
+			<![CDATA[
+				and build_date <= #{endBuildDate}
+				]]>
+			</if>
+			<if test="startFinishDate != null and startFinishDate != ''">
+				and finish_date > #{startFinishDate}
+			</if>
+			<if test="endFinishDate != null and endFinishDate != ''">
+			<![CDATA[
+				and finish_date < #{endFinishDate}
+			]]>
+			</if>
+			<if test="deal != null and deal != '' and deal != 0">
+				and (deal=#{deal} or associater=#{deal})
+			</if>
+			<if test="orDeal != null and orDeal != ''">
+				and (deal=#{orDeal} or associater=#{orDeal} or customer_leader=#{orDealName})
+			</if>
+			<if test="dealName != null and dealName != ''">
+				and deal_name like '%${dealName}%'
+			</if>
+			<if test="managerName != null and managerName != ''">
+				and manager_name like '%${managerName}%'
+			</if>
+			<if test="manager != null and manager != '' and manager != 0">
+				and manager = #{manager}
+			</if>
+			<if test="agencyName != null and agencyName != ''">
+				and agency_name like '%${agencyName}%'
+			</if>
+			<if test="level != null and level != '' ">
+				and level = #{level}
+			</if>
+			<if test="customerLeader != null and customerLeader != '' ">
+				and customer_leader = #{customerLeader}
+			</if>
+			<if test="ownerId != null ">
+				and owner_id = #{ownerId}
+			</if>
+
+			<if test="dealDepartTemp != null and dealDepartTemp != '' ">
+				and (deal_depart in (${dealDepartTemp})
+
+					<choose >
+						<when test="beforeFlag == null">or</when>
+					    <otherwise>and</otherwise>
+					</choose>
+
+					(manager = #{managerIdOr} or customer_leader=#{managerIdOrName}
+
+					<if test="customerNames!=null and customerNames!=''">
+						or customer in (${customerNames})
+					</if>
+					<if test="dealNames!=null and dealNames!=''">
+						or deal_name in (${dealNames})
+					</if>
+					)
+				)
+			</if>
+
+			<if test="contactPerson != null ">
+				and contact_person = #{contactPerson}
+			</if>
+
+			<if test="contactPhone != null ">
+				and contact_phone = #{contactPhone}
+			</if>
+
+			<if test="contactMail != null ">
+				and contact_mail = #{contactMail}
+			</if>
+
+			<if test="createType != null ">
+				and create_type = #{createType}
+			</if>
+
+			<if test="dealDepart != null and dealDepart != '' ">
+				and deal_depart = #{dealDepart}
+			</if>
+
+			<if test="orderStateTemp!=null and orderStateTemp!='' ">
+				and order_state =#{orderStateTemp}
+			</if>
+
+			<if test="buildDateOfNotAssignDeal=='usedByRTX' ">
+			<![CDATA[
+				and build_date < DATE_SUB(CURDATE(),INTERVAL 3 DAY)
+			]]>
+			</if>
+
+			<if test="repeatOrderIdComplaint != null and repeatOrderIdComplaint==1">
+				and id in (select distinct(a.id) from ct_complaint a, ct_complaint b where a.order_id=b.order_id and a.id!=b.id and a.del_flag = 0 order by a.order_id,a.id)
+			</if>
+		</where>
+	</select>
+
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.ComplaintEntity">
+		<result property="id" column="id" />
+		<result property="custId" column="cust_id" />
+		<result property="guestNum" column="guest_num" />
+		<result property="guestName" column="guest_name" />
+		<result property="guestLevel" column="guest_level" />
+		<result property="guestLevelNum" column="guest_level_num" />
+		<result property="orderId" column="order_id" />
+		<result property="orderComeFrom" column="order_come_from" />
+		<result property="routeType" column="route_type" />
+		<result property="routeTypeSp" column="route_type_sp" />
+		<result property="priority" column="priority" />
+		<result property="priorityContent" column="priorityContent" />
+		<result property="orderType" column="order_type" />
+		<result property="extension" column="extension" />
+		<result property="reasonTime" column="reason_time" />
+		<result property="seniorManager" column="senior_manager" />
+		<result property="producter" column="producter" />
+		<result property="customer" column="customer" />
+		<result property="route" column="route" />
+		<result property="routeId" column="route_id" />
+		<result property="agencyId" column="agency_id" />
+		<result property="agencyName" column="agency_name" />
+		<result property="agencyTel" column="agency_tel" />
+		<result property="customerLeader" column="customer_leader" />
+		<result property="startCity" column="start_city" />
+		<result property="manager" column="manager" />
+		<result property="comeFrom" column="come_from" />
+		<result property="managerName" column="manager_name" />
+		<result property="level" column="level" />
+		<result property="productLeader" column="product_leader" />
+		<result property="ownerPartment" column="owner_partment" />
+		<result property="orderState" column="order_state" />
+		<result property="ownerName" column="owner_name" />
+		<result property="dealName" column="deal_name" />
+		<result property="deal" column="deal" />
+		<result property="updateTime" column="update_time" />
+		<result property="addTime" column="add_time" />
+		<result property="delFlag" column="del_flag" />
+		<result property="state" column="state" />
+		<result property="requirement" column="requirement" />
+		<result property="descript" column="descript" />
+		<result property="finishDate" column="finish_date" />
+		<result property="ownerId" column="owner_id" />
+		<result property="buildDate" column="build_date" />
+		<result property="startTime" column="start_time" />
+		<result property="endCity" column="end_city" />
+		<result property="title" column="title" />
+		<result property="cmpPerson" column="cmp_person" />
+		<result property="cmpPhone" column="cmp_phone" />
+		<result property="contactPerson" column="contact_person" />
+		<result property="contactPhone" column="contact_phone" />
+		<result property="contactMail" column="contact_mail" />
+		<result property="createType" column="create_type" />
+		<result property="dealDepart" column="deal_depart" />
+		<result property="serviceManager" column="service_manager" />
+		<result property="productManager" column="product_manager" />
+		<result property="depName" column="dep_name" />
+		<result property="depManager" column="dep_manager" />
+		<result property="score" column="score" />
+		<result property="contactId" column="contact_id" />
+		<result property="isSticky" column="is_sticky" />
+		<result property="assignTime" column="assign_time" />
+		<result property="associaterName" column="associater_name" />
+		<result property="repeateTime" column="repeate_time" />
+		<result property="complaintNum" column="complaint_num" />
+		<result property="upgradeTime" column="upgrade_time" />
+		<result property="bdpName" column="bdp_name" />
+		<result property="inProcessState" column="in_process_state" />
+		<result property="firstWorkdayOvertime" column="first_workday_overtime" />
+		<result property="secondWorkdayOvertime" column="second_workday_overtime" />
+		<result property="secondaryDepId" column="secondary_dep_id" />
+		<result property="destCategoryId" column="dest_category_id" />
+		<result property="destCategoryName" column="dest_category_name" />
+		<result property="followTime" column="follow_time" />
+		<result property="minFollowTime" column="min_follow_time" />
+		<result property="chgFlightFlag" column="chg_flight_flag" />
+		<result property="warningFlag" column="warning_flag" />
+		<result property="batchCompNum" column="batch_comp_num" />
+		<result property="isMedia" column="is_media" />
+		<result property="compCity" column="comp_city" />
+		<result property="compTimeTh" column="comp_time_th" />
+		<result property="releaseId" column="release_id" />
+		<result property="releaseName" column="release_name" />
+		<result property="thFinishFlag" column="th_finish_flag" />
+		<result property="touringGroupType" column="touring_group_type" />
+		<result property="productPrice" column="product_price" />
+		<result property="airFlag" column="air_flag" />
+		<result property="airfare" column="airfare" />
+		<result property="niuLineFlag" column="niu_line_flag" />
+		<result property="signCityCode" column="sign_city_code" />
+		<result property="signCity" column="sign_city" />
+		<result property="custAgreeFlag" column="cust_agree_flag" />
+		<result property="guideId" column="guideId" />
+		<result property="guideName" column="guideName" />
+		<result property="guideCall" column="guideCall" />
+		<result property="operateName" column="operateName" />
+		<result property="operateManagerName" column="operateManagerName" />
+		<result property="isReparations" column="is_reparations" />
+		<result property="returnVisitSwitch" column="returnVisitSwitch" />
+	</resultMap>
+
+	<select id="fetchListMap" parameterType="Map" resultMap="listResultMap">
+		<include refid="list" />
+	</select>
+
+	<resultMap id="listResultMap" type="Map">
+		<result property="id" column="id" />
+		<result property="custId" column="cust_id" />
+		<result property="guestNum" column="guest_num" />
+		<result property="guestName" column="guest_name" />
+		<result property="guestLevel" column="guest_level" />
+		<result property="guestLevelNum" column="guest_level_num" />
+		<result property="orderId" column="order_id" />
+		<result property="orderComeFrom" column="order_come_from" />
+		<result property="routeType" column="route_type" />
+		<result property="routeTypeSp" column="route_type_sp" />
+		<result property="priority" column="priority" />
+		<result property="priorityContent" column="priorityContent" />
+		<result property="orderType" column="order_type" />
+		<result property="seniorManager" column="senior_manager" />
+		<result property="producter" column="producter" />
+		<result property="customer" column="customer" />
+		<result property="route" column="route" />
+		<result property="routeId" column="route_id" />
+		<result property="agencyId" column="agency_id" />
+		<result property="agencyName" column="agency_name" />
+		<result property="agencyTel" column="agency_tel" />
+		<result property="customerLeader" column="customer_leader" />
+		<result property="startCity" column="start_city" />
+		<result property="manager" column="manager" />
+		<result property="comeFrom" column="come_from" />
+		<result property="managerName" column="manager_name" />
+		<result property="level" column="level" />
+		<result property="productLeader" column="product_leader" />
+		<result property="ownerPartment" column="owner_partment" />
+		<result property="orderState" column="order_state" />
+		<result property="ownerName" column="owner_name" />
+		<result property="dealName" column="deal_name" />
+		<result property="deal" column="deal" />
+		<result property="updateTime" column="update_time" />
+		<result property="addTime" column="add_time" />
+		<result property="delFlag" column="del_flag" />
+		<result property="state" column="state" />
+		<result property="requirement" column="requirement" />
+		<result property="descript" column="descript" />
+		<result property="finishDate" column="finish_date" />
+		<result property="ownerId" column="owner_id" />
+		<result property="buildDate" column="build_date" />
+		<result property="startTime" column="start_time" />
+		<result property="endCity" column="end_city" />
+		<result property="title" column="title" />
+		<result property="cmpPerson" column="cmp_person" />
+		<result property="cmpPhone" column="cmp_phone" />
+		<result property="contactPerson" column="contact_person" />
+		<result property="contactPhone" column="contact_phone" />
+		<result property="contactMail" column="contact_mail" />
+		<result property="createType" column="create_type" />
+		<result property="dealDepart" column="deal_depart" />
+		<result property="serviceManager" column="service_manager" />
+		<result property="productManager" column="product_manager" />
+		<result property="depName" column="dep_name" />
+		<result property="depManager" column="dep_manager" />
+		<result property="score" column="score" />
+		<result property="contactId" column="contact_id" />
+		<result property="isSticky" column="is_sticky" />
+		<result property="assignTime" column="assign_time" />
+		<result property="associaterName" column="associater_name" />
+		<result property="repeateTime" column="repeate_time" />
+		<result property="complaintNum" column="complaint_num" />
+		<result property="upgradeTime" column="upgrade_time" />
+		<result property="bdpName" column="bdp_name" />
+		<result property="inProcessState" column="in_process_state" />
+		<result property="firstWorkdayOvertime" column="first_workday_overtime" />
+		<result property="secondWorkdayOvertime" column="second_workday_overtime" />
+		<result property="secondaryDepId" column="secondary_dep_id" />
+		<result property="destCategoryId" column="dest_category_id" />
+		<result property="destCategoryName" column="dest_category_name" />
+		<result property="followTime" column="follow_time" />
+		<result property="minFollowTime" column="min_follow_time" />
+		<result property="chgFlightFlag" column="chg_flight_flag" />
+		<result property="warningFlag" column="warning_flag" />
+		<result property="batchCompNum" column="batch_comp_num" />
+		<result property="isMedia" column="is_media" />
+		<result property="compCity" column="comp_city" />
+		<result property="compTimeTh" column="comp_time_th" />
+		<result property="releaseId" column="release_id" />
+		<result property="releaseName" column="release_name" />
+		<result property="thFinishFlag" column="th_finish_flag" />
+		<result property="touringGroupType" column="touring_group_type" />
+		<result property="productPrice" column="product_price" />
+		<result property="airFlag" column="air_flag" />
+		<result property="airfare" column="airfare" />
+		<result property="niuLineFlag" column="niu_line_flag" />
+		<result property="signCityCode" column="sign_city_code" />
+		<result property="signCity" column="sign_city" />
+		<result property="custAgreeFlag" column="cust_agree_flag" />
+		<result property="guideId" column="guideId" />
+		<result property="guideName" column="guideName" />
+		<result property="guideCall" column="guideCall" />
+		<result property="operateName" column="operateName" />
+		<result property="operateManagerName" column="operateManagerName" />
+		<result property="isReparations" column="is_reparations" />
+		<result property="returnVisitSwitch" column="returnVisitSwitch" />
+	</resultMap>
+
+	<select id="get" parameterType="Map" resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		cust_id,
+		guest_num,
+		guest_name,
+		guest_level,
+		guest_level_num,
+		order_id,
+		order_come_from,
+		route_type,
+		<if test="e.routeTypeSp != null">route_type_sp,</if>
+		order_type,
+		<if test="e.seniorManager != null">senior_manager,</if>
+		<if test="e.producter != null">producter,</if>
+		customer,
+		route,
+		route_id,
+		agency_id,
+		agency_name,
+		agency_tel,
+		customer_leader,
+		start_city,
+		manager,
+		come_from,
+		manager_name,
+		level,
+		<if test="e.productLeader != null">product_leader,</if>
+		owner_partment,
+		order_state,
+		owner_name,
+		deal_name,
+		deal,
+		update_time,
+		add_time,
+		del_flag,
+		state,
+		requirement,
+		descript,
+		owner_id,
+		build_date,
+		<if test="e.startTime != null">start_time,</if>
+		<if test="e.backTime != null">back_time,</if>
+		end_city,
+		title,
+		<if test="e.cmpPerson != null">cmp_person,</if>
+		<if test="e.cmpPhone != null">cmp_phone,</if>
+		contact_person,
+		contact_phone,
+		contact_mail,
+		create_type,
+		deal_depart,
+		service_manager,
+		dep_name,
+		dep_manager,
+		<if test="e.productManager != null">product_manager,</if>
+		score,
+		contact_id,
+		<if test="e.assignTime != null">assign_time,</if>
+		<if test="e.upgradeTime != null">upgrade_time,</if>
+		<if test="e.bdpName!= null">bdp_name,</if>
+		is_sticky,
+		complaint_num,
+		product_line_id,
+		secondary_dep_id,
+		dest_category_id,
+		<if test="e.inProcessState != null">in_process_state,</if>
+		<if test="e.firstWorkdayOvertime != null">first_workday_overtime,</if>
+		<if test="e.secondWorkdayOvertime != null">second_workday_overtime,</if>
+		dest_category_name,
+		<if test="e.compCity != null">comp_city,comp_time_th,</if>
+		<if test="e.releaseId != null">release_id,</if>
+		<if test="e.releaseName != null">release_name,</if>
+		chg_flight_flag,
+		warning_flag,
+		batch_comp_num,
+		<if test="e.touringGroupType != null">touring_group_type,</if>
+		product_price,
+		air_flag,
+		airfare,
+		niu_line_flag,
+		<if test="e.signCityCode != null">sign_city_code,</if>
+		<if test="e.signCity != null">sign_city,</if>
+		<if test="e.guideId != null">guideId,</if>
+		<if test="e.guideName != null">guideName,</if>
+		<if test="e.guideCall != null">guideCall,</if>
+		<if test="e.operateName != null">operateName,</if>
+		<if test="e.operateManagerName != null">operateManagerName,</if>
+		<if test="e.finalConclution != null">finalConclution,</if>
+		<if test="e.special_event_flag != null">special_event_flag,</if>
+		<if test="e.clientTypeExpand != null">client_type_expand,</if>
+		is_media
+		) values (
+		#{e.custId},
+		#{e.guestNum},
+		#{e.guestName},
+		#{e.guestLevel},
+		#{e.guestLevelNum},
+		#{e.orderId},
+		#{e.orderComeFrom},
+		#{e.routeType},
+		<if test="e.routeTypeSp != null">#{e.routeTypeSp},</if>
+		#{e.orderType},
+		<if test="e.seniorManager != null">#{e.seniorManager},</if>
+		<if test="e.producter != null">#{e.producter},</if>
+		#{e.customer},
+		#{e.route},
+		#{e.routeId},
+		#{e.agencyId},
+		#{e.agencyName},
+		#{e.agencyTel},
+		#{e.customerLeader},
+		#{e.startCity},
+		#{e.manager},
+		#{e.comeFrom},
+		#{e.managerName},
+		#{e.level},
+		<if test="e.productLeader != null">#{e.productLeader},</if>
+		#{e.ownerPartment},
+		#{e.orderState},
+		#{e.ownerName},
+		#{e.dealName},
+		#{e.deal},
+		#{e.updateTime},
+		#{e.addTime},
+		#{e.delFlag},
+		#{e.state},
+		#{e.requirement},
+		#{e.descript},
+		#{e.ownerId},
+		#{e.buildDate},
+		<if test="e.startTime != null">#{e.startTime},</if>
+		<if test="e.backTime != null">#{e.backTime},</if>
+		#{e.endCity},
+		#{e.title},
+		<if test="e.cmpPerson != null">#{e.cmpPerson},</if>
+		<if test="e.cmpPhone != null">#{e.cmpPhone},</if>
+		#{e.contactPerson},
+		#{e.contactPhone},
+		#{e.contactMail},
+		#{e.createType},
+		#{e.dealDepart},
+		#{e.serviceManager},
+		#{e.depName},
+		#{e.depManager},
+		<if test="e.productManager != null">#{e.productManager},</if>
+		#{e.score},
+		#{e.contactId},
+		<if test="e.assignTime != null">#{e.assignTime},</if>
+		<if test="e.upgradeTime != null">#{e.upgradeTime},</if>
+		<if test="e.bdpName!= null">#{e.bdpName},</if>
+		#{e.isSticky},
+		#{e.complaintNum},
+		#{e.productLineId},
+		#{e.secondaryDepId},
+		#{e.destCategoryId},
+		<if test="e.inProcessState != null">#{e.inProcessState},</if>
+		<if test="e.firstWorkdayOvertime != null">#{e.firstWorkdayOvertime},</if>
+		<if test="e.secondWorkdayOvertime != null">#{e.secondWorkdayOvertime},</if>
+		#{e.destCategoryName},
+		<if test="e.compCity != null">#{e.compCity},CURRENT_TIMESTAMP,</if>
+		<if test="e.releaseId != null">#{e.releaseId},</if>
+		<if test="e.releaseName != null">#{e.releaseName},</if>
+		#{e.chgFlightFlag},
+		#{e.warningFlag},
+		#{e.batchCompNum},
+		<if test="e.touringGroupType != null">#{e.touringGroupType},</if>
+		#{e.productPrice},
+		#{e.airFlag},
+		#{e.airfare},
+		#{e.niuLineFlag},
+		<if test="e.signCityCode != null">#{e.signCityCode},</if>
+		<if test="e.signCity != null">#{e.signCity},</if>
+		<if test="e.guideId != null">#{e.guideId},</if>
+		<if test="e.guideName != null">#{e.guideName},</if>
+		<if test="e.guideCall != null">#{e.guideCall},</if>
+		<if test="e.operateName != null">#{e.operateName},</if>
+		<if test="e.operateManagerName != null">#{e.operateManagerName},</if>
+		<if test="e.finalConclution != null">#{e.finalConclution},</if>
+		<if test="e.special_event_flag != null">#{e.special_event_flag},</if>
+		<if test="e.clientTypeExpand != null">#{e.clientTypeExpand},</if>
+		#{e.isMedia}
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.custId != null">cust_id=#{e.custId},</if>
+			<if test="e.guestNum != null">guest_num=#{e.guestNum},</if>
+			<if test="e.guestName != null">guest_name=#{e.guestName},</if>
+			<if test="e.guestLevel != null">guest_level=#{e.guestLevel},</if>
+			<if test="e.orderId != null">order_id=#{e.orderId},</if>
+			<if test="e.orderComeFrom != null">order_come_from=#{e.orderComeFrom},</if>
+			<if test="e.routeType != null">route_type=#{e.routeType},</if>
+			<if test="e.routeTypeSp != null">route_type_sp=#{e.routeTypeSp},</if>
+			<if test="e.priority != null">priority=#{e.priority},</if>
+			<if test="e.priorityContent != null">priorityContent=#{e.priorityContent},</if>
+			<if test="e.orderType != null">order_type=#{e.orderType},</if>
+			<if test="e.seniorManager != null">senior_manager=#{e.seniorManager},</if>
+			<if test="e.productManager != null">product_manager=#{e.productManager},</if>
+			<if test="e.depManager != null">dep_manager=#{e.depManager},</if>
+			<if test="e.depName != null">dep_name=#{e.depName},</if>
+			<if test="e.producter != null">producter=#{e.producter},</if>
+			<if test="e.customer != null">customer=#{e.customer},</if>
+			<if test="e.route != null">route=#{e.route},</if>
+			<if test="e.routeId != null">route_id=#{e.routeId},</if>
+			<if test="e.customerLeader != null">customer_leader=#{e.customerLeader},</if>
+			<if test="e.serviceManager != null">service_manager=#{e.serviceManager},</if>
+			<if test="e.startCity != null">start_city=#{e.startCity},</if>
+			<if test="e.manager != null">manager=#{e.manager},</if>
+			<if test="e.comeFrom != null">come_from=#{e.comeFrom},</if>
+			<if test="e.managerName != null">manager_name=#{e.managerName},</if>
+			<if test="e.level != null">level=#{e.level},</if>
+			<if test="e.productLeader != null">product_leader=#{e.productLeader},</if>
+			<if test="e.ownerPartment != null">owner_partment=#{e.ownerPartment},</if>
+			<if test="e.orderState != null">order_state=#{e.orderState},</if>
+			<if test="e.ownerName != null">owner_name=#{e.ownerName},</if>
+			<if test="e.dealName != null">deal_name=#{e.dealName},</if>
+			<if test="e.deal != null">deal=#{e.deal},</if>
+			<if test="e.associaterName != null">associater_name=#{e.associaterName},</if>
+			<if test="e.associater != null">associater=#{e.associater},</if>
+			<if test="e.oldDealName != null">old_deal_name=#{e.oldDealName},</if>
+			<if test="e.oldDeal != null">old_deal=#{e.oldDeal},</if>
+			<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			<if test="e.state != null">state=#{e.state},</if>
+			<if test="e.requirement != null">requirement=#{e.requirement},</if>
+			<if test="e.descript != null">descript=#{e.descript},</if>
+			<if test="e.finishDate != null">finish_date=#{e.finishDate},</if>
+			<if test="e.ownerId != null">owner_id=#{e.ownerId},</if>
+			<if test="e.buildDate != null">build_date=#{e.buildDate},</if>
+			<if test="e.startTime != null">start_time=#{e.startTime},</if>
+			<if test="e.endCity != null">end_city=#{e.endCity},</if>
+			<if test="e.title != null">title=#{e.title},</if>
+			<if test="e.cmpPerson != null">cmp_person=#{e.cmpPerson},</if>
+			<if test="e.cmpPhone != null">cmp_phone=#{e.cmpPhone},</if>
+			<if test="e.contactPerson != null">contact_person=#{e.contactPerson},</if>
+			<if test="e.contactPhone != null">contact_phone=#{e.contactPhone},</if>
+			<if test="e.contactMail != null">contact_mail=#{e.contactMail},</if>
+			<if test="e.createType != null">create_type=#{e.createType},</if>
+			<if test="e.dealDepart != null">deal_depart=#{e.dealDepart},</if>
+			<if test="e.contactId != null">contact_id=#{e.contactId},</if>
+			<if test="e.assignTime != null">assign_time=#{e.assignTime},</if>
+			<if test="e.repeateTime != null">repeate_time=#{e.repeateTime},</if>
+			<if test="e.upgradeTime != null">upgrade_time=#{e.upgradeTime},</if>
+			<if test="e.complaintNum != null">complaint_num=#{e.complaintNum},</if>
+			<if test="e.isSticky != null">is_sticky=#{e.isSticky},</if>
+			<if test="e.inProcessState != null">in_process_state=#{e.inProcessState},</if>
+			<if test="e.followTime != null">follow_time=#{e.followTime},</if>
+			<if test="e.minFollowTime != null">min_follow_time=#{e.minFollowTime},</if>
+			<if test="e.firstWorkdayOvertime != null">first_workday_overtime=#{e.firstWorkdayOvertime},</if>
+			<if test="e.secondWorkdayOvertime != null">second_workday_overtime=#{e.secondWorkdayOvertime},</if>
+			<if test="e.chgFlightFlag != null">chg_flight_flag=#{e.chgFlightFlag},</if>
+			<if test="e.warningFlag != null">warning_flag=#{e.warningFlag},</if>
+			<if test="e.batchCompNum != null">batch_comp_num=#{e.batchCompNum},</if>
+			<if test="e.compCity != null">comp_city=#{e.compCity},</if>
+			<if test="e.compTimeTh != null">comp_time_th=#{e.compTimeTh},</if>
+			<if test="e.releaseId != null">release_id=#{e.releaseId},</if>
+			<if test="e.releaseName != null">release_name=#{e.releaseName},</if>
+			<if test="e.thFinishFlag != null">th_finish_flag=#{e.thFinishFlag},</if>
+			<if test="e.touringGroupType != null">touring_group_type=#{e.touringGroupType},</if>
+			<if test="e.custAgreeFlag != null">cust_agree_flag=#{e.custAgreeFlag},</if>
+			<if test="e.isReparations != null and e.isReparations != ''">is_reparations=#{e.isReparations},</if>
+			<if test="e.returnVisitSwitch != null">returnVisitSwitch=#{e.returnVisitSwitch},</if>
+			<if test="e.finalConclution != null">finalConclution=#{e.finalConclution},</if>
+			<if test="e.special_event_flag != null">special_event_flag=#{e.special_event_flag},</if>
+			<if test="e.clientTypeExpand != null">client_type_expand = #{e.clientTypeExpand},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+		where id=#{e.id}
+	</sql>
+
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update" />
+	</update>
+
+	<select id="getSameGroupComplaintCount" parameterType="Map" resultType="Integer">
+		SELECT COUNT(DISTINCT order_id)
+		FROM ct_complaint
+		WHERE del_flag = 0 AND route_id=#{routeId} AND start_time=#{startTime} AND state!=9
+	</select>
+	
+	<select id="getSameGroupComplaints"  parameterType="map" resultMap="cmpBillInfo">
+		SELECT  t1.id,t1.order_id AS ordId,t1.level AS cmpLevel,t1.state,
+			    	t1.id AS cmpId,t4.type,t4.second_type AS secondType ,t4.type_descript AS typeDescript,t4.descript
+					FROM ct_complaint t1
+					LEFT JOIN ct_complaint_reason t4 ON t1.id=t4.complaint_id and t4.del_flag =1
+					WHERE  t1.del_flag = 0 and t1.route_id=#{routeId} and t1.start_time=#{startDate}
+					and t4.del_flag=1
+	</select>
+
+	<select id="getComplaintInfoByOrderIds" parameterType="Map" resultType="Map">
+		SELECT order_id, guest_level,id,deal_name,deal,state
+		FROM ct_complaint
+		WHERE del_flag = 0  AND state!=9 AND order_id IN (${orderIds})
+	</select>
+
+   <select id="getProductLeader" parameterType="Map" resultType="Map">
+		SELECT DISTINCT(product_leader)
+		FROM ct_complaint
+		WHERE product_leader like '%${productLeader}%' order by product_leader
+	</select>
+
+	<!-- 定时提醒任务使用，投诉单的投诉跟进记录+手速事宜记录，出游前大于10条提醒，出游中大于等于30条提醒，出游后大于15条就提醒 -->
+	<select id="getInfo4ComplaintScheduleSendTask" resultType="Map">
+		SELECT t5.* FROM
+			(SELECT t3.id,t3.order_id,t3.order_state,t3.note_count,COUNT(t4.complaint_id) reason_count,t3.note_count+COUNT(t4.complaint_id) total_count
+			FROM
+				(SELECT t1.id,t1.order_id,t1.order_state,COUNT(t2.complaint_id) note_count
+				FROM ct_complaint t1
+				JOIN ct_complaint_follow_note t2 ON t1.id=t2.complaint_id
+				WHERE t1.state=2 OR t1.state=3 AND t1.del_flag=1 AND t2.del_flag=1
+				GROUP BY t1.id) t3
+			JOIN ct_complaint_reason t4 ON t3.id=t4.complaint_id
+			WHERE t4.del_flag=1
+			GROUP BY t3.id) t5
+		WHERE (t5.order_state='出游前' AND t5.total_count>10) OR (t5.order_state='出游中' AND t5.total_count>30) OR (t5.order_state='出游后' AND t5.total_count>15);
+	</select>
+
+	<update id="updateComplaintUpdateTime">
+		UPDATE ct_complaint
+		SET update_time=CURRENT_DATE()
+		where id=#{id}
+	</update>
+
+	<select id="getComplaintEntityListByBuildDateAndState"  resultType="String">
+		SELECT distinct order_id FROM ct_complaint WHERE build_date>=#{buildDateBegin} AND <![CDATA[build_date<=#{buildDateEnd}]]>;
+	</select>
+
+	<!--UPDATE by JIANG SIR for 投诉量统计报表 on 20160414 Begin -->
+	<select id="getComplaintNumListForHourTable" parameterType="Map" resultType="Map">
+			SELECT date(${timeDimension}) AS date,
+			SUM(CASE HOUR(${timeDimension}) WHEN 0 THEN 1 ELSE 0 END) AS h00,
+			SUM(CASE HOUR(${timeDimension}) WHEN 1 THEN 1 ELSE 0 END) AS h01,
+			SUM(CASE HOUR(${timeDimension}) WHEN 2 THEN 1 ELSE 0 END) AS h02,
+			SUM(CASE HOUR(${timeDimension}) WHEN 3 THEN 1 ELSE 0 END) AS h03,
+			SUM(CASE HOUR(${timeDimension}) WHEN 4 THEN 1 ELSE 0 END) AS h04,
+			SUM(CASE HOUR(${timeDimension}) WHEN 5 THEN 1 ELSE 0 END) AS h05,
+			SUM(CASE HOUR(${timeDimension}) WHEN 6 THEN 1 ELSE 0 END) AS h06,
+			SUM(CASE HOUR(${timeDimension}) WHEN 7 THEN 1 ELSE 0 END) AS h07,
+			SUM(CASE HOUR(${timeDimension}) WHEN 8 THEN 1 ELSE 0 END) AS h08,
+			SUM(CASE HOUR(${timeDimension}) WHEN 9 THEN 1 ELSE 0 END) AS h09,
+			SUM(CASE HOUR(${timeDimension}) WHEN 10 THEN 1 ELSE 0 END) AS h10,
+			SUM(CASE HOUR(${timeDimension}) WHEN 11 THEN 1 ELSE 0 END) AS h11,
+			SUM(CASE HOUR(${timeDimension}) WHEN 12 THEN 1 ELSE 0 END) AS h12,
+			SUM(CASE HOUR(${timeDimension}) WHEN 13 THEN 1 ELSE 0 END) AS h13,
+			SUM(CASE HOUR(${timeDimension}) WHEN 14 THEN 1 ELSE 0 END) AS h14,
+			SUM(CASE HOUR(${timeDimension}) WHEN 15 THEN 1 ELSE 0 END) AS h15,
+			SUM(CASE HOUR(${timeDimension}) WHEN 16 THEN 1 ELSE 0 END) AS h16,
+			SUM(CASE HOUR(${timeDimension}) WHEN 17 THEN 1 ELSE 0 END) AS h17,
+			SUM(CASE HOUR(${timeDimension}) WHEN 18 THEN 1 ELSE 0 END) AS h18,
+			SUM(CASE HOUR(${timeDimension}) WHEN 19 THEN 1 ELSE 0 END) AS h19,
+			SUM(CASE HOUR(${timeDimension}) WHEN 20 THEN 1 ELSE 0 END) AS h20,
+			SUM(CASE HOUR(${timeDimension}) WHEN 21 THEN 1 ELSE 0 END) AS h21,
+			SUM(CASE HOUR(${timeDimension}) WHEN 22 THEN 1 ELSE 0 END) AS h22,
+			SUM(CASE HOUR(${timeDimension}) WHEN 23 THEN 1 ELSE 0 END) AS h23,
+			COUNT(1) as datetotal
+			FROM ct_complaint WHERE del_flag=0 AND deal_depart =#{dealDepart} AND DATE(${timeDimension}) BETWEEN #{assignDateBgn} AND #{assignDateEnd} 
+			GROUP BY DATE(${timeDimension})
+			union all
+			SELECT '总计' AS date,
+			SUM(CASE HOUR(${timeDimension}) WHEN 0 THEN 1 ELSE 0 END) AS h00,
+			SUM(CASE HOUR(${timeDimension}) WHEN 1 THEN 1 ELSE 0 END) AS h01,
+			SUM(CASE HOUR(${timeDimension}) WHEN 2 THEN 1 ELSE 0 END) AS h02,
+			SUM(CASE HOUR(${timeDimension}) WHEN 3 THEN 1 ELSE 0 END) AS h03,
+			SUM(CASE HOUR(${timeDimension}) WHEN 4 THEN 1 ELSE 0 END) AS h04,
+			SUM(CASE HOUR(${timeDimension}) WHEN 5 THEN 1 ELSE 0 END) AS h05,
+			SUM(CASE HOUR(${timeDimension}) WHEN 6 THEN 1 ELSE 0 END) AS h06,
+			SUM(CASE HOUR(${timeDimension}) WHEN 7 THEN 1 ELSE 0 END) AS h07,
+			SUM(CASE HOUR(${timeDimension}) WHEN 8 THEN 1 ELSE 0 END) AS h08,
+			SUM(CASE HOUR(${timeDimension}) WHEN 9 THEN 1 ELSE 0 END) AS h09,
+			SUM(CASE HOUR(${timeDimension}) WHEN 10 THEN 1 ELSE 0 END) AS h10,
+			SUM(CASE HOUR(${timeDimension}) WHEN 11 THEN 1 ELSE 0 END) AS h11,
+			SUM(CASE HOUR(${timeDimension}) WHEN 12 THEN 1 ELSE 0 END) AS h12,
+			SUM(CASE HOUR(${timeDimension}) WHEN 13 THEN 1 ELSE 0 END) AS h13,
+			SUM(CASE HOUR(${timeDimension}) WHEN 14 THEN 1 ELSE 0 END) AS h14,
+			SUM(CASE HOUR(${timeDimension}) WHEN 15 THEN 1 ELSE 0 END) AS h15,
+			SUM(CASE HOUR(${timeDimension}) WHEN 16 THEN 1 ELSE 0 END) AS h16,
+			SUM(CASE HOUR(${timeDimension}) WHEN 17 THEN 1 ELSE 0 END) AS h17,
+			SUM(CASE HOUR(${timeDimension}) WHEN 18 THEN 1 ELSE 0 END) AS h18,
+			SUM(CASE HOUR(${timeDimension}) WHEN 19 THEN 1 ELSE 0 END) AS h19,
+			SUM(CASE HOUR(${timeDimension}) WHEN 20 THEN 1 ELSE 0 END) AS h20,
+			SUM(CASE HOUR(${timeDimension}) WHEN 21 THEN 1 ELSE 0 END) AS h21,
+			SUM(CASE HOUR(${timeDimension}) WHEN 22 THEN 1 ELSE 0 END) AS h22,
+			SUM(CASE HOUR(${timeDimension}) WHEN 23 THEN 1 ELSE 0 END) AS h23,
+			COUNT(1) as datetotal
+			FROM ct_complaint WHERE del_flag=0 AND deal_depart =#{dealDepart} AND DATE(${timeDimension}) BETWEEN #{assignDateBgn} AND #{assignDateEnd}  
+			union all
+			SELECT '平均值' AS date,
+			SUM(CASE HOUR(${timeDimension}) WHEN 0 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h00,
+			SUM(CASE HOUR(${timeDimension}) WHEN 1 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h01,
+			SUM(CASE HOUR(${timeDimension}) WHEN 2 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h02,
+			SUM(CASE HOUR(${timeDimension}) WHEN 3 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h03,
+			SUM(CASE HOUR(${timeDimension}) WHEN 4 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h04,
+			SUM(CASE HOUR(${timeDimension}) WHEN 5 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h05,
+			SUM(CASE HOUR(${timeDimension}) WHEN 6 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h06,
+			SUM(CASE HOUR(${timeDimension}) WHEN 7 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h07,
+			SUM(CASE HOUR(${timeDimension}) WHEN 8 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h08,
+			SUM(CASE HOUR(${timeDimension}) WHEN 9 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h09,
+			SUM(CASE HOUR(${timeDimension}) WHEN 10 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h10,
+			SUM(CASE HOUR(${timeDimension}) WHEN 11 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h11,
+			SUM(CASE HOUR(${timeDimension}) WHEN 12 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h12,
+			SUM(CASE HOUR(${timeDimension}) WHEN 13 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h13,
+			SUM(CASE HOUR(${timeDimension}) WHEN 14 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h14,
+			SUM(CASE HOUR(${timeDimension}) WHEN 15 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h15,
+			SUM(CASE HOUR(${timeDimension}) WHEN 16 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h16,
+			SUM(CASE HOUR(${timeDimension}) WHEN 17 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h17,
+			SUM(CASE HOUR(${timeDimension}) WHEN 18 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h18,
+			SUM(CASE HOUR(${timeDimension}) WHEN 19 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h19,
+			SUM(CASE HOUR(${timeDimension}) WHEN 20 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h20,
+			SUM(CASE HOUR(${timeDimension}) WHEN 21 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h21,
+			SUM(CASE HOUR(${timeDimension}) WHEN 22 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h22,
+			SUM(CASE HOUR(${timeDimension}) WHEN 23 THEN 1 ELSE 0 END)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS h23,
+			COUNT(1)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) as datetotal
+			FROM ct_complaint WHERE del_flag=0 AND deal_depart =#{dealDepart} AND DATE(${timeDimension}) BETWEEN #{assignDateBgn} AND #{assignDateEnd}  
+	</select>
+	<!-- Add by Jiang sir for 投诉量统计报表 on 20140227 End -->
+	
+	<select id="getComplaintNumListForHourGraph" parameterType="Map" resultType="Map">
+		SELECT 
+			SUM(CASE HOUR(${timeDimension}) WHEN 0 THEN 1 ELSE 0 END) AS h00,
+			SUM(CASE HOUR(${timeDimension}) WHEN 1 THEN 1 ELSE 0 END) AS h01,
+			SUM(CASE HOUR(${timeDimension}) WHEN 2 THEN 1 ELSE 0 END) AS h02,
+			SUM(CASE HOUR(${timeDimension}) WHEN 3 THEN 1 ELSE 0 END) AS h03,
+			SUM(CASE HOUR(${timeDimension}) WHEN 4 THEN 1 ELSE 0 END) AS h04,
+			SUM(CASE HOUR(${timeDimension}) WHEN 5 THEN 1 ELSE 0 END) AS h05,
+			SUM(CASE HOUR(${timeDimension}) WHEN 6 THEN 1 ELSE 0 END) AS h06,
+			SUM(CASE HOUR(${timeDimension}) WHEN 7 THEN 1 ELSE 0 END) AS h07,
+			SUM(CASE HOUR(${timeDimension}) WHEN 8 THEN 1 ELSE 0 END) AS h08,
+			SUM(CASE HOUR(${timeDimension}) WHEN 9 THEN 1 ELSE 0 END) AS h09,
+			SUM(CASE HOUR(${timeDimension}) WHEN 10 THEN 1 ELSE 0 END) AS h10,
+			SUM(CASE HOUR(${timeDimension}) WHEN 11 THEN 1 ELSE 0 END) AS h11,
+			SUM(CASE HOUR(${timeDimension}) WHEN 12 THEN 1 ELSE 0 END) AS h12,
+			SUM(CASE HOUR(${timeDimension}) WHEN 13 THEN 1 ELSE 0 END) AS h13,
+			SUM(CASE HOUR(${timeDimension}) WHEN 14 THEN 1 ELSE 0 END) AS h14,
+			SUM(CASE HOUR(${timeDimension}) WHEN 15 THEN 1 ELSE 0 END) AS h15,
+			SUM(CASE HOUR(${timeDimension}) WHEN 16 THEN 1 ELSE 0 END) AS h16,
+			SUM(CASE HOUR(${timeDimension}) WHEN 17 THEN 1 ELSE 0 END) AS h17,
+			SUM(CASE HOUR(${timeDimension}) WHEN 18 THEN 1 ELSE 0 END) AS h18,
+			SUM(CASE HOUR(${timeDimension}) WHEN 19 THEN 1 ELSE 0 END) AS h19,
+			SUM(CASE HOUR(${timeDimension}) WHEN 20 THEN 1 ELSE 0 END) AS h20,
+			SUM(CASE HOUR(${timeDimension}) WHEN 21 THEN 1 ELSE 0 END) AS h21,
+			SUM(CASE HOUR(${timeDimension}) WHEN 22 THEN 1 ELSE 0 END) AS h22,
+			SUM(CASE HOUR(${timeDimension}) WHEN 23 THEN 1 ELSE 0 END) AS h23
+			FROM ct_complaint WHERE del_flag=0 AND deal_depart =#{dealDepart} AND DATE(${timeDimension}) BETWEEN #{assignDateBgn} AND #{assignDateEnd} 
+	</select>
+	
+	<select id="getComplaintNumListForDayTable" parameterType="Map" resultType="Map">
+		SELECT 
+			date(${timeDimension}) as date,
+			count(1) as count
+			FROM ct_complaint WHERE del_flag=0 AND deal_depart =#{dealDepart} AND DATE(${timeDimension}) BETWEEN #{assignDateBgn} AND #{assignDateEnd} 
+			group by date(${timeDimension})
+			UNION ALL
+			SELECT '总计' AS DATE,COUNT(1) AS COUNT
+			FROM ct_complaint WHERE del_flag=0 AND deal_depart =#{dealDepart} AND DATE(${timeDimension}) BETWEEN #{assignDateBgn} AND #{assignDateEnd} 
+			UNION ALL
+			SELECT '平均值' AS DATE,COUNT(1)/(DATEDIFF(#{assignDateEnd},#{assignDateBgn})+1) AS COUNT
+			FROM ct_complaint WHERE del_flag=0 AND deal_depart =#{dealDepart} AND DATE(${timeDimension}) BETWEEN #{assignDateBgn} AND #{assignDateEnd} 
+	</select>
+	
+	<select id="getComplaintNumListForDayGraph" parameterType="Map" resultType="Map">
+		SELECT 
+			date(${timeDimension}) as date,
+			count(1) as count
+			FROM ct_complaint WHERE del_flag=0 AND deal_depart =#{dealDepart} AND DATE(${timeDimension}) BETWEEN #{assignDateBgn} AND #{assignDateEnd} 
+			group by date(${timeDimension})
+	</select>
+
+	<select id="updateCustIdByOrderId" >
+	update ct_complaint
+	set cust_id = #{custId}
+	where order_id = #{orderId}
+	</select>
+
+	<select id="getComplaintIdsByCon"  resultType="Integer" parameterType="String">
+		SELECT DISTINCT complaint_id
+		FROM ct_complaint_reason
+		WHERE 1=1
+		<if test="_parameter != null and _parameter != ''">
+			<choose>
+				<when test="_parameter=='保险理赔'">
+					AND (second_type = '保险理赔'  or second_type='保险')
+				</when>
+				<otherwise>
+					AND second_type = #{_parameter}
+				</otherwise>
+			</choose>
+		</if>
+		<if test="_parameter != null and _parameter == ''">
+			AND (second_type = '保险理赔' or second_type='保险' or  second_type = '退货')
+		</if>
+		 AND del_flag=1
+		 ORDER BY id
+	</select>
+
+	<select id="getOvertimeUnAssignInfo" parameterType="String" resultType="Map">
+	    <![CDATA[
+			 SELECT COUNT(1) AS num FROM ct_complaint WHERE del_flag=0 AND state!=9 AND state!=6 AND deal=0
+             AND '2014-04-01 00:00:00'<add_time AND add_time<=(CURRENT_TIMESTAMP - INTERVAL 120 SECOND)
+             AND deal_depart=#{dealDepart}
+		]]>
+	</select>
+
+	<select id="getBefThreeNullList" resultMap="listResultEntity">
+	    SELECT * FROM ct_complaint WHERE deal_depart='售前组'
+        AND (customer='' OR customer='null') AND (customer_leader='' OR customer_leader='null') AND (service_manager='' OR service_manager='null')
+        AND del_flag=0 AND state!=9
+	</select>
+
+	<select id="queryHasCtOrders" resultType="Integer" parameterType="Map">
+	SELECT DISTINCT a.order_id FROM ct_complaint a WHERE a.del_flag=0 and a.state!=9 and a.order_id IN(${orderIds})
+	</select>
+
+	<select id="getCmpBillInfo" parameterType="Integer" resultMap="cmpBillInfo">
+		SELECT t1.id,t1.order_id AS ordId,t1.level AS cmpLevel,t1.state, 
+		t1.route_id AS routeId,  t1.route AS routeName, t1.agency_name AS agencyName,
+		t1.customer AS customer,t1.customer_leader AS customerLeader,t1.service_manager AS serviceManager,
+			CASE t1.state
+			WHEN 1 THEN '投诉待处理'
+			WHEN 2 THEN '投诉处理中'
+			WHEN 3 THEN '投诉已待结'
+			WHEN 4 THEN '投诉已完成'
+			WHEN 5 THEN '投诉待指定（升级售后）'
+			WHEN 6 THEN '投诉待指定（提交售后填写分担方案）'
+			WHEN 7 THEN '投诉待指定（升级售前）'
+			WHEN 9 THEN '已撤销'
+			WHEN 10 THEN '投诉待指定（升级客服中心售后）'
+			END AS stateName,
+			t1.order_state as orderState,t1.niu_line_flag as niuLineFlag,t1.dep_name as depName,
+			t1.dep_manager as depManager,t1.product_manager as productManager,t1.senior_manager as seniorManager,
+			t1.product_leader as productLeader,t1.producter,
+			t1.del_flag AS delFlag,t1.add_time AS ADDTIME1,t1.finish_date AS finishTime1,t1.come_from AS comeFrom,
+			t1.deal AS dealPersonId,t1.deal_name AS dealPerson,IFNULL(t2.cash+t2.tourist_book,0) AS indemnifyAmount,t1.finalConclution,
+			t3.supplier_total AS claimAmount,t3.quality_tool_total AS qualityToolAmount,t3.total as shareAmount, 
+			t2.replace_book AS repVoucherAmount,t2.gift AS giftAmount,t2.descript AS payBasis,
+			t5.theoryPayOutAmount,
+			t1.owner_id AS ownerId,
+			t1.owner_name AS ownerName 
+			<!-- t1.id AS cmpId,t4.type,t4.second_type AS secondType,t4.type_descript AS typeDescript,t4.descript -->
+		FROM ct_complaint t1 
+		LEFT JOIN ct_complaint_solution t2 ON t1.id=t2.complaint_id and t2.del_flag =1
+		LEFT JOIN ct_share_solution t3 ON t1.id=t3.complaint_id  and t3.del_flag =1
+		<!-- LEFT JOIN ct_complaint_reason t4 ON t1.id=t4.complaint_id and t4.del_flag =1 -->
+		LEFT JOIN (
+			SELECT complaintId , SUM(theoryPayout) AS theoryPayOutAmount FROM ct_complaint_point WHERE complaintId = #{cmpId} AND delFlag = 0
+		)t5 ON t5.complaintId = t1.id
+		WHERE t1.id=#{cmpId}
+		limit 1
+	</select>
+	
+	<!-- 根据投诉单id 获得投诉事宜 -->
+	<select id="getReasonListByCmpId" parameterType="Integer" resultType="com.tuniu.gt.complaint.vo.ComplaintReasonVo">
+		SELECT  complaint_id AS cmpId,
+			type,
+			second_type AS secondType,
+			type_descript AS typeDescript,
+			descript
+		FROM ct_complaint_reason
+		WHERE  complaint_id = #{cmpId} and del_flag = 1
+		
+	</select>
+
+	<resultMap id="cmpBillInfo" type="com.tuniu.gt.complaint.vo.ComplaintVo">
+		<result property="id" column="id" />
+		<result property="ordId" column="ordId" />
+		<result property="cmpLevel" column="cmpLevel" />
+		<result property="state" column="state" />
+		<result property="stateName" column="stateName" />
+		<result property="delFlag" column="delFlag" />
+		<result property="addTime1" column="addTime1" />
+		<result property="finishTime1" column="finishTime1" />
+		<result property="dealPersonId" column="dealPersonId" />
+		<result property="dealPerson" column="dealPerson" />
+		<result property="indemnifyAmount" column="indemnifyAmount" />
+		<result property="finalConclution" column="finalConclution" />
+		<result property="shareAmount" column="shareAmount" />
+		<result property="claimAmount" column="claimAmount" />
+		<result property="qualityToolAmount" column="qualityToolAmount" />
+		<result property="repVoucherAmount" column="repVoucherAmount" />
+		<result property="giftAmount" column="giftAmount" />
+		<result property="comeFrom" column="comeFrom" />
+		<result property="payBasis" column="payBasis" />
+		<result property="orderState" column="orderState" />	
+		<result property="niuLineFlag" column="niuLineFlag" />	
+		<result property="depName" column="depName" />	
+		<result property="depManager" column="depManager" />	
+		<result property="productManager" column="productManager" />	
+		<result property="seniorManager" column="seniorManager" />	
+		<result property="productLeader" column="productLeader" />	
+		<result property="producter" column="producter" />
+		<result property="customer" column="customer" />
+		<result property="customerLeader" column="customerLeader" />
+		<result property="serviceManager" column="serviceManager" />
+		<result property="routeId" column="routeId" />
+		<result property="routeName" column="routeName" />	
+		<result property="agencyName" column="agencyName" />
+		<result property="ownerId" column="ownerId" />
+		<result property="ownerName" column="ownerName" />	
+		<result property="theoryPayOutAmount" column="theoryPayOutAmount" />
+		<collection property="reasonList" javaType="ArrayList" ofType="com.tuniu.gt.complaint.vo.ComplaintReasonVo">
+			<result property="cmpId" column="cmpId" />
+			<result property="type" column="type" />
+			<result property="secondType" column="secondType" />
+			<result property="typeDescript" column="typeDescript" />
+			<result property="descript" column="descript" />
+		</collection>
+	</resultMap>
+
+	<select id="getComplaintList" parameterType="Map" resultMap="compListResultEntity">
+		SELECT t1.*,t2.type,t2.second_type,t2.type_descript,t2.descript AS type_comment
+		<if test="complaintSolution != null and complaintSolution != ''">,t3.id AS solution_id,t3.cash,t3.replace_book,t3.tourist_book,t3.gift </if>
+			FROM ct_complaint t1 LEFT JOIN ct_complaint_reason t2 ON t1.id=t2.complaint_id
+		<if test="complaintSolution != null and complaintSolution != '' "> LEFT JOIN ct_complaint_solution t3 ON t1.id=t3.complaint_id</if>
+		<where>1=1
+			<if test="id != null and id != '' ">
+				and t1.id = #{id}
+			</if>
+			<if test="orderId != null and orderId != ''">
+				and t1.order_id = #{orderId}
+			</if>
+			<if test="noneOrder != null and noneOrder != ''">
+				and t1.order_id = 0
+			</if>
+			<if test="custId != null">
+				and t1.cust_id = #{custId}
+			</if>
+			
+			<if test="routeId != null and routeId != ''">
+				and t1.route_id = #{routeId}
+			</if>
+			<if test="deal != null and deal != '' and deal != 0">
+				and (t1.deal=#{deal} or t1.associater=#{deal})
+			</if>
+			<if test="associater != null and associater != '' and associater != 0">
+				and t1.associater=#{associater} and t1.associater != deal and t1.associater_name !=''
+			</if>
+			<if test="orDeal != null and orDeal != ''">
+				and (t1.deal=#{orDeal} or t1.associater=#{orDeal} or t1.customer_leader=#{orDealName})
+			</if>
+			<if test="dealName != null and dealName != ''">
+				and t1.deal_name = #{dealName}
+			</if>
+			<if test="startBuildDate != null and startBuildDate != ''">
+				and t1.build_date >= #{startBuildDate}
+			</if>
+			<if test="endBuildDate != null and endBuildDate != ''">
+			<![CDATA[
+				and t1.build_date <= #{endBuildDate}
+				]]>
+			</if>
+			<if test="startTimeBegin != null and startTimeBegin != ''">
+				and t1.start_time >= #{startTimeBegin}
+			</if>
+			<if test="startTimeEnd != null and startTimeEnd != ''">
+			<![CDATA[
+				and t1.start_time <= #{startTimeEnd}
+				]]>
+			</if>
+			<if test="startFinishDate != null and startFinishDate != ''">
+				and t1.finish_date > #{startFinishDate}
+			</if>
+			<if test="endFinishDate != null and endFinishDate != ''">
+			<![CDATA[
+				and t1.finish_date < #{endFinishDate}
+			]]>
+			</if>
+			<if test="startAssignTime != null and startAssignTime != ''">
+				and assign_time >= #{startAssignTime}
+			</if>
+			<if test="endAssignTime != null and endAssignTime != ''">
+			<![CDATA[
+				and assign_time <= #{endAssignTime}
+			]]>
+			</if>
+			<if test="state != null and state!='' and repeatOrderIdComplaint==null">
+				and state in (${state})
+			</if>
+			<if test="managerName != null and managerName != ''">
+				and t1.manager_name like '%${managerName}%'
+			</if>
+			<if test="manager != null and manager != '' and manager != 0">
+				and t1.manager = #{manager}
+			</if>
+			<if test="customerLeader != null and customerLeader != '' ">
+				and t1.customer_leader = #{customerLeader}
+			</if>
+			<if test="ownerId != null ">
+				and t1.owner_id = #{ownerId}
+			</if>
+			<if test="normal != null and normal != '' ">
+				and t1.id not in (${canUseIds})
+			</if>
+			<if test="insurance != null and insurance != '' ">
+				and t1.id in (${canUseIds})
+			</if>
+			<if test="returnGood != null and returnGood != '' ">
+				and t1.id in (${canUseIds})
+			</if>
+			<if test="route != null and route != ''">
+				and t1.route like '%${route}%'
+			</if>
+			<if test="comeFrom != null and comeFrom != ''">
+				and t1.come_from=#{comeFrom}
+			</if>
+			<if test="startCity != null and startCity != ''">
+				and t1.start_city=#{startCity}
+			</if>
+			<if test="endCity != null and endCity != ''">
+				and t1.end_city=#{endCity}
+			</if>
+			<if test="leader != null and leader == 'all'">
+				and t1.associater > 0 and t1.associater != deal and t1.associater_name !=''
+			</if>
+			<if test="agencyName != null and agencyName != ''">
+				and t1.agency_name like '%${agencyName}%'
+			</if>
+			<if test="level != null and level != '' ">
+				and t1.level = #{level}
+			</if>
+			<if test="dealDepartTemp != null and dealDepartTemp != '' ">
+				and (t1.deal_depart in (${dealDepartTemp})
+					<choose >
+						<when test="beforeFlag == null">or</when>
+					    <otherwise>and</otherwise>
+					</choose>
+					(t1.manager = #{managerIdOr} or t1.customer_leader=#{managerIdOrName}
+					<if test="customerNames!=null and customerNames!=''">
+						or t1.customer in (${customerNames})
+					</if>
+					<if test="dealNames!=null and dealNames!=''">
+						or t1.deal_name in (${dealNames})
+					</if>
+					)
+				)
+			</if>
+			<if test="dealBusDep!=null and dealBusDep!=''">
+			  and t1.bdp_name=#{dealBusDep}
+			</if>
+			<if test="notInTime != null and notInTime !='' ">
+				and t1.add_time &lt; #{notInTime}
+			</if>
+			<if test="routeType != null and routeType !='' ">
+				and t1.route_type in (${routeType})
+			</if>
+			<if test="afterSaleRouteType != null and afterSaleRouteType !='' ">
+				and t1.route_type = #{afterSaleRouteType}
+			</if>
+			<if test="notInRouteType != null and notInRouteType !='' ">
+				and t1.route_type not in (${notInRouteType})
+			</if>
+			<if test="contactPerson != null ">
+				and t1.contact_person = #{contactPerson}
+			</if>
+			<if test="contactPhone != null ">
+				and t1.contact_phone = #{contactPhone}
+			</if>
+			<if test="contactMail != null ">
+				and t1.contact_mail = #{contactMail}
+			</if>
+			<if test="createType != null ">
+				and t1.create_type = #{createType}
+			</if>
+			<if test="dealDepart != null and dealDepart != '' ">
+				and t1.deal_depart = #{dealDepart}
+			</if>
+			<if test="orderStateTemp!=null and orderStateTemp!='' ">
+				and t1.order_state =#{orderStateTemp}
+			</if>
+			<if test="isReparations != null and isReparations != ''">
+				and t1.is_reparations =#{isReparations}
+			</if>
+			<if test="destCategoryName != null and destCategoryName != ''">
+				and dest_category_name = #{destCategoryName}
+			</if>
+			<if test="otherType !=null and otherType !=''">
+				AND (
+					route_type not in ('门票','酒店','签证','机票','火车票')
+					and 
+					dest_category_name not in ('出境长线','出境短线','国内长线','周边')
+				)
+			</if>
+			<if test="destCategoryNames != null ">
+				and t1.dest_category_name in
+			<foreach collection="destCategoryNames" open="(" separator="," close=")" item="destCategoryName">
+					#{destCategoryName}
+			</foreach>
+			</if>
+			<if test="firstCallOverTime != null">
+				and t1.in_process_state=0 and t1.assign_time &lt; timestamp(now(), '-00:30:00')
+			</if>
+			<if test="custAgreeFlag !=null">
+				and t1.cust_agree_flag = #{custAgreeFlag}
+			</if>
+			<if test="firstWorkdayOvertime !=null">
+				and t1.first_workday_overtime &lt; now()
+			</if>
+			and t1.del_flag = 0
+		</where>
+	</select>
+
+	<select id="compareMax" parameterType="Map" resultType="Integer">
+		select count(*) from ct_complaint
+		<include refid="whereSql" />
+	</select>
+
+	<resultMap id="compListResultEntity" type="com.tuniu.gt.complaint.entity.ComplaintEntity">
+		<result property="id" column="id" />
+		<result property="custId" column="cust_id" />
+		<result property="guestNum" column="guest_num" />
+		<result property="guestName" column="guest_name" />
+		<result property="guestLevel" column="guest_level" />
+		<result property="orderId" column="order_id" />
+		<result property="orderComeFrom" column="order_come_from" />
+		<result property="routeType" column="route_type" />
+		<result property="orderType" column="order_type" />
+		<result property="orderTypeSp" column="order_type_sp" />
+		<result property="seniorManager" column="senior_manager" />
+		<result property="producter" column="producter" />
+		<result property="customer" column="customer" />
+		<result property="route" column="route" />
+		<result property="routeId" column="route_id" />
+		<result property="agencyId" column="agency_id" />
+		<result property="agencyName" column="agency_name" />
+		<result property="agencyTel" column="agency_tel" />
+		<result property="customerLeader" column="customer_leader" />
+		<result property="startCity" column="start_city" />
+		<result property="manager" column="manager" />
+		<result property="comeFrom" column="come_from" />
+		<result property="managerName" column="manager_name" />
+		<result property="level" column="level" />
+		<result property="productLeader" column="product_leader" />
+		<result property="ownerPartment" column="owner_partment" />
+		<result property="orderState" column="order_state" />
+		<result property="ownerName" column="owner_name" />
+		<result property="dealName" column="deal_name" />
+		<result property="deal" column="deal" />
+		<result property="updateTime" column="update_time" />
+		<result property="addTime" column="add_time" />
+		<result property="delFlag" column="del_flag" />
+		<result property="state" column="state" />
+		<result property="requirement" column="requirement" />
+		<result property="descript" column="descript" />
+		<result property="finishDate" column="finish_date" />
+		<result property="ownerId" column="owner_id" />
+		<result property="buildDate" column="build_date" />
+		<result property="startTime" column="start_time" />
+		<result property="endCity" column="end_city" />
+		<result property="title" column="title" />
+		<result property="cmpPerson" column="cmp_person" />
+		<result property="cmpPhone" column="cmp_phone" />
+		<result property="contactPerson" column="contact_person" />
+		<result property="contactPhone" column="contact_phone" />
+		<result property="contactMail" column="contact_mail" />
+		<result property="createType" column="create_type" />
+		<result property="dealDepart" column="deal_depart" />
+		<result property="serviceManager" column="service_manager" />
+		<result property="productManager" column="product_manager" />
+		<result property="depName" column="dep_name" />
+		<result property="depManager" column="dep_manager" />
+		<result property="score" column="score" />
+		<result property="contactId" column="contact_id" />
+		<result property="isSticky" column="is_sticky" />
+		<result property="assignTime" column="assign_time" />
+		<result property="associaterName" column="associater_name" />
+		<result property="repeateTime" column="repeate_time" />
+		<result property="complaintNum" column="complaint_num" />
+		<result property="upgradeTime" column="upgrade_time" />
+		<result property="bdpName" column="bdp_name" />
+		<result property="inProcessState" column="in_process_state" />
+		<result property="firstWorkdayOvertime" column="first_workday_overtime" />
+		<result property="secondWorkdayOvertime" column="second_workday_overtime" />
+		<result property="secondaryDepId" column="secondary_dep_id" />
+		<result property="destCategoryId" column="dest_category_id" />
+		<result property="destCategoryName" column="dest_category_name" />
+		<result property="followTime" column="follow_time" />
+		<result property="minFollowTime" column="min_follow_time" />
+		<result property="guideId" column="guideId" />
+		<result property="guideName" column="guideName" />
+		<result property="guideCall" column="guideCall" />
+		<result property="operateName" column="operateName" />
+		<result property="operateManagerName" column="operateManagerName" />
+		<result property="isReparations" column="is_reparations" />
+		<association property="compSolution" javaType="com.tuniu.gt.complaint.entity.ComplaintSolutionEntity">
+			<id property="id" column="solution_id"/>
+			<result property="cash" column="cash" />
+			<result property="replaceBook" column="replace_book" />
+			<result property="touristBook" column="tourist_book" />
+			<result property="gift" column="gift" />
+		</association>
+		<association property="shareSolutionList" javaType="com.tuniu.gt.complaint.entity.ShareSolutionEntity">
+			<id property="id" column="complaint_id"/>
+			<result property="special" column="special" />
+			<result property="orderGains" column="order_gains" />
+			<result property="qualityToolTotal" column="quality_tool_total" />
+		</association>
+		<collection property="reasonList" javaType="ArrayList" ofType="com.tuniu.gt.complaint.entity.ComplaintReasonEntity">
+			<result property="type" column="type" />
+			<result property="secondType" column="second_type" />
+			<result property="typeDescript" column="type_descript" />
+			<result property="descript" column="type_comment" />
+		</collection>
+		<collection property="supportShareList" javaType="ArrayList" ofType="com.tuniu.gt.complaint.entity.SupportShareEntity">
+			<result property="name" column="name" />
+			<result property="number" column="number" />
+		</collection>
+	</resultMap>
+
+	<resultMap type="java.util.Map" id="detailMap">
+		<result property="otherNum" column="otherNum" />
+		<result property="allNum" column="allNum" />
+		<result property="deal" column="deal" />
+		<result property="dealName" column="deal_name" />
+		<result property="dealDepart" column="deal_depart" />
+	</resultMap>
+
+	<select id="getPayInfoOnOrder" resultType="Map" parameterType="Integer">
+		SELECT t1.complaint_id,t2.deal_name,t1.cash,t1.tourist_book,t1.replace_book,t1.gift
+		FROM ct_complaint_solution t1 INNER JOIN 
+		(SELECT id,deal_name FROM ct_complaint WHERE order_id=#{orderId}) t2 ON t1.complaint_id=t2.id
+		WHERE (t1.cash>0 OR t1.tourist_book>0 OR t1.replace_book>0 OR t1.gift>0) AND t1.del_flag=1
+	</select>
+
+	<select id="getPayInfoOnTel" resultType="Map" parameterType="String">
+		SELECT t1.complaint_id,t2.deal_name,t1.cash,t1.tourist_book,t1.replace_book,t1.gift
+		FROM ct_complaint_solution t1 INNER JOIN 
+		(SELECT id,deal_name FROM ct_complaint WHERE contact_phone=#{tel}) t2 ON t1.complaint_id=t2.id
+		WHERE (t1.cash>0 OR t1.tourist_book>0 OR t1.replace_book>0 OR t1.gift>0) AND t1.del_flag=1
+	</select>
+	
+	<!-- 查询该投诉单下相关赔付信息， 对客或分担金额任意不为0 ， 有订单投诉，根据订单号查询 无订单投诉，根据手机号查询-->
+	<select id="getHistoryPayInfo" resultType="Map" parameterType="Map">
+		SELECT t1.id AS complaint_id, t1.deal_name, IFNULL( t2.cash, 0.00) AS cash, 
+			IFNULL( t2.tourist_book, 0.00) AS tourist_book, IFNULL( t2.replace_book, 0.00) AS replace_book, 
+			IFNULL( t2.gift, 0.00) AS gift, IFNULL( t3.total , 0.00) AS shareTotal
+		FROM ct_complaint t1
+		LEFT JOIN ct_complaint_solution t2 ON t1.id = t2.complaint_id AND t2.del_flag = 1 
+		LEFT JOIN ct_share_solution t3 ON t1.id = t3.complaint_id AND t3.del_flag = 1 
+		WHERE t1.del_flag = 0 
+			<if test="orderId != null and orderId > 0 ">
+				AND t1.order_id = #{orderId} 
+			</if>
+			<if test="orderId == null or orderId == 0"> 
+				AND t1.contact_phone = #{contactPhone} 
+			</if>
+			AND (t2.cash>0 OR t2.tourist_book>0 OR t2.replace_book>0 OR t2.gift>0 OR t3.total > 0)
+	</select>
+
+	<select id="getUndoneCompBills" resultType="Map">
+		SELECT t1.id AS complaintId, t1.order_id AS orderId FROM ct_complaint t1, ct_qc t2
+		WHERE (t1.state NOT IN (4,9) OR t2.status=1) AND t1.order_id>0
+		AND t1.del_flag=0 AND t2.del_flag=0 AND t1.id=t2.complaint_id
+	</select>
+
+   <select id="getThirdParty" parameterType="java.util.Map" resultMap="detailMap">
+       SELECT
+			  a.otherNum,
+			  b.allNum,
+			  a.deal,
+			  a.deal_name,
+			  a.deal_depart
+			  FROM (SELECT
+			        COUNT(1)   AS otherNum,
+			        deal,
+			        deal_name,
+			        deal_depart
+			      FROM ct_complaint
+			      WHERE assign_time &gt;=  #{startTime}
+			          AND assign_time &lt;= #{endTime}
+			          AND state in (2,3,4)
+			          AND come_from IN
+			           <foreach collection="dialTypes" item="dialType"
+					      open="(" close=")" separator=",">
+					  	 #{dialType}
+					  </foreach>
+			      GROUP BY deal,deal_name,deal_depart) a
+			  INNER JOIN (SELECT
+			                COUNT(1)   AS allNum,
+			                deal,
+			                deal_name,
+			                deal_depart
+			              FROM ct_complaint
+			               WHERE assign_time &gt;=  #{startTime}
+			         	 AND assign_time &lt;= #{endTime}
+			         	  AND state in (2,3,4)
+			              GROUP BY deal,deal_name,deal_depart) b
+			WHERE a.deal = b.deal and a.deal_name = b.deal_name AND a.deal_depart = b.deal_depart
+
+
+   </select>
+
+
+   <select id="getCallBack" parameterType="java.util.Map" resultMap="listResultEntity">
+
+       SELECT * FROM (
+       SELECT  a.id,
+ 			   DATE_FORMAT( a.assign_time,'%Y-%m-%d %H:%i:%s') AS  assign_time,
+			   IFNULL(DATE_FORMAT( a.follow_time,'%Y-%m-%d %H:%i:%s') ,'') AS follow_time,
+			   IFNULL( DATE_FORMAT(c.reason_time,'%Y-%m-%d %H:%i:%s') ,'') AS reason_time,
+			   a.deal,
+			   a.deal_name,
+               a.deal_depart,
+			   a.contact_phone,
+			   b.extension
+			   FROM ct_complaint a
+			   LEFT JOIN frm_user b ON a.deal =b.id
+			   AND  a.del_flag =0 AND b.del_flag =0
+			   LEFT JOIN
+			   ( SELECT MAX(add_time) AS reason_time ,complaint_id FROM ct_complaint_reason a WHERE del_flag = 1 AND add_time &gt;= #{startTime} AND add_time  &lt;= #{endTime}   GROUP BY complaint_id) c
+			   ON c.complaint_id =a.id  AND c.reason_time > a.assign_time
+			   WHERE a.state IN(2,3,4) AND( a.assign_time &gt;=  #{startTime} AND a.assign_time &lt;= #{endTime}) OR ( a.follow_time &gt;= #{startTime} AND a.follow_time &lt;= #{endTime})
+			   ) d WHERE d.contact_phone!='' AND d.extension!='' AND ( d.follow_time !='' OR d.reason_time!='')
+
+
+   </select>
+
+   <select id="getBdpNames" resultType="string">
+   		select distinct(bdp_name) from ct_complaint where del_flag=0 and bdp_name is not null and bdp_name !=''
+   </select>
+
+
+	<update id="updateCmpLevel" parameterType="java.util.Map">
+
+	   update ct_complaint set level =#{level} where id =#{cmpId}
+
+	</update>
+
+	<select id="getAfterSaleReport"  parameterType="map"  resultType="com.tuniu.gt.complaint.vo.AfterSaleReportVo">
+		SELECT deal_name AS dealName,
+		CASE WHEN 
+  		route_type IN ('门票','酒店','签证','机票','火车票') 
+  		THEN route_type 
+  		WHEN dest_category_name IN('出境长线','出境短线','国内长线','周边') 
+  		THEN dest_category_name
+  		ELSE '其他' END AS statisticsField,
+  		COUNT(1)           AS COUNT
+  		FROM ct_complaint
+  		WHERE assign_time BETWEEN #{assignTimeBgn}  
+  		AND concat(#{assignTimeEnd},' 23:59:59')
+	    AND del_flag = 0
+	    AND is_reparations = 0
+	    AND deal_name != ''
+	    AND order_id > 0
+		GROUP BY deal_name,statisticsField
+		UNION ALL
+		SELECT deal_name AS dealName,'无订单' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint
+			WHERE  assign_time BETWEEN #{assignTimeBgn}  and concat(#{assignTimeEnd},' 23:59:59') and  del_flag=0 and is_reparations=0 AND order_id=0 AND deal_name!='' GROUP BY deal_name
+		UNION ALL
+		SELECT deal_name AS dealName,'赔款单' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint
+			WHERE  assign_time BETWEEN #{assignTimeBgn}  and concat(#{assignTimeEnd},' 23:59:59') and  del_flag=0 AND is_reparations=1 AND deal_name!='' GROUP BY deal_name
+	</select>
+
+	<select id="getPostSaleUnDoneComplaintReport"    resultType="com.tuniu.gt.complaint.vo.AfterSaleReportVo">
+		SELECT c.deal_name AS dealName, '处理中' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint c INNER JOIN frm_user u ON u.id=c.deal
+			WHERE  c.del_flag=0 AND u.del_flag=0 AND c.state=2 GROUP BY c.deal_name
+		UNION ALL
+		SELECT c.deal_name AS dealName, '处理中对客已达成' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint c INNER JOIN frm_user u ON u.id=c.deal
+			WHERE  c.del_flag=0 AND u.del_flag=0 AND c.state=2 AND c.cust_agree_flag=1 GROUP BY c.deal_name
+		UNION ALL
+		SELECT t.deal_name,'处理中首呼超时' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint t INNER JOIN frm_user u ON t.deal=u.id
+			WHERE t.del_flag=0 AND t.state=2 AND ((t.assign_time&lt;TIMESTAMP(NOW(), '-00:30:00') and deal_depart='售后组') or (t.assign_time&lt;TIMESTAMP(NOW(), '-02:00:00') and deal_depart in ('售前组','出游前客户服务','资深组'))) AND in_process_state=0 AND u.del_flag=0   GROUP BY t.deal
+		UNION ALL
+		SELECT t.deal_name,'处理中超时出境' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint t INNER JOIN frm_user u ON t.deal=u.id
+			WHERE t.del_flag=0 AND t.state=2 AND u.del_flag=0 AND t.first_workday_overtime&lt;NOW() AND t.dest_category_name IN('出境长线','出境短线','出境当地参团') GROUP BY t.deal
+		UNION ALL
+		SELECT t.deal_name,'处理中超时国内' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint t INNER JOIN frm_user u ON t.deal=u.id
+			WHERE t.del_flag=0 AND t.state=2 AND u.del_flag=0 AND t.first_workday_overtime&lt;NOW() AND t.dest_category_name IN('周边','国内长线','国内当地参团') GROUP BY t.deal
+		UNION ALL
+		SELECT c.deal_name AS dealName, '已待结' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint c INNER JOIN frm_user u ON u.id=c.deal
+			WHERE  c.del_flag=0 AND u.del_flag=0 AND c.state=3 GROUP BY c.deal_name
+		UNION ALL
+		SELECT t.deal_name,'已待结超时出境' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint t INNER JOIN frm_user u ON t.deal=u.id
+			WHERE t.del_flag=0 AND t.state=3 AND u.del_flag=0 AND t.first_workday_overtime&lt;NOW() AND t.dest_category_name IN('出境长线','出境短线','出境当地参团') GROUP BY t.deal
+		UNION ALL
+		SELECT t.deal_name,'已待结超时国内' AS statisticsField,COUNT(1) AS COUNT FROM ct_complaint t INNER JOIN frm_user u ON t.deal=u.id
+			WHERE t.del_flag=0 AND t.state=3 AND u.del_flag=0 AND t.first_workday_overtime&lt;NOW() AND t.dest_category_name IN('周边','国内长线','国内当地参团') GROUP BY t.deal
+	</select>
+	
+	<select id="getPostSaleCompleteCmpReport"   parameterType="map" resultType="com.tuniu.gt.complaint.vo.AfterSaleReportVo">
+			SELECT dealName,statisticsField,SUM(COUNT) AS COUNT FROM 
+			(
+				SELECT deal_name AS dealName,dest_category_name AS statisticsField,COUNT(1) AS COUNT FROM 
+					(
+						SELECT distinct c.order_id,c.deal_name,c.dest_category_name
+					FROM ct_complaint c 
+					WHERE  c.del_flag=0  AND c.deal_depart ='售后组' AND c.dest_category_name IN('出境长线','出境短线','国内长线','周边')
+					AND c.finish_date &gt;= #{finishTimeBgn} AND c.finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59')
+					AND c.state=4 
+					AND c.finish_date=(
+					   SELECT MAX(finish_date) FROM ct_complaint WHERE order_id=c.order_id AND del_flag=0  AND deal_depart = '售后组' AND dest_category_name IN('出境长线','出境短线','国内长线','周边')
+							AND finish_date &gt;= #{finishTimeBgn} AND finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') and state=4
+					) 
+					
+					) t
+					 GROUP BY deal_name,dest_category_name
+
+					UNION ALL
+
+				SELECT deal_name AS dealName,dest_category_name AS statisticsField,COUNT(1) AS COUNT FROM 
+					(
+						SELECT distinct c.order_id,c.deal_name,c.dest_category_name
+					FROM ct_complaint c 
+					WHERE  c.del_flag=0  AND c.deal_depart = '资深组' AND c.dest_category_name IN('出境长线','出境短线','国内长线','周边')
+					AND c.finish_date &gt;= #{finishTimeBgn} AND c.finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59')
+					AND c.state=4 
+					AND c.finish_date=(
+					   SELECT MAX(finish_date) FROM ct_complaint WHERE order_id=c.order_id AND del_flag=0  AND deal_depart = '资深组' AND dest_category_name IN('出境长线','出境短线','国内长线','周边')
+							AND finish_date &gt;= #{finishTimeBgn} AND finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') and state=4
+					) 
+					
+					) t
+					 GROUP BY deal_name,dest_category_name
+				) tt
+				GROUP BY dealName,statisticsField
+
+				UNION ALL
+
+				SELECT dealName,statisticsField,SUM(COUNT) AS COUNT FROM 
+				(
+				SELECT distinct deal_name AS dealName,route_type AS statisticsField,COUNT(1) AS COUNT FROM 
+				(
+					SELECT c.order_id,c.deal_name,c.route_type
+				FROM ct_complaint c 
+				WHERE  c.del_flag=0  AND c.deal_depart = '售后组' AND c.route_type IN('门票','酒店','签证','机票','火车票')
+				AND c.finish_date &gt;= #{finishTimeBgn} AND c.finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') 
+				AND c.state=4 
+				AND c.finish_date=(
+						SELECT MAX(finish_date) FROM ct_complaint WHERE order_id=c.order_id AND del_flag=0  AND deal_depart = '售后组' AND route_type IN('门票','酒店','签证','机票','火车票')
+						AND finish_date &gt;= #{finishTimeBgn} AND finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') and state=4
+				) 
+				) t
+				group by deal_name,route_type
+
+				UNION ALL
+
+				SELECT distinct deal_name AS dealName,route_type AS statisticsField,COUNT(1) AS COUNT FROM 
+				(
+					SELECT c.order_id,c.deal_name,c.route_type
+				FROM ct_complaint c 
+				WHERE  c.del_flag=0  AND c.deal_depart = '资深组' AND c.route_type IN('门票','酒店','签证','机票','火车票')
+				AND c.finish_date &gt;= #{finishTimeBgn} AND c.finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') 
+				AND c.state=4 
+				AND c.finish_date=(
+					SELECT MAX(finish_date) FROM ct_complaint WHERE order_id=c.order_id AND del_flag=0  AND deal_depart = '资深组' AND route_type IN('门票','酒店','签证','机票','火车票')
+						AND finish_date &gt;= #{finishTimeBgn} AND finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') and state=4
+				) 
+				) t
+				group by deal_name,route_type
+
+				) tt
+				GROUP BY dealName,statisticsField
+				
+				union all
+				
+				SELECT dealName,statisticsField,SUM(COUNT) AS COUNT FROM 
+				(
+					SELECT distinct deal_name AS dealName,'其他' AS statisticsField,COUNT(1) AS COUNT FROM 
+					(
+						SELECT c.order_id,c.deal_name,c.route_type
+					FROM ct_complaint c 
+					WHERE  c.del_flag=0  AND c.deal_depart = '售后组' AND (c.route_type not IN('门票','酒店','签证','机票','火车票')  and c.dest_category_name not IN('出境长线','出境短线','国内长线','周边'))
+					AND c.finish_date &gt;= #{finishTimeBgn} AND c.finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') 
+					AND c.state=4 
+					AND c.finish_date=(
+						SELECT MAX(finish_date) FROM ct_complaint WHERE order_id=c.order_id AND del_flag=0  AND deal_depart = '售后组' AND (route_type not  IN('门票','酒店','签证','机票','火车票') and dest_category_name not IN('出境长线','出境短线','国内长线','周边'))
+							AND finish_date &gt;= #{finishTimeBgn} AND finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') and state=4
+					) 
+					) t
+					group by deal_name
+					
+					union all
+					
+					SELECT distinct deal_name AS dealName,'其他' AS statisticsField,COUNT(1) AS COUNT FROM 
+					(
+						SELECT c.order_id,c.deal_name,c.route_type
+					FROM ct_complaint c 
+					WHERE  c.del_flag=0  AND c.deal_depart = '资深组' AND (c.route_type not IN('门票','酒店','签证','机票','火车票')  and c.dest_category_name not IN('出境长线','出境短线','国内长线','周边'))
+					AND c.finish_date &gt;= #{finishTimeBgn} AND c.finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') 
+					AND c.state=4 
+					AND c.finish_date=(
+						SELECT MAX(finish_date) FROM ct_complaint WHERE order_id=c.order_id AND del_flag=0  AND deal_depart = '资深组' AND (route_type not  IN('门票','酒店','签证','机票','火车票') and dest_category_name not IN('出境长线','出境短线','国内长线','周边'))
+							AND finish_date &gt;= #{finishTimeBgn} AND finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59') and state=4
+					) 
+					) t
+					group by deal_name
+				) tt
+				GROUP BY dealName,statisticsField
+				
+	</select>
+	
+	<select id="getCompleteCmpOrderList" parameterType="map" resultType="int">
+		  SELECT c.order_id
+				FROM ct_complaint c 
+				WHERE  c.del_flag=0  AND c.deal_depart ='售后组' AND c.deal_name = #{dealName}
+				AND c.finish_date &gt;= #{finishTimeBgn} AND c.finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59')
+				AND c.state=4
+				<choose>
+					<when test="routeType !=null and routeType!=''">
+						AND   route_type=#{routeType} 
+					</when>
+					<when test="destCategoryName !=null and destCategoryName!=''">
+						AND   dest_category_name =#{destCategoryName}
+					</when>
+					<when test="otherType !=null and otherType !=''">
+							AND (
+								route_type not in ('门票','酒店','签证','机票','火车票')
+								and 
+								dest_category_name not in ('出境长线','出境短线','国内长线','周边')
+							)
+					</when>
+				</choose> 
+				   
+				AND c.build_date=(
+				   SELECT MAX(build_date) FROM ct_complaint WHERE order_id=c.order_id AND del_flag=0  AND deal_depart = '售后组'
+				   <choose>
+					<when test="routeType !=null and routeType!=''">
+						AND   route_type=#{routeType} 
+					</when>
+					<when test="destCategoryName !=null and destCategoryName!=''">
+						AND   dest_category_name =#{destCategoryName}
+					</when>
+					<when test="otherType !=null and otherType !=''">
+							AND (
+								route_type not in ('门票','酒店','签证','机票','火车票')
+								and 
+								dest_category_name not in ('出境长线','出境短线','国内长线','周边')
+							)
+					</when>
+				</choose> 
+				    AND c.state=4 
+					AND finish_date &gt;= #{finishTimeBgn} AND finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59')
+				) 
+
+		UNION ALL
+
+		SELECT c.order_id
+				FROM ct_complaint c 
+				WHERE  c.del_flag=0  AND c.deal_depart ='资深组' AND c.deal_name = #{dealName}
+				AND c.finish_date &gt;= #{finishTimeBgn} AND c.finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59')
+				AND c.state=4
+				<choose>
+					<when test="routeType !=null and routeType!=''">
+						AND   route_type=#{routeType} 
+					</when>
+					<when test="destCategoryName !=null and destCategoryName!=''">
+						AND   dest_category_name =#{destCategoryName}
+					</when>
+					<when test="otherType !=null and otherType !=''">
+							AND (
+								route_type not in ('门票','酒店','签证','机票','火车票')
+								and 
+								dest_category_name not in ('出境长线','出境短线','国内长线','周边')
+							)
+					</when>
+				</choose> 
+				   
+				AND c.build_date=(
+				   SELECT MAX(build_date) FROM ct_complaint WHERE order_id=c.order_id AND del_flag=0  AND deal_depart = '资深组'
+				   <choose>
+					<when test="routeType !=null and routeType!=''">
+						AND   route_type=#{routeType} 
+					</when>
+					<when test="destCategoryName !=null and destCategoryName!=''">
+						AND   dest_category_name =#{destCategoryName}
+					</when>
+					<when test="otherType !=null and otherType !=''">
+							AND (
+								route_type not in ('门票','酒店','签证','机票','火车票')
+								and 
+								dest_category_name not in ('出境长线','出境短线','国内长线','周边')
+							)
+					</when>
+				</choose> 
+				    AND c.state=4 
+					AND finish_date &gt;= #{finishTimeBgn} AND finish_date &lt;= concat(#{finishTimeEnd},' 23:59:59')
+				) 
+	</select>
+
+	<select id="getReasonList" parameterType="java.util.Map" resultMap="cmpBillInfo">
+
+	    	SELECT  t1.id,t1.order_id AS ordId,t1.level AS cmpLevel,t1.state,
+			    	t1.id AS cmpId,t4.type,t4.second_type AS secondType ,t4.type_descript AS typeDescript,t4.descript
+					FROM ct_complaint t1
+					LEFT JOIN ct_complaint_reason t4 ON t1.id=t4.complaint_id and t4.del_flag =1
+					WHERE  t1.id in
+					<foreach collection="cmpIds" item="cmpId"
+					      open="(" close=")" separator=",">
+					  	 #{cmpId}
+				   </foreach>
+				   and t1.del_flag = 0
+				   order by t1.id
+	</select>
+	
+	<select id="getComplaintCountByDealNameAndAssignTimePeriod" parameterType="map" resultType="int">
+			select count(*) from ct_complaint where del_flag=0
+			and deal_name = #{dealName}
+			and assign_time &gt;= #{assignTimeBgn}
+			and assign_time &lt;= #{assignTimeEnd}
+			<if test="is_reparations != null">
+				and is_reparations = #{is_reparations}
+			</if>
+			<if test="no_order != null">
+				and order_id = 0
+			</if>
+			<if test="has_order != null">
+				and order_id &gt; 0
+			</if>
+	</select>
+	
+	<select id="getLeastCountEarliestPerson" parameterType="map" resultType="String">
+			SELECT caa.user_name,COUNT(temp.id),MIN(temp.assign_time)
+			FROM ct_auto_assign caa
+			LEFT JOIN 
+			(SELECT id,deal_name,assign_time
+			FROM ct_complaint
+			WHERE del_flag=0
+			and assign_time &gt;= #{assignTimeBgn}
+			and assign_time &lt;= #{assignTimeEnd}
+			<if test="is_reparations != null">
+				and is_reparations = #{is_reparations}
+			</if>
+			<if test="no_order != null">
+				and order_id = 0
+			</if>
+			<if test="has_order != null">
+				and order_id &gt; 0
+			</if>
+			AND deal_name IN 
+			<foreach collection="userNameList" item="userName" open="(" close=")"
+				separator=",">
+				#{userName}
+			</foreach>
+			) temp
+			ON temp.deal_name = caa.user_name
+			WHERE caa.tour_time_node = #{tour_time_node}
+			AND caa.user_name IN 
+			<foreach collection="userNameList" item="userName" open="(" close=")"
+				separator=",">
+				#{userName}
+			</foreach>
+			GROUP BY caa.user_name
+			ORDER BY COUNT(temp.id),MIN(temp.assign_time),RAND()
+			LIMIT 1
+	</select>
+	
+	<sql id="listSql">
+		 FROM  ct_complaint  
+		<where>
+			  del_flag = 0 
+			<if test="id != null and id != '' ">
+				and id = #{id}
+			</if>
+			<if test="orderId != null and orderId != ''">
+				and order_id = #{orderId}
+			</if>
+			<if test="comeFrom != null and comeFrom != ''">
+				and come_from=#{comeFrom}
+			</if>
+			<if test="startCity != null and startCity != ''">
+				and start_city=#{startCity}
+			</if>
+			<if test="route != null and route != ''">
+				and route like '%${route}%'
+			</if>
+			<if test="routeId != null and routeId != ''">
+				and route_id = #{routeId}
+			</if>
+			<if test="productLeader != null and productLeader != '' ">
+				and product_leader = #{productLeader}
+			</if>
+			<if test="agencyName != null and agencyName != ''">
+				and agency_name like '%${agencyName}%'
+			</if>
+			
+			<if test="startBuildDate != null and startBuildDate != ''">
+				and build_date >= #{startBuildDate}
+			</if>
+			<if test="endBuildDate != null and endBuildDate != ''">
+			<![CDATA[
+				and build_date <= #{endBuildDate}
+				]]>
+			</if>
+			
+			<if test="startFinishDate != null and startFinishDate != ''">
+				and finish_date >= #{startFinishDate}
+			</if>
+			<if test="endFinishDate != null and endFinishDate != ''">
+			<![CDATA[
+				and finish_date <= #{endFinishDate}
+			]]>
+			</if>
+			<if test="startAssignTime != null and startAssignTime != ''">
+				and assign_time >= #{startAssignTime}
+			</if>
+			<if test="endAssignTime != null and endAssignTime != ''">
+			<![CDATA[
+				and assign_time <= #{endAssignTime}
+			]]>
+			</if>
+			<if test="customerLeader != null and customerLeader != '' ">
+				and customer_leader = #{customerLeader}
+			</if>
+		
+		    <if test="ownerName != null and ownerName != ''">
+				and owner_name=#{ownerName}
+			</if>
+			
+			<if test="dealName != null and dealName != ''">
+				and deal_name =  #{dealName}
+			</if>
+			
+			<if test="managerName != null and managerName != ''">
+				and manager_name like '%${managerName}%'
+			</if>
+			
+			<if test="level != null and level != '' ">
+				and level = #{level}
+			</if>
+		
+			<if test="priority != null and priority!=-1 ">
+				and priority = #{priority}
+			</if>
+			
+			<if test="contactPhone != null and contactPhone != ''">
+				and contact_phone = #{contactPhone}
+			</if>
+			<if test="ownerId != null ">
+				and owner_id = #{ownerId}
+			</if>
+			<if test="deal != null and deal != '' and deal != 0">
+				and (deal=#{deal} or associater=#{deal})
+			</if>
+			<if test="dealDepart != null and dealDepart != '' ">
+				and  deal_depart = #{dealDepart}
+			</if>
+			<if test="state != null and state!=-1 ">
+				and state = #{state}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="listAll" parameterType="Map" resultMap="listResultEntity">
+		SELECT id,cust_id,order_id,guest_name,guest_level,come_from,start_city,route_id,build_date,customer_leader,
+			product_leader,order_state,deal_depart,level,owner_name,deal_name,state,priority,priorityContent
+		<include refid="listSql"/>
+		ORDER BY id desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getListCount" parameterType="Map" resultType="Integer">
+		SELECT COUNT(1) <include refid="listSql"></include>
+	</select>
+	
+	<select id="getDealPayoutReport" parameterType="map"
+		resultType="com.tuniu.gt.complaint.vo.ComplaintDtReportVo">
+		SELECT fu.id AS userid,fu.real_name,ud1.dep_name AS dept_third,
+		ud2.dep_name AS dept_second,ud3.dep_name AS dept_first,
+		SUM(CASE WHEN ((IFNULL(ccs.cash,0))+IFNULL(ccs.tourist_book,0))>0 THEN 1 ELSE 0 END) AS payout_num,
+		SUM(CASE WHEN ISNULL(ccp.theoryPayout) THEN 0 ELSE 1 END) AS theory_num,
+		SUM(IFNULL(ccp.theoryPayout,0)) AS theoryPayout,
+		SUM(IFNULL(css.supplier_total,0))+SUM(IFNULL(css.special,0))+SUM(IFNULL(css.quality_tool_total,0))+SUM(IFNULL(css.order_gains,0)) AS share_total,
+		SUM(IFNULL(ccp.theoryPayout,0)) AS theoryPayout,SUM(IFNULL(css.supplier_total,0)) AS supplier_total,SUM(IFNULL(css.order_gains,0)) AS order_gains,
+		SUM(IFNULL(css.special,0)) AS company_total,SUM(IFNULL(css.quality_tool_total,0)) AS quality_tool_total,
+		<!-- (SUM(IFNULL(theoryPayout,0))-SUM(IFNULL(ccs.cash,0))-SUM(IFNULL(ccs.tourist_book,0))) AS savePayout,
+		(SUM(IFNULL(ccs.cash,0))+SUM(IFNULL(ccs.tourist_book,0))-SUM(IFNULL(theoryPayout,0)))/SUM(IFNULL(theoryPayout,0)) AS above_scale, -->
+		(SUM(IFNULL(ccs.cash,0))+SUM(IFNULL(ccs.tourist_book,0))) AS realPayout 
+		FROM ct_complaint cc
+		INNER JOIN frm_user fu ON cc.deal = fu.id AND fu.del_flag=0
+		INNER JOIN uc_department ud1 ON fu.dep_id = ud1.id
+		INNER JOIN uc_department ud2 ON ud1.father_id = ud2.id
+		INNER JOIN uc_department ud3 ON ud2.father_id = ud3.id
+		LEFT JOIN (SELECT complaintId,SUM(IFNULL(theoryPayout,0)) AS theoryPayout,SUM(CASE WHEN ISNULL(theoryPayout) THEN 0 ELSE 1 END) AS theory_num FROM ct_complaint_point WHERE delFlag=0 GROUP BY complaintId) ccp ON ccp.complaintId = cc.id
+		INNER JOIN ct_complaint_solution ccs ON ccs.complaint_id = cc.id AND ccs.del_flag=1 AND ccs.submit_flag=1 AND (ccs.audit_flag=4 or ccs.audit_flag=-1)
+		LEFT JOIN ct_share_solution css ON css.complaint_id = cc.id AND css.del_flag=1
+		WHERE cc.state = 4 
+		AND cc.del_flag=0   
+		AND cc.finish_date &gt;= #{assignTimeBgn}
+		AND cc.finish_date &lt;= #{assignTimeEnd}
+		AND IFNULL(css.submit_flag,1)=1 AND (IFNULL(css.audit_flag,4)=4 or css.audit_flag=-1)
+		<if test="idlist_second != null">
+		AND ud2.id IN 
+		<foreach collection="idlist_second" item="id_scond" open="(" close=")"
+			separator=",">
+			#{id_scond}
+		</foreach>
+		</if>
+		GROUP BY fu.id ORDER BY ud3.id,ud2.id,ud1.id,fu.id;
+	</select>
+	
+	<select id="getDealPayoutDetail" parameterType="map"
+		resultType="com.tuniu.gt.complaint.vo.ComplaintDtReportVo">
+		SELECT cc.id,cc.order_id,fu.id AS userid,fu.real_name,
+		SUM(IFNULL(ccp.theoryPayout,0)) AS theoryPayout,IFNULL(css.supplier_total,0) AS supplier_total,
+		IFNULL(css.special,0) AS company_total,IFNULL(css.quality_tool_total,0) AS quality_tool_total,IFNULL(css.order_gains,0) AS order_gains,
+		(IFNULL(ccs.cash,0)+IFNULL(ccs.tourist_book,0)) AS realPayout,
+		(SUM(IFNULL(ccs.cash,0))+SUM(IFNULL(ccs.tourist_book,0))-SUM(IFNULL(css.supplier_total,0))) AS savePayout,
+		(IFNULL(css.supplier_total,0)-IFNULL(ccs.cash,0)-IFNULL(ccs.tourist_book,0)) AS realGain,
+		(SUM(IFNULL(ccp.theoryPayout,0))+IFNULL(css.supplier_total,0)-IFNULL(ccs.cash,0)-IFNULL(ccs.tourist_book,0)) AS theoryGain,
+		<!-- (SUM(IFNULL(ccp.theoryPayout,0))-IFNULL(ccs.cash,0)-IFNULL(ccs.tourist_book,0)) AS savePayout,
+		ROUND((IFNULL(ccs.cash,0)+IFNULL(ccs.tourist_book,0)-SUM(IFNULL(ccp.theoryPayout,0)))*100/SUM(IFNULL(ccp.theoryPayout,0)),2) AS above_scale, -->
+		IFNULL(css.supplier_total,0)+IFNULL(css.special,0)+IFNULL(css.quality_tool_total,0)+IFNULL(css.order_gains,0) AS share_total 
+		FROM ct_complaint cc
+		INNER JOIN frm_user fu ON cc.deal = fu.id AND fu.del_flag=0
+		LEFT JOIN ct_complaint_point ccp ON ccp.complaintId = cc.id AND ccp.delFlag=0
+		INNER JOIN ct_complaint_solution ccs ON ccs.complaint_id = cc.id AND ccs.del_flag=1 AND ccs.submit_flag=1 AND (ccs.audit_flag=4 or ccs.audit_flag=-1)
+		LEFT JOIN ct_share_solution css ON css.complaint_id = cc.id AND css.del_flag=1
+		WHERE cc.state = 4 
+		AND cc.del_flag=0
+		AND cc.finish_date &gt;= #{assignTimeBgn}
+		AND cc.finish_date &lt;= #{assignTimeEnd}
+		AND fu.real_name= #{real_name}
+		AND IFNULL(css.submit_flag,1)=1 AND (IFNULL(css.audit_flag,4)=4 or css.audit_flag=-1)
+		GROUP BY cc.id
+	</select>
+	
+	<select id="getDealPayoutEcharts" parameterType="map"
+		resultType="com.tuniu.gt.complaint.vo.ComplaintDtReportVo">
+		SELECT
+		ud2.id       AS userid,
+		ud2.dep_name AS dept_second,
+		SUM(CASE WHEN ((IFNULL(ccs.cash,0))+IFNULL(ccs.tourist_book,0))>0 THEN 1 ELSE 0 END) AS payout_num,
+		SUM(CASE WHEN ISNULL(ccp.theoryPayout) THEN 0 ELSE 1 END) AS theory_num,
+		SUM(IFNULL(ccp.theoryPayout,0)) AS theoryPayout,
+		SUM(IFNULL(css.supplier_total,0))    +SUM(IFNULL(css.special,
+		0))+SUM(IFNULL(css.quality_tool_total,0))    +SUM(IFNULL(css.order_gains,
+		0))          AS share_total,
+		SUM(IFNULL(ccp.theoryPayout,0)) AS theoryPayout,
+		SUM(IFNULL(css.supplier_total,0)) AS supplier_total,
+		SUM(IFNULL(css.order_gains,0)) AS order_gains,
+		SUM(IFNULL(css.special,0)) AS company_total,
+		SUM(IFNULL(css.quality_tool_total,0)) AS quality_tool_total,
+		(SUM(IFNULL(ccs.cash,0))+SUM(IFNULL(ccs.tourist_book,0))-SUM(IFNULL(css.supplier_total,0))) AS savePayout,
+		(SUM(IFNULL(css.supplier_total,0))+SUM(IFNULL(css.special,0))+SUM(IFNULL(css.quality_tool_total,0))+SUM(IFNULL(css.order_gains,0))
+		-SUM(IFNULL(ccs.cash,0))-SUM(IFNULL(ccs.tourist_book,0))) AS realGain,
+		(SUM(IFNULL(theoryPayout,0))+SUM(IFNULL(css.supplier_total,0))-SUM(IFNULL(ccs.cash,0))-SUM(IFNULL(ccs.tourist_book,0))) AS theoryGain,
+		<!-- (SUM(IFNULL(theoryPayout,0))-SUM(IFNULL(ccs.cash,0))-SUM(IFNULL(ccs.tourist_book,0))) AS savePayout,
+		ROUND(IFNULL((SUM(IFNULL(ccs.cash,0))+SUM(IFNULL(ccs.tourist_book,0))-SUM(IFNULL(theoryPayout,0)))*100/SUM(IFNULL(theoryPayout,0)),0),2) AS above_scale, -->
+		(SUM(IFNULL(ccs.cash,0))+SUM(IFNULL(ccs.tourist_book,0))) AS realPayout 
+		FROM ct_complaint cc
+		INNER JOIN frm_user fu
+		ON cc.deal = fu.id
+		AND fu.del_flag = 0
+		INNER JOIN uc_department ud1
+		ON fu.dep_id = ud1.id
+		INNER JOIN uc_department ud2
+		ON ud1.father_id = ud2.id
+		INNER JOIN uc_department ud3
+		ON ud2.father_id = ud3.id
+		LEFT JOIN (SELECT
+		complaintId,
+		SUM(IFNULL(theoryPayout,0)) AS theoryPayout,
+		SUM(CASE WHEN ISNULL(theoryPayout) THEN 0 ELSE 1 END) AS theory_num
+		FROM ct_complaint_point
+		WHERE delFlag = 0
+		GROUP BY complaintId) ccp
+		ON ccp.complaintId = cc.id
+		INNER JOIN ct_complaint_solution ccs
+		ON ccs.complaint_id = cc.id
+		AND ccs.del_flag = 1
+		AND ccs.submit_flag = 1
+		AND (ccs.audit_flag = 4
+		OR ccs.audit_flag =  - 1)
+		LEFT JOIN ct_share_solution css
+		ON css.complaint_id = cc.id
+		AND css.del_flag = 1
+		WHERE cc.state = 4
+	    AND cc.del_flag = 0
+		AND cc.finish_date &gt;= #{assignTimeBgn}
+		AND cc.finish_date &lt;= #{assignTimeEnd}
+		AND IFNULL(css.submit_flag,1)=1 AND (IFNULL(css.audit_flag,4)=4 or css.audit_flag=-1)
+		<if test="idlist_second != null">
+		AND ud2.id IN 
+		<foreach collection="idlist_second" item="id_scond" open="(" close=")"
+			separator=",">
+			#{id_scond}
+		</foreach>
+		</if>
+		GROUP BY ud2.id
+		UNION 
+		SELECT ud.id AS userid,ud.dep_name AS dept_second,
+		SUM(CASE WHEN ((IFNULL(ccs.cash,0))+IFNULL(ccs.tourist_book,0))>0 THEN 1 ELSE 0 END) AS payout_num,
+		SUM(CASE WHEN ISNULL(ccp.theoryPayout) THEN 0 ELSE 1 END) AS theory_num,
+		SUM(IFNULL(ccp.theoryPayout,0)) AS theoryPayout,
+		SUM(IFNULL(css.supplier_total,0))    +SUM(IFNULL(css.special,
+		0))+SUM(IFNULL(css.quality_tool_total,0))    +SUM(IFNULL(css.order_gains,
+		0))          AS share_total,
+		SUM(IFNULL(ccp.theoryPayout,0)) AS theoryPayout,
+		SUM(IFNULL(css.supplier_total,0)) AS supplier_total,
+		SUM(IFNULL(css.order_gains,0)) AS order_gains,
+		SUM(IFNULL(css.special,0)) AS company_total,
+		SUM(IFNULL(css.quality_tool_total,0)) AS quality_tool_total,
+		(SUM(IFNULL(ccs.cash,0))+SUM(IFNULL(ccs.tourist_book,0))-SUM(IFNULL(css.supplier_total,0))) AS savePayout,
+		(SUM(IFNULL(css.supplier_total,0))+SUM(IFNULL(css.special,0))+SUM(IFNULL(css.quality_tool_total,0))+SUM(IFNULL(css.order_gains,0))
+		-SUM(IFNULL(ccs.cash,0))-SUM(IFNULL(ccs.tourist_book,0))) AS realGain,
+		(SUM(IFNULL(theoryPayout,0))+SUM(IFNULL(css.supplier_total,0))-SUM(IFNULL(ccs.cash,0))-SUM(IFNULL(ccs.tourist_book,0))) AS theoryGain,
+		<!-- (SUM(IFNULL(theoryPayout,0))-SUM(IFNULL(ccs.cash,0))-SUM(IFNULL(ccs.tourist_book,0))) AS savePayout,
+		ROUND(IFNULL((SUM(IFNULL(ccs.cash,0))+SUM(IFNULL(ccs.tourist_book,0))-SUM(IFNULL(theoryPayout,0)))*100/SUM(IFNULL(theoryPayout,0)),0),2) AS above_scale -->
+		(SUM(IFNULL(ccs.cash,0))+SUM(IFNULL(ccs.tourist_book,0))) AS realPayout
+		FROM ct_complaint cc
+		INNER JOIN frm_user fu ON cc.deal = fu.id AND fu.del_flag=0
+		INNER JOIN uc_department ud ON fu.dep_id = ud.id
+		LEFT JOIN ct_complaint_point ccp ON ccp.complaintId = cc.id AND ccp.delFlag=0
+		INNER JOIN ct_share_solution css ON css.complaint_id = cc.id AND css.del_flag=1 AND css.submit_flag=1 AND css.audit_flag=4
+		LEFT JOIN ct_complaint_solution ccs ON ccs.complaint_id = cc.id AND ccs.del_flag=1
+		WHERE cc.state = 4 
+		AND cc.del_flag=0   
+		AND cc.finish_date &gt;= #{assignTimeBgn}
+		AND cc.finish_date &lt;= #{assignTimeEnd}
+		AND IFNULL(css.submit_flag,1)=1 AND (IFNULL(css.audit_flag,4)=4 or css.audit_flag=-1)
+		<if test="idlist_third != null">
+		AND ud.id IN 
+		<foreach collection="idlist_third" item="id_third" open="(" close=")"
+			separator=",">
+			#{id_third}
+		</foreach>
+		</if>
+	</select>
+	
+	<select id="getDealPayoutAnalyseList" parameterType="map"
+		resultType="com.tuniu.gt.complaint.vo.ComplaintDtAnalyseVo">
+		<include refid="getDtAnalyse"/>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	
+	<sql id="getDtAnalyse" >
+		SELECT
+		cc.order_id,
+		cc.id AS complaint_id,
+		cc.finish_date,
+		cc.route_id,
+		cc.route,
+		cc.agency_name,
+		CONCAT(ud3.dep_name,'-',ud2.dep_name,'-',ud.dep_name) AS belong_dept,
+		cc.start_city,
+		cc.end_city,
+		cc.sign_city,
+		cc.route_type,
+		cc.product_leader,
+		SUM(IFNULL(ccp.theoryPayout,0)) AS theoryPayout,
+		IFNULL(ccs.cash,0) +IFNULL(ccs.tourist_book,
+		0)AS realPayout,
+		IFNULL(css.supplier_total,0)+IFNULL(css.special,0)+IFNULL(css.quality_tool_total,0)+IFNULL(css.order_gains,0)
+		AS share_total,
+		IFNULL(css.supplier_total,0) AS supplier_total,
+		IFNULL(css.special,0) AS company_total,
+		IFNULL(css.quality_tool_total,0) AS quality_tool_total,
+		IFNULL(css.order_gains,0) AS order_gains
+		FROM ct_complaint cc
+		INNER JOIN frm_user fu ON fu.real_name=cc.product_leader
+		INNER JOIN uc_department ud ON fu.dep_id = ud.id
+		LEFT JOIN uc_department ud2 ON ud.father_id =ud2.id
+		LEFT JOIN uc_department ud3 ON ud2.father_id =ud3.id
+		LEFT JOIN (SELECT
+		complaintId,
+		SUM(IFNULL(theoryPayout,0)) AS theoryPayout
+		FROM ct_complaint_point
+		WHERE delFlag = 0
+		GROUP BY complaintId) ccp
+		ON ccp.complaintId = cc.id
+		INNER JOIN ct_complaint_solution ccs
+		ON ccs.complaint_id = cc.id
+		AND ccs.del_flag = 1
+		AND ccs.submit_flag = 1
+		AND (ccs.audit_flag = 4
+		OR ccs.audit_flag = - 1)
+		LEFT JOIN ct_share_solution css
+		ON css.complaint_id = cc.id
+		AND css.del_flag = 1
+		WHERE cc.state = 4
+		AND cc.del_flag = 0
+		AND cc.finish_date &gt;= #{assignTimeBgn}
+		AND cc.finish_date &lt;= #{assignTimeEnd}
+		<if test="agencyName != ''">
+			AND cc.agency_name like '%${agencyName}%'
+		</if>
+		<if test="belongDept != ''">
+			AND ud.dep_name  like '%${belongDept}%'
+		</if>
+		<if test="startCity != ''">
+			AND cc.start_city = #{startCity}
+		</if>
+		<if test="endCity != ''">
+			AND cc.end_city = #{endCity}
+		</if>
+		<if test="signCity != ''">
+			AND cc.sign_city = #{signCity}
+		</if>
+		<if test="routeType != ''">
+			AND cc.route_type = #{routeType}
+		</if>
+		<if test="productLeder != ''">
+			AND cc.product_leader = #{productLeder}
+		</if>
+		<if test="orderId != ''">
+			AND cc.order_id = #{orderId}
+		</if>
+		<if test="complaintId != ''">
+			AND cc.id = #{complaintId}
+		</if>
+		<if test="routeId != ''">
+			AND cc.route_id = #{routeId}
+		</if>
+		<if test="dealDepart != ''">
+			AND cc.deal_depart = #{dealDepart}
+		</if>
+		<if test="isRealPayout !=null">
+			AND IFNULL(ccs.cash,0)    +IFNULL(ccs.tourist_book,0)>0
+		</if>
+		<if test="isTheoryPayout !=null">
+			AND IFNULL(ccp.theoryPayout,0) >0
+		</if>
+		AND IFNULL(css.submit_flag,1) = 1
+		AND (IFNULL(css.audit_flag,4) = 4
+		OR css.audit_flag = - 1)
+		GROUP BY cc.id
+	</sql>
+	
+	<select id="getDtAnalyseCount" parameterType="Map" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="getDtAnalyse"></include>
+		) t
+	</select>
+	
+	<select id="getComplaintByOrderIdOrCustId" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintCrmEntity">
+		  SELECT
+		  id AS complaintId,
+		  order_id AS orderId,
+		  order_type AS orderType,
+		  route_id AS productId,
+		  route AS productName,
+		  cust_id AS userId,
+		  deal_name AS compHandlerName,
+		  DATE_FORMAT(build_date,'%Y-%m-%d %H:%i:%s') AS compDate,
+		  CASE state 
+		  WHEN 1 THEN '待处理' 
+		  WHEN 2 THEN '处理中' 
+		  WHEN 3 THEN '已待结'
+		  WHEN 4 THEN '已完成'
+		  WHEN 5 THEN '待指定(升级售后)' 
+		  WHEN 6 THEN '待指定(提交售后填写分担方案)' 
+		  WHEN 7 THEN '待指定(升级售前)' 
+		  WHEN 9 THEN '已撤销' 
+		  WHEN 10 THEN '待指定(升级客服中心售后)' 
+		  ELSE '未知' END AS statusName
+		  <include refid="getComplaintByOrderIdOrCustIdList" />
+		  <if test="pageStart != null and pageSize != null">
+			limit #{pageStart},#{pageSize}
+		  </if>
+	</select>
+	
+	<select id="getComplaintByOrderIdOrCustIdCount" parameterType="Map"
+		resultType="Integer">
+		  SELECT COUNT(1)
+		  <include refid="getComplaintByOrderIdOrCustIdList" />
+	</select>
+	
+	<sql id="getComplaintByOrderIdOrCustIdList">
+		FROM ct_complaint
+		  WHERE 1=1
+		  <if test="orderId != null">
+			AND order_id = #{orderId}
+		  </if>
+		  <if test="custId != null">
+			AND cust_id = #{custId}
+		  </if>
+		  <if test="orderId != null and oneflag != ''">
+			AND id = (SELECT
+				 	 MAX(id)
+				FROM ct_complaint cc
+				  INNER JOIN (SELECT
+				                order_id,
+				                MAX(build_date) AS build_date
+				              FROM ct_complaint
+				              WHERE del_flag = 0
+				                  AND order_id = #{orderId}) temp
+				    ON cc.order_id = temp.order_id
+				      AND cc.build_date = temp.build_date)
+		  </if>
+		  <if test="custId != null and oneflag != ''">
+			AND id in (SELECT
+				 	 MAX(id)
+				     FROM ct_complaint cc
+				     INNER JOIN (SELECT
+				                order_id,
+				                MAX(build_date) AS build_date
+				              FROM ct_complaint
+				              WHERE del_flag = 0
+				                  AND cust_id = #{custId}
+				              GROUP BY order_id) temp
+				      ON cc.order_id = temp.order_id
+				      AND cc.build_date = temp.build_date
+				      GROUP BY temp.order_id)
+		  </if>
+		  AND del_flag=0
+		  ORDER BY build_date desc
+	</sql>
+	
+	<select id="getComplaintCancelState" parameterType="Map"
+		resultType="Boolean">
+		SELECT
+		CASE WHEN IFNULL(SUM(IFNULL(ccs.cash+ccs.tourist_book,0)),0)=0
+		THEN TRUE ELSE FALSE END
+		AND
+		CASE WHEN IFNULL(cc.come_from,'')!='点评' 
+		THEN TRUE ELSE FALSE END
+		AND
+		CASE WHEN COUNT(cqp.id)=0
+		THEN TRUE ELSE FALSE END
+		FROM ct_complaint cc
+		LEFT JOIN ct_complaint_solution ccs 
+		ON ccs.complaint_id=cc.id
+		LEFT JOIN ct_qc_point cqp 
+		ON cqp.complaintId=cc.id
+		WHERE cc.id = #{complaint_id}
+	</select>
+	
+	<select id="getCrmComplaint" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintSynchCrmEntity">
+		SELECT 
+		id AS complaint_id,
+		order_id,
+		DATE_FORMAT(build_date,'%Y-%m-%d %H:%i:%s') AS build_date,
+		DATE_FORMAT(finish_date,'%Y-%m-%d %H:%i:%s') AS finish_date,
+		DATE_FORMAT(add_time,'%Y-%m-%d %H:%i:%s') AS add_time,
+		DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') AS update_time,
+		come_from,
+		LEVEL,
+		cust_id,
+		cmp_person,
+		cmp_phone,
+		deal,
+		deal_name,
+		deal_depart,
+		state,
+		priority,
+		owner_id,
+		owner_name,
+		is_media
+		<include refid="getCrmComplaintCountSql" />
+		<if test="pageStart != null and pageSize != null">
+			limit #{pageStart},#{pageSize}
+	    </if>
+	</select>
+	
+	<select id="getCrmComplaintCount" parameterType="Map"
+		resultType="Integer">
+		  SELECT COUNT(1)
+		  <include refid="getCrmComplaintCountSql" />
+	</select>
+	
+	<sql id="getCrmComplaintCountSql">
+		FROM ct_complaint 
+		WHERE 
+		del_flag=0
+		<if test="complaint_id != null">
+			AND id = #{complaint_id}
+		</if>
+		<if test="complaint_id == null">
+			AND (add_time &gt;= #{startDate}
+			AND add_time &lt;= #{endDate})
+			OR (update_time &gt;= #{startDate}
+			AND update_time &lt;= #{endDate})
+		</if>
+	</sql>
+	
+	<!-- 根据投诉单号，获得是否是订单平台标识字段 -->
+	<select id="getClientTypeExpand" parameterType="Integer" resultType="Integer">
+		select client_type_expand from ct_complaint where id = #{complaintId}
+	</select>
+	
+	<select id="getHandingComplaintIds" parameterType="Map" resultType="Integer">
+		SELECT id 
+		FROM ct_complaint
+		WHERE  state not in (4,9)
+			AND del_flag = 0 
+			AND build_date &gt;= #{someDayBgn}
+			AND build_date &lt;= #{someDayEnd}
+	</select>
+	
+	<select id="getOvertimeNotCallbackLists" parameterType="Map" resultMap="listResultEntity">
+		SELECT *
+		FROM ct_complaint
+		WHERE del_flag = 0
+		    AND state = 2
+		    AND deal_depart = #{deal_depart}
+		    AND in_process_state = 0
+		    AND assign_time &lt;= DATE_ADD(NOW(), INTERVAL - #{overtime_frame} MINUTE)
+	</select>
+	
+	<update id="upgradeComplaintByIdList" parameterType="Map">
+		update ct_complaint 
+		set 
+		deal = 0,
+		deal_name = '',
+		associater = 0,
+		associater_name = '',
+		deal_depart = #{deal_depart},
+		state = #{state}
+		where 
+		id in 
+		<foreach collection="complaintIdList" item="complaintId" open="(" close=")"
+			separator=",">
+			#{complaintId}
+		</foreach>
+	</update>
+</mapper>

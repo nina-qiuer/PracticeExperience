@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.ISessionMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.frm.entity.SessionEntity">  
+		
+		<result property="userInfo" column="user_info" />
+		
+		<result property="id" column="id" />
+		
+		<result property="isSa" column="is_sa" />
+		
+		<result property="updateTime" column="update_time" />
+		
+		<result property="uid" column="uid" />
+		
+		<result property="privileges" column="privileges" />
+		
+		<result property="needUpdate" column="need_update" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="userInfo" column="user_info"/>
+		
+		<result property="id" column="id"/>
+		
+		<result property="isSa" column="is_sa"/>
+		
+		<result property="updateTime" column="update_time"/>
+		
+		<result property="uid" column="uid"/>
+		
+		<result property="privileges" column="privileges"/>
+		
+		<result property="needUpdate" column="need_update"/>
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  user_info,
+		 
+		  id,
+		 
+		  is_sa,
+		 
+		  update_time,
+		 
+		  uid,
+		 
+		  privileges,
+		 
+		  need_update
+		 
+		) values  (
+		
+		  #{e.userInfo}, 
+		 
+		  #{e.id}, 
+		 
+		  #{e.isSa}, 
+		 
+		  #{e.updateTime}, 
+		 
+		  #{e.uid}, 
+		 
+		  #{e.privileges}, 
+		 
+		  #{e.needUpdate} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.userInfo != null">user_info=#{e.userInfo},</if>
+			
+				<if test="e.id != null">id=#{e.id},</if>
+			
+				<if test="e.isSa != null">is_sa=#{e.isSa},</if>
+			
+				<if test="e.updateTime != null">update_time=#{e.updateTime},</if>
+			
+				<if test="e.uid != null">uid=#{e.uid},</if>
+			
+				<if test="e.privileges != null">privileges=#{e.privileges},</if>
+			
+				<if test="e.needUpdate != null">need_update=#{e.needUpdate}</if>
+			
+		</set>
+	    where 
+	    <choose>
+	    	<when test="e.uid != null">
+	    		uid=#{e.uid}
+	    	</when>
+	    	<otherwise>
+	    		id=#{e.id}
+	    	</otherwise>
+	    </choose>
+	    
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/>
+	</sql>
+	
+	<delete id="delete">
+		<include refid="delete"/>
+		where uid=#{uid}
+	</delete>
+	
+</mapper>

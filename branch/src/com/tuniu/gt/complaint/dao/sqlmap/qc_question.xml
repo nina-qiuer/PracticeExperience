@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IQcQuestionMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			<if test="report_id != null">
+				report_id = #{report_id}
+			</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.QcQuestionEntity">  
+		<id property="id" column="id" />
+		<result property="reportId" column="report_id" />
+		<result property="bigClass" column="big_class" />
+		<result property="smallClass" column="small_class" />
+		<result property="compLevel" column="comp_level" />
+		<result property="conclusion" column="conclusion" />
+		<result property="scoreLevel" column="score_level" />
+		<result property="scoreValue" column="score_value" />
+		<result property="scoreTarget1" column="score_target1" />
+		<result property="scoreTarget2" column="score_target2" />
+		<result property="startCity" column="start_city" />
+		<result property="endCity" column="end_city" />
+		<result property="airfare" column="airfare" />
+		<result property="productPrice" column="product_price" />
+		<result property="buildDate" column="build_date" />		
+		<result property="addTime" column="add_time" />		
+		<result property="updateTime" column="update_time" />		
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		<id property="id" column="id" />
+		<result property="reportId" column="report_id" />
+		<result property="bigClass" column="big_class" />
+		<result property="smallClass" column="small_class" />
+		<result property="compLevel" column="comp_level" />
+		<result property="conclusion" column="conclusion" />
+		<result property="scoreLevel" column="score_level" />
+		<result property="scoreValue" column="score_value" />
+		<result property="scoreTarget1" column="score_target1" />
+		<result property="scoreTarget2" column="score_target2" />
+		<result property="startCity" column="start_city" />
+		<result property="endCity" column="end_city" />
+		<result property="airfare" column="airfare" />
+		<result property="productPrice" column="product_price" />
+		<result property="buildDate" column="build_date" />		
+		<result property="addTime" column="add_time" />		
+		<result property="updateTime" column="update_time" />		
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<!-- get question list by report id -->
+	<select id="getQuestionListByReportId" parameterType="Integer"  resultMap="questionsResult">
+		SELECT a.*,	 c.id AS track_id, c.responsibility,c.resp_second,c.resp_third,c.position, c.responsible_person,c.improver 
+		FROM ct_qc_question  a,  ct_qc_tracker c 
+		WHERE a.report_id=#{report_id} AND a.id=c.question_id and a.del_flag!=1;
+	</select>
+	<resultMap id="questionsResult" type="com.tuniu.gt.complaint.entity.QcQuestionEntity">  
+		<id property="id" column="id" />
+		<result property="reportId" column="report_id" />
+		<result property="bigClass" column="big_class" />
+		<result property="smallClass" column="small_class" />
+		<result property="compLevel" column="comp_level" />
+		<result property="conclusion" column="conclusion" />
+		<result property="scoreLevel" column="score_level" />
+		<result property="scoreValue" column="score_value" />
+		<result property="scoreTarget1" column="score_target1" />
+		<result property="scoreTarget2" column="score_target2" />
+		<result property="startCity" column="start_city" />
+		<result property="endCity" column="end_city" />
+		<result property="airfare" column="airfare" />
+		<result property="productPrice" column="product_price" />
+		<result property="buildDate" column="build_date" />		
+		<result property="addTime" column="add_time" />		
+		<result property="updateTime" column="update_time" />		
+		<result property="delFlag" column="del_flag" />
+		<collection property="trackers" ofType="com.tuniu.gt.complaint.entity.QcTrackerEntity"> 
+			<id property="id" column="track_id"/>
+			<result property="improver" column="improver"/>				
+			<result property="responsiblePerson" column="responsible_person"/>				
+			<result property="responsibility" column="responsibility"/>
+			<result property="respSecond" column="resp_second"/>	
+			<result property="respThird" column="resp_third"/>				
+			<result property="position" column="position"/>
+		</collection>
+	</resultMap>
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  report_id,	 
+		  big_class_id,
+		  big_class_name,
+		  small_class_id,
+		  small_class_name,
+		  comp_level,
+		  conclusion,
+		  score_level,
+		  score_value,
+		  score_target1,
+		  score_target2,
+		  <if test="e.startCity != null">start_city,</if>
+		  <if test="e.endCity != null">end_city,</if>
+		  <if test="e.airfare != null">airfare,</if>
+		  <if test="e.productPrice != null">product_price,</if>
+		  build_date,		 
+		  add_time,		 
+		  update_time,		 
+		  del_flag		 
+		) values  (
+		  #{e.reportId}, 
+		  #{e.bigClassId}, 
+		  #{e.bigClassName}, 
+		  #{e.smallClassId},
+		  #{e.smallClassName},
+		  #{e.compLevel},
+		  #{e.conclusion},
+		  #{e.scoreLevel},
+		  #{e.scoreValue},
+		  #{e.scoreTarget1},
+		  #{e.scoreTarget2},
+		  <if test="e.startCity != null">#{e.startCity},</if>
+		  <if test="e.endCity != null">#{e.endCity},</if>
+		  <if test="e.airfare != null">#{e.airfare},</if>
+		  <if test="e.productPrice != null">#{e.productPrice},</if>
+		  #{e.buildDate}, 		 
+		  #{e.addTime}, 		 
+		  #{e.updateTime},		 
+		  #{e.delFlag}		 
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+		
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			<if test="e.id != null">question_id=#{e.id},</if>
+			<if test="e.reportId != null">report_id=#{e.reportId},</if>
+			<if test="e.bigClassId != null">big_class=#{e.bigClass},</if>
+			<if test="e.smallClassId != null">small_class=#{e.smallClass},</if>
+			<if test="e.compLevel != null">comp_level=#{e.compLevel},</if>
+			<if test="e.conclusion != null">conclusion=#{e.conclusion},</if>
+			<if test="e.scoreLevel != null">score_level=#{e.scoreLevel},</if>
+			<if test="e.scoreValue != null">score_value=#{e.scoreValue},</if>
+			<if test="e.scoreTarget1 != null">score_target1=#{e.scoreTarget1},</if>
+			<if test="e.scoreTarget2 != null">score_target2=#{e.scoreTarget2},</if>
+			<if test="e.startCity != null">start_city=#{e.startCity},</if>
+			<if test="e.endCity != null">end_city=#{e.endCity},</if>
+			<if test="e.airfare != null">airfare=#{e.airfare},</if>
+			<if test="e.productPrice != null">product_price=#{e.productPrice},</if>
+			<if test="e.buildDate != null">build_date=#{e.buildDate},</if>
+			<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			<if test="e.updateTime != null">update_time=#{e.updateTime},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<delete id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/>
+		where id=#{id}
+	</delete>
+	
+	<!-- 根据report_id 批量删除question记录 -->
+	<update id="deleteQuestionsByReportId" parameterType="Integer" flushCache="true" statementType="PREPARED">
+		UPDATE ct_qc_question SET del_flag=1 WHERE report_id=#{reportId}
+	</update>
+	
+</mapper>

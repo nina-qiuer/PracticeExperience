@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<!-- 规则 中划线前为namespace -->	
+	
+	<package name="callloss-callloss" extends="apply-default" namespace="/callloss/action"> 
+		<action name="*-*" class="callloss_action-{1}" method="{2}">
+			<result name="callloss_list">/WEB-INF/html/callloss/callloss_main_list/callloss_list.jsp</result>
+			<result name="return_list" type="redirectAction">callloss?status=0&amp;calling=${calling}</result>
+			<result name="init_change">/WEB-INF/html/callloss/callloss_main_list/init_change.jsp</result>
+			<result name="callloss_detail">/WEB-INF/html/callloss/callloss_main_list/callloss_detail.jsp</result>
+			<result name="call_loss_period_list">/WEB-INF/html/callloss/callloss_main_list/callloss_period_list.jsp</result>
+			<result name="send_sms_lost">/WEB-INF/html/callloss/callloss_main_list/send_sms_lost.jsp</result>
+		</action>		
+	</package>
+</struts>

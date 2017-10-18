@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.IRolePrivilegeMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			<choose>
+				<when  test="roleId != null">
+					role_id = #{roleId}
+				</when>
+				<when  test="roleIds != null"> 
+					role_id in(${roleIds}) 
+				</when>
+			</choose>
+			
+			<if test="manageLevel != null">
+				and <![CDATA[manage_level & ${manageLevel} = ${manageLevel}]]>
+			</if>
+			<if test="privilegeId != null">
+				and privilege_id > 0
+			</if>
+			
+		</where>		
+		<if test="groupBy != null">
+			group by ${groupBy}
+		</if>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.frm.entity.RolePrivilegeEntity">  
+		
+		<result property="privilegeId" column="privilege_id" />
+		
+		<result property="menuId" column="menu_id" />
+		
+		<result property="manageLevel" column="manage_level" />
+		
+		<result property="roleId" column="role_id" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="privilegeId" column="privilege_id"/>
+		
+		<result property="menuId" column="menu_id"/>
+		
+		<result property="manageLevel" column="manage_level"/>
+		
+		<result property="roleId" column="role_id"/>
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		insert into ${table}
+		(
+		  privilege_id,
+		 
+		  menu_id,
+		 
+		  manage_level,
+		 
+		  role_id
+		 
+		) values  (
+		
+		  #{e.privilegeId}, 
+		 
+		  #{e.menuId}, 
+		 
+		  #{e.manageLevel}, 
+		 
+		  #{e.roleId} 
+		 
+		)  ON DUPLICATE KEY UPDATE del_flag = 0
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.privilegeId != null">privilege_id=#{e.privilegeId},</if>
+			
+				<if test="e.menuId != null">menu_id=#{e.menuId},</if>
+			
+				<if test="e.manageLevel != null"><![CDATA[manage_level= manage_level | ${e.manageLevel}]]>,</if>
+			
+				<if test="e.roleId != null">role_id=#{e.roleId}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	
+	<update id="updateDelFlagByRoleId">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		set del_flag = 1 where role_id = #{roleId}
+	</update>
+	
+	
+	
+	
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/>
+	</sql>
+	
+	<delete id="delete">
+		<include refid="delete"/>
+		<where>
+		<choose>
+			<when test="roleId != null">
+				role_id=#{roleId} and del_flag = 1
+			</when>
+			<when test="id != null">
+				id=#{id}
+			</when>
+		</choose>	
+		</where>
+	</delete>
+	
+	<update id="cleanManageLevel"> 
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		 set 
+		 <![CDATA[ manage_level = manage_level & ~${manageLevel}]]>
+		 where role_id=#{roleId}
+	</update>
+	
+	
+	<update id="addManageLevel"> 
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		 set 
+		 <![CDATA[ manage_level = manage_level | ${e.manageLevel}]]>
+		 where role_id=#{e.roleId} AND menu_id = #{e.menuId} and privilege_id=#{e.privilegeId}
+	</update>
+	
+</mapper>

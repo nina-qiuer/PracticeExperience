@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.satisfaction.dao.sqlmap.imap.IFrmUserDelMap"> 
+	
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>1=1 
+			AND DATE_FORMAT(update_time, '%Y-%m')=#{yearMonth}
+			<if test="depId != null">and dep_id=#{depId}</if>
+		</where>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	
+	<select id="fetchListOrg" parameterType="Map"  resultType="Map">
+		<include refid="list"/>
+	</select> 
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="com.tuniu.gt.satisfaction.entity.FrmUserDelEntity">
+		
+		<result property="userName" column="user_name" />
+		
+		<result property="realName" column="real_name" />
+		
+		<result property="depId" column="dep_id" />
+		
+		<result property="approvalNumber" column="approval_number" />
+		
+		<result property="updateTime" column="update_time" />
+		
+	</resultMap>
+	
+	<select id="selectByName" parameterType="Map"  resultMap="listResultMap">
+		SELECT * FROM uc_user_del WHERE 
+		real_name=#{salerName} AND DATE_FORMAT(update_time, '%Y-%m')=#{yearMonth}
+		limit 1
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+	</insert>
+	
+	<insert id="addPersonsByDept" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.satisfaction.entity.FrmUserDelEntity" flushCache="true" statementType="PREPARED" >
+		insert into uc_user_del(user_name,real_name,work_num,dep_id,approval_number,update_time) values(#{userName},#{realName},#{workNum},#{depId},#{approvalNumber},#{updateTime})
+	</insert>
+	
+	<insert id="copyPersonForNextMonth" useGeneratedKeys="true" keyProperty="id" parameterType="map" flushCache="true" statementType="PREPARED" >
+		insert into uc_user_del(user_name,real_name,work_num,dep_id,approval_number,update_time) select fu.user_name,fu.real_name,fu.worknum,fu.dep_id,0,DATE_FORMAT(DATE_ADD(NOW(),INTERVAL 1 MONTH),'%Y-%m-%d') from frm_user fu where fu.dep_id=#{id } and fu.del_flag=0
+	</insert>
+	
+	<insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" 
+		flushCache="true" statementType="PREPARED">
+		insert into uc_user_del (
+			user_name,real_name,work_num,dep_id,approval_number,update_time
+		) values 
+        <foreach collection="list" item="e" index="index" separator="," >
+        (
+            #{e.userName},#{e.realName},#{e.workNum},#{e.depId},#{e.approvalNumber},#{e.updateTime}
+        )
+        </foreach>
+    </insert>
+	
+	<sql id="update">
+		UPDATE uc_user_del SET approval_number=approval_number+1 
+	    where real_name=#{e.realName} and EXTRACT(YEAR_MONTH  FROM update_time)=EXTRACT(YEAR_MONTH FROM NOW())
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+	</sql>
+	
+	<delete id="deleteExitPerson">
+		delete from uc_user_del where EXTRACT(YEAR_MONTH FROM update_time)=EXTRACT(YEAR_MONTH FROM NOW())
+	</delete>
+
+</mapper>

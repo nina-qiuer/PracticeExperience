@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintLaunchCountMap">
+
+	<insert id="insertComplaintLaunchByDay" parameterType="Map">
+		INSERT
+		INTO ct_complaint_launch_count
+		(complaint_id,
+		launcher,
+		launcher_name,
+		depname_fourth,
+		depname_third,
+		depname_second,
+		depname_first,
+		build_time,
+		build_day,
+		build_hour,
+		route_type,
+		dest_category_name)
+		SELECT
+		cc.id,
+		owner_id,
+		fu.real_name,
+		ud1.dep_name,
+		IFNULL(ud2.dep_name,''),
+		IFNULL(ud3.dep_name,''),
+		IFNULL(ud4.dep_name,''),
+		cc.build_date,
+		DATE_FORMAT(cc.build_date,'%Y%m%d'),
+		DATE_FORMAT(cc.build_date,'%H'),
+		route_type,
+		dest_category_name
+		FROM
+		ct_complaint cc
+		INNER JOIN frm_user fu
+		ON cc.owner_id = fu.id
+		INNER JOIN
+		uc_department ud1
+		ON fu.dep_id = ud1.id
+		LEFT JOIN uc_department ud2
+		ON
+		ud1.father_id = ud2.id
+		LEFT JOIN
+		uc_department ud3
+		ON ud2.father_id =
+		ud3.id
+		LEFT JOIN uc_department ud4
+		ON ud3.father_id = ud4.id
+		WHERE
+		cc.build_date &gt;=
+		#{finishTimeBgn}
+		AND
+		cc.build_date
+		&lt;=
+		#{finishTimeEnd}
+	</insert>
+
+	<update id="updateDepartmentToReportOne">
+		UPDATE ct_complaint_launch_count SET
+		depname_first=depname_fourth,depname_second='',depname_third='',depname_fourth=''
+		WHERE depname_second=''
+	</update>
+
+	<update id="updateDepartmentToReportTwo">
+		UPDATE ct_complaint_launch_count SET
+		depname_first=depname_third,depname_second=depname_fourth,depname_third='',depname_fourth=''
+		WHERE depname_second=''
+	</update>
+
+	<update id="updateDepartmentToReportThree">
+		UPDATE ct_complaint_launch_count SET
+		depname_first=depname_second,depname_second=depname_third,depname_third=depname_fourth,depname_fourth=''
+		WHERE depname_first=''
+	</update>
+
+	<select id="getComplaintLaunchCountNum" parameterType="Map"
+		resultType="Integer">
+		SELECT COUNT(1) FROM ct_complaint_launch_count
+		WHERE
+		build_time &gt;=
+		#{finishTimeBgn}
+		AND
+		build_time
+		&lt;=
+		#{finishTimeEnd}
+		<if test="routeType != ''">
+			AND route_type = #{routeType}
+		</if>
+	</select>
+
+	<select id="getComplaintLaunchCountList" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintLaunchCountEntity">
+		SELECT
+		depname_second AS dep_name,
+		'' AS father_dep,
+		'' AS grandpa_dep,
+		COUNT(*)
+		AS countNum
+		FROM ct_complaint_launch_count
+		WHERE
+		build_time &gt;=
+		#{finishTimeBgn}
+		AND
+		build_time
+		&lt;=
+		#{finishTimeEnd}
+		<if test="routeType != ''">
+			AND route_type = #{routeType}
+		</if>
+		GROUP BY
+		depname_second
+		UNION SELECT
+		depname_third
+		<!-- CASE WHEN depname_third!='' THEN depname_third ELSE launcher_name 
+			END -->
+		AS dep_name,
+		depname_second AS
+		father_dep,
+		'' AS grandpa_dep,
+		COUNT(*) AS
+		countNum
+		FROM ct_complaint_launch_count
+		WHERE
+		depname_third != ''
+		AND
+		build_time &gt;= #{finishTimeBgn}
+		AND
+		build_time
+		&lt;=
+		#{finishTimeEnd}
+		<if test="routeType != ''">
+			AND route_type = #{routeType}
+		</if>
+		GROUP BY depname_second,depname_third
+		UNION SELECT
+		depname_fourth
+		<!-- CASE WHEN depname_fourth!='' THEN depname_fourth ELSE launcher_name 
+			END -->
+		AS dep_name,
+		depname_third AS
+		father_dep,
+		depname_second AS grandpa_dep,
+		COUNT(*) AS countNum
+		FROM ct_complaint_launch_count
+		WHERE
+		depname_fourth
+		!= ''
+		AND
+		build_time &gt;= #{finishTimeBgn}
+		AND
+		build_time
+		&lt;=
+		#{finishTimeEnd}
+		<if test="routeType != ''">
+			AND route_type = #{routeType}
+		</if>
+		GROUP BY depname_second,depname_third,depname_fourth;
+	</select>
+
+	<select id="getComplaintLaunchListCount" parameterType="Map"
+		resultType="Integer">
+		SELECT
+		count(1)
+		<include refid="getComplaintLaunchSql" />
+	</select>
+
+	<select id="getComplaintLaunchList" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintLaunchEntity">
+		SELECT
+		complaint_id,
+		route_type,
+		launcher_name,
+		depname_first,
+		depname_second,
+		depname_third,
+		depname_fourth
+		<include refid="getComplaintLaunchSql" />
+		ORDER BY complaint_id desc
+		<if test="dataLimitStart != null and pageSize != null">
+			limit #{dataLimitStart},#{pageSize}
+		</if>
+	</select>
+
+	<sql id="getComplaintLaunchSql">
+		FROM
+		ct_complaint_launch_count
+		WHERE build_time &gt;= #{finishTimeBgn}
+		AND
+		build_time
+		&lt;=
+		#{finishTimeEnd}
+		<if test="routeType != ''">
+			AND route_type = #{routeType}
+		</if>
+		<if test="dep_second != ''">
+			AND depname_second like '%${dep_second}%'
+		</if>
+		<if test="dep_third != ''">
+			AND depname_third like '%${dep_third}%'
+		</if>
+		<if test="dep_fourth != ''">
+			AND depname_fourth like '%${dep_fourth}%'
+		</if>
+	</sql>
+</mapper>

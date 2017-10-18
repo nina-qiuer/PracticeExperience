@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintPointMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			delFlag = 0
+			<if test="complaintId!=null">
+				and complaintId=#{complaintId}
+			</if>
+		</where>
+		order by id
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultType="com.tuniu.gt.complaint.entity.ComplaintPointEntity">
+		<include refid="list"/>
+	</select>
+	
+	
+	<select id="get" parameterType="Map"  resultType="com.tuniu.gt.complaint.entity.ComplaintPointEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+
+		  <if test="e.typeDescript != null">
+		  	typeDescript,
+		  </if>
+
+		  <if test="e.payoutBase != null">
+		  	payoutBase,
+		  </if>
+
+		  <if test="e.verify != null">
+		  	verify,
+		  </if>
+
+		  <if test="e.theoryPayout != null and e.theoryPayout !=0">
+		  	theoryPayout,
+		  </if>
+		  
+		  <if test="e.theoryPayoutQuality != null and e.theoryPayoutQuality !=0">
+		  	theoryPayoutQuality,
+		  </if>
+		  
+		  <if test="e.theoryPayoutLaw != null and e.theoryPayoutLaw !=0">
+		  	theoryPayoutLaw,
+		  </if>
+
+		  complaintId,
+		 
+		  mainType,
+		 
+		  secondType
+
+		) values  (
+		  <if test="e.typeDescript != null">
+		  	#{e.typeDescript},
+		  </if>
+
+		  <if test="e.payoutBase != null">
+		  	#{e.payoutBase},
+		  </if>
+
+		  <if test="e.verify != null">
+		  	#{e.verify},
+		  </if>
+
+		  <if test="e.theoryPayout != null and e.theoryPayout !=0">
+		  	#{e.theoryPayout},
+		  </if>
+		  
+		  <if test="e.theoryPayoutQuality != null and e.theoryPayoutQuality !=0">
+		  	#{e.theoryPayoutQuality},
+		  </if>
+		  
+		  <if test="e.theoryPayoutLaw != null and e.theoryPayoutLaw !=0">
+		  	#{e.theoryPayoutLaw},
+		  </if>
+		
+		  #{e.complaintId}, 
+		 
+		  #{e.mainType}, 
+		 
+		  #{e.secondType}
+
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.complaint.entity.ComplaintPointEntity" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.mainType != null">mainType=#{e.mainType},</if>
+			
+				<if test="e.secondType != null">secondType=#{e.secondType},</if>
+			
+				<if test="e.typeDescript != null">typeDescript=#{e.typeDescript},</if>
+			
+				<if test="e.payoutBase != null">payoutBase=#{e.payoutBase},</if>
+			
+				<if test="e.verify != null">verify=#{e.verify},</if>
+			
+				<if test="e.theoryPayout != null">theoryPayout=#{e.theoryPayout},</if>
+				
+				<if test="e.theoryPayoutQuality != null">theoryPayoutQuality=#{e.theoryPayoutQuality},</if>
+				
+				<if test="e.theoryPayoutLaw != null">theoryPayoutLaw=#{e.theoryPayoutLaw},</if>
+				
+				<if test="e.delFlag != null">delFlag=#{e.delFlag},</if>
+				updateTime=now()			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<delete id="delete" parameterType="int">
+			delete from ct_complaint_point where complaintId=#{complaintId}
+	</delete>
+	
+	<insert id="batchInsert" parameterType="java.util.List">
+			insert into ct_complaint_point(complaintId,mainType,secondType,typeDescript,payoutBase,verify,theoryPayout,theoryPayoutQuality,theoryPayoutLaw,addTime
+			,detailFirst,detailSecond,detailThird)
+			values
+			<foreach collection="list"  item="point" separator=",">
+				 (#{point.complaintId},#{point.mainType},#{point.secondType},#{point.typeDescript},#{point.payoutBase},
+				 #{point.verify},#{point.theoryPayout},#{point.theoryPayoutQuality},#{point.theoryPayoutLaw},now()
+				 ,#{point.detailFirst},#{point.detailSecond},#{point.detailThird})
+			</foreach>
+	</insert>
+	
+	<!-- 获得固定时间存在有效理论赔付的投诉id -->
+	<select id="getTheoryPayout" parameterType="java.util.Map" resultType="Integer">
+		select DISTINCT complaintId
+		from  ct_complaint_point
+		where delFlag = 0
+			and theoryPayout > 0
+			AND `addTime`  &gt;= #{submitTimeBgn} 
+			AND `addTime`  &lt;= #{submitTimeEnd} 
+	</select>
+</mapper>

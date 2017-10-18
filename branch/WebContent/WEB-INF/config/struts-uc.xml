@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/2.1.dtd">
+<struts>
+	<include file="../config/uc/package.xml"></include>
+	<include file="../config/uc/ajax-package.xml"></include>
+	<include file="../config/uc/webservice-package.xml"></include> 
+</struts>

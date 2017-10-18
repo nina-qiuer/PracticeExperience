@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.uc.dao.sqlmap.imap.IJobMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>1=1
+		<if test="jobName != null and jobName != ''">AND job_name LIKE '%${jobName}'</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.uc.entity.JobEntity">  
+		
+		<result property="jobName" column="job_name" />
+		
+		<result property="delFlag" column="del_flag" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="jobName" column="job_name"/>
+		
+		<result property="delFlag" column="del_flag"/>
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  <if test="e.id != null">
+			id,
+		  </if>
+		  
+		  job_name,
+		 
+		  del_flag
+		 
+		) values  (
+		  
+		  <if test="e.id != null">
+			 #{e.id}, 
+		  </if>
+		
+		  #{e.jobName}, 
+		 
+		  #{e.delFlag} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.jobName != null">job_name=#{e.jobName},</if>
+			
+				<if test="e.delFlag != null">del_flag=#{e.delFlag}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/>
+	</sql>
+	
+	<delete id="delete">
+		<include refid="delete"/>
+		  where id=#{id}
+	</delete>
+	
+</mapper>

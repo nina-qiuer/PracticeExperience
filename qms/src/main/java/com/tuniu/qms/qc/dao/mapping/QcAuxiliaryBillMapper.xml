@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.QcAuxiliaryBillMapper">
+
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcAuxiliaryBill">
+		INSERT INTO qc_auxiliary_bill (
+		
+		    <if test="templateId != null">templateId,</if>
+		    <if test="qcId != null">qcId,</if>
+			<if test="field1 != null">field1,</if>
+			<if test="field2 != null">field2,</if>
+			<if test="field3 != null">field3,</if>
+			<if test="field4 != null">field4,</if>
+			<if test="field5 != null">field5,</if>
+			<if test="field6 != null">field6,</if>
+			<if test="field7 != null">field7,</if>
+			<if test="field8 != null">field8,</if>
+			<if test="field9 != null">field9,</if>
+			<if test="field10 != null">field10,</if>
+			<if test="field11 != null">field11,</if>
+			<if test="field12 != null">field12,</if>
+			<if test="field13 != null">field13,</if>
+			<if test="field14 != null">field14,</if>
+			<if test="field15 != null">field15,</if>
+			<if test="field16 != null">field16,</if>
+			<if test="field17 != null">field17,</if>
+			<if test="field18 != null">field18,</if>
+			<if test="field19 != null">field19,</if>
+			<if test="field20 != null">field20,</if>
+			<if test="field21 != null">field21,</if>
+			<if test="field22 != null">field22,</if>
+			<if test="field23 != null">field23,</if>
+			<if test="field24 != null">field24,</if>
+			<if test="field25 != null">field25,</if>
+			<if test="field26 != null">field26,</if>
+			<if test="field27 != null">field27,</if>
+			<if test="field28 != null">field28,</if>
+			<if test="field29 != null">field29,</if>
+			<if test="field30 != null">field30,</if>
+			<if test="addPerson != null">addPerson,</if>
+			addTime,
+			delFlag
+		) VALUES (
+		
+			<if test="templateId != null">#{templateId},</if>
+			<if test="qcId != null">#{qcId},</if>
+			<if test="field1 != null">#{field1},</if>
+			<if test="field2 != null">#{field2},</if>
+			<if test="field3 != null">#{field3},</if>
+			<if test="field4 != null">#{field4},</if>
+			<if test="field5 != null">#{field5},</if>
+			<if test="field6 != null">#{field6},</if>
+			<if test="field7 != null">#{field7},</if>
+			<if test="field8 != null">#{field8},</if>
+			<if test="field9 != null">#{field9},</if>
+			<if test="field10 != null">#{field10},</if>
+			<if test="field11 != null">#{field11},</if>
+			<if test="field12 != null">#{field12},</if>
+			<if test="field13 != null">#{field13},</if>
+			<if test="field14 != null">#{field14},</if>
+			<if test="field15 != null">#{field15},</if>
+			<if test="field16 != null">#{field16},</if>
+			<if test="field17 != null">#{field17},</if>
+			<if test="field18 != null">#{field18},</if>
+			<if test="field19 != null">#{field19},</if>
+			<if test="field20 != null">#{field20},</if>
+			<if test="field21 != null">#{field21},</if>
+			<if test="field22 != null">#{field22},</if>
+			<if test="field23 != null">#{field23},</if>
+			<if test="field24 != null">#{field24},</if>
+			<if test="field25 != null">#{field25},</if>
+			<if test="field26 != null">#{field26},</if>
+			<if test="field27 != null">#{field27},</if>
+			<if test="field28 != null">#{field28},</if>
+			<if test="field29 != null">#{field29},</if>
+			<if test="field30 != null">#{field30},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			 CURRENT_TIMESTAMP() ,
+			0
+		)
+	</insert>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_auxiliary_bill WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcAuxiliaryBill" flushCache="true" statementType="PREPARED">
+		UPDATE qc_auxiliary_bill 
+		<set>
+			<if test="qcId != null">qcId=#{qcId},</if>
+			<if test="field1 != null">field1=#{field1},</if>
+			<if test="field2 != null">field2=#{field2},</if>
+			<if test="field3 != null">field3=#{field3},</if>
+			<if test="field4 != null">field4=#{field4},</if>
+			<if test="field5 != null">field5=#{field5},</if>
+			<if test="field6 != null">field6=#{field6},</if>
+			<if test="field7 != null">field7=#{field7},</if>
+			<if test="field8 != null">field8=#{field8},</if>
+			<if test="field9 != null">field9=#{field9},</if>
+			<if test="field10 != null">field10=#{field10},</if>
+			<if test="field11 != null">field11=#{field11},</if>
+			<if test="field12 != null">field12=#{field12},</if>
+			<if test="field13 != null">field13=#{field13},</if>
+			<if test="field14 != null">field14=#{field14},</if>
+			<if test="field15 != null">field15=#{field15},</if>
+			<if test="field16 != null">field16=#{field16},</if>
+			<if test="field17 != null">field17=#{field17},</if>
+			<if test="field18 != null">field18=#{field18},</if>
+			<if test="field19 != null">field19=#{field19},</if>
+			<if test="field20 != null">field20=#{field20},</if>
+			<if test="field21 != null">field21=#{field21},</if>
+			<if test="field22 != null">field22=#{field22},</if>
+			<if test="field23 != null">field23=#{field23},</if>
+			<if test="field24 != null">field24=#{field24},</if>
+			<if test="field25 != null">field25=#{field25},</if>
+			<if test="field26 != null">field26=#{field26},</if>
+			<if test="field27 != null">field27=#{field27},</if>
+			<if test="field28 != null">field28=#{field28},</if>
+			<if test="field29 != null">field29=#{field29},</if>
+			<if test="field30 != null">field30=#{field30},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcAuxiliaryBill">
+		SELECT *  FROM qc_auxiliary_bill
+		 
+		  WHERE delFlag =0 and id=#{id}
+	</select>
+
+    <select id="getByTemplate" parameterType="com.tuniu.qms.qc.dto.QcAuxiliaryBillDto" resultType="com.tuniu.qms.qc.model.QcAuxiliaryBill">
+       
+      
+        select * from qc_auxiliary_bill where templateId = #{templateId} and qcId =#{qcId} and delFlag = 0 
+      
+    </select>
+    
+    <sql id="listSql">
+    
+		SELECT qt.qcType,qp.name as qcTypeName,qc.* FROM  qc_auxiliary_bill qc 
+		INNER JOIN qc_auxiliary_bill_template qt 
+		ON qc.templateId = qt.id AND qt.delFlag =0 
+		left join qc_qc_type qp on qp.id = qt.qcType and qp.delFlag =0
+		<where>
+			qc.delFlag=0 
+			<if test="qcId != null and qcId!=''">AND qc.qcId=#{qcId}</if>
+			<if test="qcType != null and qcType!=''">AND qt.qcType=#{qcType}</if>
+			<if test="addTimeBgn != null and addTimeBgn!=''">AND qc.addTime &gt;= #{addTimeBgn}</if>
+			<if test="addTimeEnd != null and addTimeEnd!=''">AND qc.addTime &lt;=concat(#{addTimeEnd},' 23:59:59')</if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QcAuxiliaryBillDto" resultType="com.tuniu.qms.qc.model.QcAuxiliaryBill">
+		<include refid="listSql"/>
+		ORDER BY qc.templateId 
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.QcAuxiliaryBillDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+		
+	</select>
+	
+    <select id="exportCount" parameterType="com.tuniu.qms.qc.dto.QcAuxiliaryBillDto" resultType="Integer">
+	   
+	    SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+	     
+	</select>
+	
+	<select id="exportList" parameterType="com.tuniu.qms.qc.dto.QcAuxiliaryBillDto" resultType="com.tuniu.qms.qc.model.QcAuxiliaryBill">
+	   
+	     <include refid="listSql"/>
+		 ORDER BY qc.id 
+	     
+	</select>
+</mapper>

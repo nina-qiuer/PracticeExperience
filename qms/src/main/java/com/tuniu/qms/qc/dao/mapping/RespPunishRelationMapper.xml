@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.RespPunishRelationMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.RespPunishRelation">
+		INSERT INTO qc_resp_punish_relation (
+			<if test="respId != null">resp_id,</if>
+			<if test="respType != null">resp_type,</if>
+			<if test="punishId != null">punish_id,</if>
+			<if test="punishType != null">punish_type,</if>
+			<if test="addPerson != null">add_person,</if>
+			<if test="delFlag != null">del_flag,</if>
+			add_time
+		) VALUES (
+			<if test="respId != null">#{respId},</if>
+			<if test="respType != null">#{respType},</if>
+			<if test="punishId != null">#{punishId},</if>
+			<if test="punishType != null">#{punishType},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="delFlag != null">#{delFlag},</if>
+			CURRENT_TIMESTAMP()
+		)
+	</insert>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.RespPunishRelationDto" resultMap="myResult">
+		select *
+		from qc_resp_punish_relation
+		where del_flag = 0
+		<if test="respId != null">and resp_id = #{respId}</if>
+		<if test="respType != null">and resp_type = #{respType}</if>
+		<if test="punishId != null">and punish_id = #{punishId}</if>
+		<if test="punishType != null">and punish_type = #{punishType}</if>
+	</select>
+	
+	<resultMap type="com.tuniu.qms.qc.model.RespPunishRelation" id="myResult">
+		<result column="resp_id" property="respId"/>
+		<result column="resp_type" property="respType"/>
+		<result column="punish_id" property="punishId"/>
+		<result column="punish_type" property="punishType"/>
+	</resultMap>
+	
+	<delete id="deleteByPunish" parameterType="com.tuniu.qms.qc.dto.RespPunishRelationDto">
+		delete from qc_resp_punish_relation
+		where punish_id = #{punishId} and punish_type = #{punishType}
+	</delete>
+	
+	<delete id="deleteByResp" parameterType="com.tuniu.qms.qc.dto.RespPunishRelationDto">
+		delete from qc_resp_punish_relation
+		where resp_id = #{respId} and resp_type = #{respType}
+	</delete>
+	
+	<select id="checkPunishRelation" parameterType="Integer" resultType="com.tuniu.qms.qc.model.RespPunishRelation">
+		SELECT t2.punishId as punishId, t1.id AS id
+		FROM(
+			SELECT id AS punishId, 2 AS punishType FROM qc_outer_punish_bill WHERE delFlag = 0 AND qcId = #{qcBillId}
+			UNION ALL
+			SELECT id AS punishId , 1 AS punishType FROM qc_inner_punish_bill WHERE delFlag = 0 AND qcId = #{qcBillId}) t2
+		LEFT JOIN qc_resp_punish_relation t1 ON t1.punish_id = t2.punishId AND t1.punish_type = t2.punishType AND t1.del_flag = 0
+	</select>
+	
+	<select id="getRelationByPunish"  parameterType="com.tuniu.qms.qc.dto.RespPunishRelationDto" resultMap="myResult">
+		select *
+		from qc_resp_punish_relation
+		where del_flag = 0
+			and punish_id = #{punishId}
+			and punish_type = #{punishType}
+		limit 1
+	</select>
+</mapper>

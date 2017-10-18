@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.workorder.dao.sqlmap.imap.IWorkOrderMap"> 
+	<sql id="list">
+		<where>
+			 o.delFlag=0 and c.delFlag=0 
+			<if test="id != null">and o.id=#{id}</if>
+			<if test="configId != null and sonConfigId == null">and o.configId=#{configId}</if>
+			<if test="configId != null and sonConfigId != null and sonConfigId == 0">and o.configId in (select id from wo_config where pid = #{configId} )</if>
+			<if test="sonConfigId != null and sonConfigId > 0">and o.configId=#{sonConfigId}</if>
+			<if test="responsibleConfig!=null">
+				and (o.dealPerson=#{assignerName} or o.configId in
+				<foreach collection="responsibleConfig" open="(" separator="," close=")" item="config">
+						#{config.id}
+				</foreach>
+				)
+			</if>
+			<if test="addTimeBgn != null and addTimeBgn != ''">and o.addTime&gt;=#{addTimeBgn}</if>
+			<if test="addTimeEnd != null and addTimeEnd != ''">and o.addTime&lt;=#{addTimeEnd}</if>
+			<if test="state != null">and o.state=#{state}</if>
+			<if test="dealPerson != null and dealPerson != ''">and o.dealPerson=#{dealPerson}</if>
+			<if test="addPersonName != null and addPersonName != ''">and o.addPerson=#{addPersonName}</if>
+			<if test="phone != null and phone != ''">and o.phone=#{phone}</if>
+			<if test="businessClass != null and businessClass != ''">and o.businessClass=#{businessClass}</if>
+		</where>
+	</sql>
+	
+	<select id="count" parameterType="map"  resultType="int">
+		select count(*) as count  
+		from wo_work_order o
+		LEFT JOIN wo_config c ON o.configId=c.id
+		
+		<include refid="list"></include>
+	</select>
+	
+	<select id="fetchList" parameterType="Map" resultType="com.tuniu.gt.workorder.entity.WorkOrder">
+		SELECT o.*, c.assigners, c.department 
+		FROM wo_work_order o
+		LEFT JOIN wo_config c ON o.configId=c.id
+		<include refid="list"/>
+		order by o.addTime desc
+
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getWorkOrderList" parameterType="Map" resultType="com.tuniu.gt.workorder.entity.WorkOrderObj">
+			SELECT wwo.id,wwo.orderId,DATE_FORMAT(wwo.addTime,'%Y-%m-%d %H:%i:%s') AS addTime,wwo.customerName,
+			wwo.phone,wwo.phoneMatter,DATE_FORMAT(wwo.updateTime,'%Y-%m-%d %H:%i:%s') AS finishTime,
+            wc.department AS projectTeam,wwo.businessClass,wwo.addPerson,wwo.dealPerson FROM wo_work_order wwo
+            INNER JOIN wo_config wc ON wwo.configId = wc.id 
+            WHERE wwo.state = 3 and wwo.delFlag=0 and wc.delFlag=0
+            and wwo.updateTime &gt;= #{startDate} and wwo.updateTime &lt;= #{endDate}
+	</select>
+	
+	<select id="get" parameterType="map"  resultType="com.tuniu.gt.workorder.entity.WorkOrder">
+		select wo.*,wc.department, t1.id as parentConfigId
+		from wo_work_order wo  
+		inner join wo_config wc  on wo.configId = wc.id and wc.delFlag=0
+		left join wo_config t1 on wc.pid = t1.id and t1.delFlag = 0
+		<where>
+			 <if test="id!=null and id != 0">wo.id=#{id}</if>
+			 <if test="phone !=null and phone !=''">and wo.phone=#{phone}</if>
+			 and wo.delFlag=0 
+		</where>
+		limit 1
+	</select>
+
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  addPerson,
+		 
+		  configId,
+		  
+		  orderId,
+		  
+		  businessClass,
+
+		  customerName,
+
+		  phone,
+
+		  phoneMatter,
+
+		  answerTime,
+		  
+		  <if test="e.dealPerson != null">dealPerson,</if>
+		  
+		  <if test="e.state != null">state,</if>
+		  
+		  remark
+
+		) values  (
+		
+		  #{e.addPerson}, 
+		
+		  #{e.configId},
+		  
+		  #{e.orderId},
+
+		  #{e.businessClass},
+		  
+		  #{e.customerName},
+
+		  #{e.phone},
+
+		  #{e.phoneMatter},
+
+		  #{e.answerTime},
+		  
+		  <if test="e.dealPerson != null">#{e.dealPerson},</if>
+		  
+		  <if test="e.state != null">#{e.state},</if>
+		  
+		  #{e.remark}
+
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.workorder.entity.WorkOrder" flushCache="true" statementType="PREPARED"> 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+				<if test="e.configId != null">configId=#{e.configId},</if>
+				<if test="e.orderId != null">orderId=#{e.orderId},</if>
+				<if test="e.businessClass != null">businessClass=#{e.businessClass},</if>
+				<if test="e.state != null">state = #{e.state},</if>
+				<if test="e.dealPerson != null">dealPerson=#{e.dealPerson},</if>
+				<if test="e.customerName != null">customerName=#{e.customerName},</if>
+				<if test="e.phone != null">phone=#{e.phone},</if>
+				<if test="e.phoneMatter != null">phoneMatter=#{e.phoneMatter},</if>
+				<if test="e.answerTime != null">answerTime=#{e.answerTime},</if>
+				<if test="e.solveResult != null">solveResult=#{e.solveResult},</if>
+				<if test="e.remark != null">remark=#{e.remark},</if>
+				updateTime=now()
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	<update id="update" parameterType="com.tuniu.gt.workorder.entity.WorkOrder" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/>
+	</sql>
+	
+	<delete id="delete">
+		<include refid="delete"/>
+		  where id=#{id}
+	</delete>
+	
+	<select id="getWorkOrderReportData" parameterType="Map" resultType="com.tuniu.gt.workorder.entity.WorkOrderReport">
+		select t1.configId, t2.department as name,count(1) as workOrderNums
+		from wo_work_order t1
+		Inner join wo_config t2 on t2.id = t1.configId 
+		where `addTime` &gt;=  #{addTimeBgn} and `addTime`  &lt;= #{addTimeEnd} and t1.delFlag= 0
+		group by t1.configId
+	</select>
+
+</mapper>

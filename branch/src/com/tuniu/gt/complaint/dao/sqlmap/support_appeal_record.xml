@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.ISupportAppealRecordMap">
+
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		<if test="e.oa_id != null">oa_id,</if>
+		<if test="e.complaint_id != null">complaint_id,</if>
+		<if test="e.order_id != null">order_id,</if>
+		<if test="e.route_id != null">route_id,</if>
+		<if test="e.old_agency_id != null">old_agency_id,</if>
+		<if test="e.old_agency_name != null">old_agency_name,</if>
+		<if test="e.old_agency_payout != null">old_agency_payout,</if>
+		<if test="e.new_agency_id != null">new_agency_id,</if>
+		<if test="e.new_agency_name != null">new_agency_name,</if>
+		<if test="e.new_agency_payout != null">new_agency_payout,</if>
+		<if test="e.company_payout != null">company_payout,</if>
+		<if test="e.approval_result != null">approval_result,</if>
+		<if test="e.approval_id != null">approval_id,</if>
+		<if test="e.approval_comment != null">approval_comment,</if>
+		add_time,
+		del_flag
+		) values (
+		<if test="e.oa_id != null">#{e.oa_id},</if>
+		<if test="e.complaint_id != null">#{e.complaint_id},</if>
+		<if test="e.order_id != null">#{e.order_id},</if>
+		<if test="e.route_id != null">#{e.route_id},</if>
+		<if test="e.old_agency_id != null">#{e.old_agency_id},</if>
+		<if test="e.old_agency_name != null">#{e.old_agency_name},</if>
+		<if test="e.old_agency_payout != null">#{e.old_agency_payout},</if>
+		<if test="e.new_agency_id != null">#{e.new_agency_id},</if>
+		<if test="e.new_agency_name != null">#{e.new_agency_name},</if>
+		<if test="e.new_agency_payout != null">#{e.new_agency_payout},</if>
+		<if test="e.company_payout != null">#{e.company_payout},</if>
+		<if test="e.approval_result != null">#{e.approval_result},</if>
+		<if test="e.approval_id != null">#{e.approval_id},</if>
+		<if test="e.approval_comment != null">#{e.approval_comment},</if>
+		CURRENT_TIMESTAMP(),
+		0
+		)
+	</insert>
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintEmailConfigMap">
+
+	<sql id="list">
+		ct_complaint_email_config
+		<where>
+			del_flag = 0
+			<if test="deal_depart !=null and deal_depart !=''">
+				and deal_depart IN ('',#{deal_depart})
+			</if>
+			<if test="complaint_level !=null and complaint_level !=''">
+				and complaint_level IN (0,#{complaint_level})
+			</if>
+			<if test="come_from !=null and come_from !=''">
+				and come_from IN ('',#{come_from})
+			</if>
+			<if test="class_brand_parent_id !=null and class_brand_parent_id !=''">
+				and class_brand_parent_id IN
+				(-1,#{class_brand_parent_id})
+			</if>
+			<if test="class_brand_id !=null and class_brand_id !=''">
+				and class_brand_id IN (-1,#{class_brand_id})
+			</if>
+			<if
+				test="product_new_line_type_id !=null and product_new_line_type_id !=''">
+				and product_new_line_type_id IN
+				(-1,#{product_new_line_type_id})
+			</if>
+			<if test="dest_group_id !=null and dest_group_id !=''">
+				and dest_group_id IN (-1,#{dest_group_id})
+			</if>
+			<if test="mail_type !=null and mail_type !=''">
+				and mail_type=#{mail_type}
+			</if>
+		</where>
+	</sql>
+
+	<select id="fetchList" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintEmailConfigEntity">
+		select * from
+		<include refid="list" />
+		order by id desc
+	</select>
+
+	<select id="getEmailConfigCount" parameterType="Map" resultType="Integer">
+		select count(1) from
+		<include refid="list" />
+	</select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		<if test="e.deal_depart != null">deal_depart,</if>
+		<if test="e.complaint_level != null">complaint_level,</if>
+		<if test="e.come_from != null">come_from,</if>
+		<if test="e.class_brand_parent_id != null">class_brand_parent_id,</if>
+		<if test="e.class_brand_parent_name != null">class_brand_parent_name,</if>
+		<if test="e.class_brand_id != null">class_brand_id,</if>
+		<if test="e.class_brand_name != null">class_brand_name,</if>
+		<if test="e.product_new_line_type_id != null">product_new_line_type_id,</if>
+		<if test="e.product_new_line_type_name != null">product_new_line_type_name,</if>
+		<if test="e.dest_group_id != null">dest_group_id,</if>
+		<if test="e.dest_group_name != null">dest_group_name,</if>
+		<if test="e.emails != null">emails,</if>
+		<if test="e.content != null">content,</if>
+		<if test="e.mail_type != null">mail_type,</if>
+		<if test="e.add_id != null">add_id,</if>
+		add_time,
+		del_flag
+		) values (
+		<if test="e.deal_depart != null">#{e.deal_depart},</if>
+		<if test="e.complaint_level != null">#{e.complaint_level},</if>
+		<if test="e.come_from != null">#{e.come_from},</if>
+		<if test="e.class_brand_parent_id != null">#{e.class_brand_parent_id},</if>
+		<if test="e.class_brand_parent_name != null">#{e.class_brand_parent_name},</if>
+		<if test="e.class_brand_id != null">#{e.class_brand_id},</if>
+		<if test="e.class_brand_name != null">#{e.class_brand_name},</if>
+		<if test="e.product_new_line_type_id != null">#{e.product_new_line_type_id},</if>
+		<if test="e.product_new_line_type_name != null">#{e.product_new_line_type_name},</if>
+		<if test="e.dest_group_id != null">#{e.dest_group_id},</if>
+		<if test="e.dest_group_name != null">#{e.dest_group_name},</if>
+		<if test="e.emails != null">#{e.emails},</if>
+		<if test="e.content != null">#{e.content},</if>
+		<if test="e.mail_type != null">#{e.mail_type},</if>
+		<if test="e.add_id != null">#{e.add_id},</if>
+		CURRENT_TIMESTAMP(),
+		0
+		)
+	</insert>
+
+	<update id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.deal_depart != null">deal_depart=#{e.deal_depart},</if>
+			<if test="e.complaint_level != null">complaint_level=#{e.complaint_level},</if>
+			<if test="e.come_from != null">come_from=#{e.come_from},</if>
+			<if test="e.class_brand_parent_id != null">class_brand_parent_id=#{e.class_brand_parent_id},</if>
+			<if test="e.class_brand_parent_name != null">class_brand_parent_name=#{e.class_brand_parent_name},
+			</if>
+			<if test="e.class_brand_id != null">class_brand_id=#{e.class_brand_id},</if>
+			<if test="e.class_brand_name != null">class_brand_name=#{e.class_brand_name},</if>
+			<if test="e.product_new_line_type_id != null">product_new_line_type_id=#{e.product_new_line_type_id},
+			</if>
+			<if test="e.product_new_line_type_name != null">product_new_line_type_name=#{e.product_new_line_type_name},
+			</if>
+			<if test="e.dest_group_id != null">dest_group_id=#{e.dest_group_id},</if>
+			<if test="e.dest_group_name != null">dest_group_name=#{e.dest_group_name},</if>
+			<if test="e.emails != null">emails=#{e.emails},</if>
+			<if test="e.content != null">content=#{e.content},</if>
+			<if test="e.mail_type != null">mail_type=#{e.mail_type},</if>
+			<if test="e.add_id != null">add_id=#{e.add_id},</if>
+			<if test="e.update_id != null">update_id=#{e.update_id},</if>
+			<if test="e.del_flag != null">del_flag=#{e.del_flag},</if>
+			update_time=CURRENT_TIMESTAMP()
+		</set>
+		where id=#{e.id}
+	</update>
+
+	<select id="get" parameterType="map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintEmailConfigEntity">
+		select * from ct_complaint_email_config
+		<where>
+			<if test="id!=null and id != 0">id=#{id}</if>
+			and del_flag = 0
+		</where>
+		limit 1
+	</select>
+</mapper>

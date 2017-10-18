@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IQcworkMap">
+
+	<!-- 质检工作量统计查询：质检工作人员、已完成质检单数、超时已完成质检单数，问题abc等 -->
+	<select id="queryQcworkCount" resultType="Map" parameterType="Map">
+		<![CDATA[
+		SELECT qc.qc_person AS person, qc.qc_person_name AS pername,
+		  COUNT(DISTINCT qc.id) AS alldoaccount,
+		  COUNT(CASE WHEN qc.time_out_flag=1 THEN 1 END) AS timeoutdocount,
+		  COUNT(CASE WHEN que.big_class_id=1 THEN 1 END) AS qesa,
+		  COUNT(CASE WHEN que.big_class_id=2 THEN 1 END) AS qesb,
+		  COUNT(CASE WHEN que.big_class_id=3 THEN 1 END) AS qesc,
+		  COUNT(CASE WHEN que.big_class_id=5 THEN 1 END) AS qesd
+		FROM ct_qc qc LEFT JOIN ct_qc_report rep ON qc.id=rep.qc_id 
+		LEFT JOIN ct_qc_question que ON que.report_id=rep.id 
+		WHERE qc.del_flag = 0 AND qc.qc_person > 0 AND qc.status = 2 AND rep.del_flag=0 AND que.del_flag=0 
+		AND qc.finish_date >= #{start} AND qc.finish_date <= #{end} 
+		AND rep.id=(SELECT MAX(r.id) FROM ct_qc_report r WHERE r.qc_id=qc.id AND r.del_flag=0) 
+		GROUP BY qc.qc_person
+		]]>
+	</select>
+
+	<!-- 质检工作量统计查询：质检人员id，工作天数 -->
+	<select id="queryQcworkDayCount" resultType="Map" parameterType="Map">
+		<![CDATA[SELECT
+			b.qc_person AS person,
+			COUNT(*) AS workday
+			FROM (SELECT DISTINCT (DATE_FORMAT(a.finish_date,'%Y-%m-%d')),
+					a.qc_person
+					FROM ct_qc a 
+					WHERE a.status = 2
+					AND a.finish_date >= #{start}
+					AND a.finish_date <= #{end}) b
+			GROUP BY b.qc_person]]>
+	</select>
+
+	<!-- 质检工作量统计查询：质检人员id，超时未完成单数 -->
+	<select id="queryQcworkTimeOutNotDo" resultType="Map" parameterType="Map">
+		<![CDATA[
+		SELECT qc_person_id AS person, COUNT(qc_id) AS timeoutnotdocount FROM ct_qc_timeout 
+		WHERE del_flag = 0 AND record_date = #{endDate} GROUP BY qc_person_id
+		]]>
+	</select>
+	
+	<!-- 质检工作量统计查询明细 -->
+	<select id="queryQcDetail" resultType="Map" parameterType="Map">
+	SELECT  a.id AS qcid,
+			a.status,
+			a.qc_person,
+			a.qc_person_name,
+			a.complaint_id,
+			a.distribution_date,
+			a.finish_date,
+			a.order_id,
+			a.conclusion,
+			b.back_time,
+			b.route,
+			b.level,
+			b.product_leader,
+			b.customer_leader,
+			b.producter,
+			b.descript,
+			b.owner_name,
+			b.build_date,
+			b.finish_date AS ct_finish_date,
+			d.big_class_name,
+			d.small_class_name,
+			e.responsibility,
+			e.resp_second,
+			e.resp_third,
+			e.position,
+			e.responsible_person,
+			e.improver
+		FROM ct_qc a LEFT JOIN ct_complaint b ON a.complaint_id=b.id 
+		LEFT JOIN ct_qc_report c ON c.qc_id=a.id 
+		LEFT JOIN ct_qc_question d ON d.report_id=c.id 
+		LEFT JOIN ct_qc_tracker e ON e.question_id=d.id 
+		WHERE a.del_flag = 0 AND a.qc_person = #{qcPerson} AND a.status = 2 
+		<![CDATA[
+	    AND a.finish_date >= #{startTime} AND a.finish_date <= #{endTime} 
+	    ]]>
+		<if test="timeoutflag != null">AND a.time_out_flag=#{timeoutflag}</if>
+		AND b.del_flag=0 AND b.state!=9 AND c.del_flag=0 
+		AND c.id=(SELECT MAX(r.id) FROM ct_qc_report r WHERE r.qc_id=a.id AND r.del_flag=0) 
+		AND d.del_flag=0 AND e.del_flag=0 
+		<if test="questions != null">AND d.big_class_id IN (#{questions})</if>
+	</select>
+	
+	<select id="queryQcDetailUndone" resultType="Map" parameterType="Map">
+	SELECT  t2.id AS qcid,
+			t2.status,
+			t2.qc_person,
+			t2.qc_person_name,
+			t2.complaint_id,
+			t2.distribution_date,
+			t2.finish_date,
+			t2.order_id,
+			t2.conclusion, 
+			t3.back_time,
+			t3.route,
+			t3.level,
+			t3.product_leader,
+			t3.customer_leader,
+			t3.producter,
+			t3.descript,
+			t3.owner_name,
+			t3.build_date,
+			t3.finish_date AS ct_finish_date
+		FROM ct_qc_timeout t1 LEFT JOIN ct_qc t2 ON t1.qc_id=t2.id 
+		LEFT JOIN ct_complaint t3 ON t2.complaint_id=t3.id 
+		WHERE t1.del_flag=0 AND t1.record_date=#{endDateStr} AND t1.qc_person_id=#{qcPerson} 
+		AND t2.del_flag=0 AND t3.del_flag=0 AND t3.state!=9
+	</select>
+	
+</mapper>

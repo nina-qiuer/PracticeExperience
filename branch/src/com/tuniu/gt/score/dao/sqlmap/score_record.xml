@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.score.dao.sqlmap.imap.ScoreRecordMap">
+	<sql id="whereSql">
+		<where>1=1
+			<if test="srId != null and srId != ''">
+				and id = #{srId}
+			</if>
+			<if test="qcDateBgn != null and qcDateBgn != ''">
+				and qc_date >= #{qcDateBgn}
+			</if>
+			<if test="qcDateEnd != null and qcDateEnd != ''">
+				and #{qcDateEnd} >= qc_date
+			</if>
+			<if test="qcPerson != null and qcPerson != ''">
+				and qc_person = #{qcPerson}
+			</if>
+			<if test="qcPersons != null and qcPersons != ''">
+				and qc_person IN (${qcPersons})
+			</if>
+			<if test="orderId == '000'">
+				and order_id=0 and route_id=0 and jira_num=''
+			</if>
+			<if test="orderId != null and orderId != '000' and orderId != ''">
+				and order_id = #{orderId}
+			</if>
+			<if test="routeId != null and routeId != ''">
+				and route_id = #{routeId}
+			</if>
+			<if test="jiraNum != null and jiraNum != ''">
+				and jira_num = #{jiraNum}
+			</if>
+			<if test="depId1 != null and depId1 > 0">
+				and dep_id1 = #{depId1}
+			</if>
+			<if test="depId2 != null and depId2 > 0">
+				and dep_id2 = #{depId2}
+			</if>
+			<if test="scoreTarget1 != null and scoreTarget1 != ''">
+				and score_target1 = #{scoreTarget1}
+			</if>
+			<if test="scoreTarget2 != null and scoreTarget2 != ''">
+				and score_target2 = #{scoreTarget2}
+			</if>
+			<if test="myName != null and myName != ''">
+				and (score_target1=#{myName} OR score_target2=#{myName}) 
+			</if>
+			and del_flag = 0 order by id desc
+		</where>
+	</sql>
+
+    <sql id="limitSql">
+		<if test="start != -1">
+			limit #{start}
+			<if test="pageSize > 0">
+				,#{pageSize}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="getTotal" parameterType="com.tuniu.gt.score.util.ScoreRecordPage" resultType="Map">
+		SELECT COUNT(1) AS totalRecords,SUM(score_value1+score_value2) AS totalValue FROM sr_score_record
+		<include refid="whereSql" />
+	</select>
+	
+	<select id="getScoreRecordList" parameterType="com.tuniu.gt.score.util.ScoreRecordPage" resultMap="listResultEntity">
+		SELECT 	id, qc_date, qc_person, order_id, route_id, complaint_id, jira_num, question_class_id,
+			(SELECT parent_id FROM ct_qc_question_class WHERE id=sr_score_record.question_class_id) AS question_class_id1,
+			(SELECT description FROM ct_qc_question_class WHERE id=(SELECT parent_id FROM ct_qc_question_class WHERE id=sr_score_record.question_class_id)) AS big_class_name,
+			(SELECT description FROM ct_qc_question_class WHERE id=sr_score_record.question_class_id) AS small_class_name,
+			responsible_person, improver, dep_id1, dep_id2, 
+			(SELECT dep_name FROM uc_department WHERE id=dep_id1) AS dep_name1,
+			(SELECT dep_name FROM uc_department WHERE id=dep_id2) AS dep_name2,
+			position_id, score_target1, score_target2, score_value1, score_value2, score_type_id,
+			(SELECT parent_id FROM sr_score_type WHERE id=score_type_id) AS score_type_id1,
+			(SELECT name FROM sr_score_type WHERE id=(SELECT parent_id FROM sr_score_type WHERE id=score_type_id)) AS score_type_name1,
+			(SELECT name FROM sr_score_type WHERE id=score_type_id) AS score_type_name2,
+			description, add_time, update_time, del_flag
+		FROM sr_score_record
+		<include refid="whereSql" />
+		<include refid="limitSql" />
+	</select>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.score.entity.ScoreRecordEntity">
+		<result property="qcDate" column="qc_date" />
+		<result property="qcPerson" column="qc_person" />
+		<result property="orderId" column="order_id" />
+		<result property="routeId" column="route_id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="jiraNum" column="jira_num" />
+		<result property="questionClassId" column="question_class_id" />
+		<result property="questionClassId1" column="question_class_id1" />
+		<result property="bigClassName" column="big_class_name" />
+		<result property="smallClassName" column="small_class_name" />
+		<result property="responsiblePerson" column="responsible_person" />
+		<result property="improver" column="improver" />
+		<result property="depId1" column="dep_id1" />
+		<result property="depId2" column="dep_id2" />
+		<result property="depName1" column="dep_name1" />
+		<result property="depName2" column="dep_name2" />
+		<result property="positionId" column="position_id" />
+		<result property="scoreTarget1" column="score_target1" />
+		<result property="scoreTarget2" column="score_target2" />
+		<result property="scoreValue1" column="score_value1" />
+		<result property="scoreValue2" column="score_value2" />
+		<result property="scoreTypeId" column="score_type_id" />
+		<result property="scoreTypeId1" column="score_type_id1" />
+		<result property="scoreTypeName1" column="score_type_name1" />
+		<result property="scoreTypeName2" column="score_type_name2" />
+		<result property="description" column="description" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		qc_date, 
+		qc_person, 
+		order_id, 
+		route_id, 
+		complaint_id,
+		<if test="e.jiraNum != null">jira_num, </if>
+		question_class_id, 
+		<if test="e.responsiblePerson != null">responsible_person, </if>
+		<if test="e.improver != null">improver, </if>
+		dep_id1, 
+		dep_id2, 
+		position_id, 
+		score_target1, 
+		score_target2, 
+		score_value1, 
+		score_value2, 
+		score_type_id,
+		description
+		) values (
+		#{e.qcDate},
+		#{e.qcPerson},
+		#{e.orderId},
+		#{e.routeId},
+		#{e.complaintId},
+		<if test="e.jiraNum != null">#{e.jiraNum},</if> 
+		#{e.questionClassId},
+		<if test="e.responsiblePerson != null">#{e.responsiblePerson},</if>
+		<if test="e.improver != null">#{e.improver},</if>
+		#{e.depId1},
+		#{e.depId2},
+		#{e.positionId},
+		#{e.scoreTarget1},
+		#{e.scoreTarget2},
+		#{e.scoreValue1},
+		#{e.scoreValue2},
+		#{e.scoreTypeId},
+		#{e.description}
+		)
+	</sql>
+	
+	<insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" 
+		flushCache="true" statementType="PREPARED">
+		insert into sr_score_record (
+			qc_date, 
+			qc_person, 
+			order_id, 
+			route_id, 
+			complaint_id, 
+			jira_num, 
+			question_class_id, 
+			responsible_person, 
+			improver, 
+			dep_id1, 
+			dep_id2, 
+			position_id, 
+			score_target1, 
+			score_target2, 
+			score_value1, 
+			score_value2, 
+			score_type_id,
+			description
+		) values 
+        <foreach collection="list" item="e" index="index" separator="," >
+        (
+            #{e.qcDate},
+			#{e.qcPerson},
+			#{e.orderId},
+			#{e.routeId},
+			#{e.complaintId},
+			#{e.jiraNum},
+			#{e.questionClassId},
+			#{e.responsiblePerson},
+			#{e.improver},
+			#{e.depId1},
+			#{e.depId2},
+			#{e.positionId},
+			#{e.scoreTarget1},
+			#{e.scoreTarget2},
+			#{e.scoreValue1},
+			#{e.scoreValue2},
+			#{e.scoreTypeId},
+			#{e.description}
+        )
+        </foreach>
+    </insert>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.qcDate != null">qc_date=#{e.qcDate},</if>
+			<if test="e.orderId != null">order_id=#{e.orderId},</if>
+			<if test="e.routeId != null">route_id=#{e.routeId},</if>
+			<if test="e.complaintId != null">complaint_id=#{e.complaintId},</if>
+			<if test="e.jiraNum != null">jira_num=#{e.jiraNum},</if>
+			<if test="e.questionClassId != null">question_class_id=#{e.questionClassId},</if>
+			<if test="e.responsiblePerson != null">responsible_person=#{e.responsiblePerson},</if>
+			<if test="e.improver != null">improver=#{e.improver},</if>
+			<if test="e.depId1 != null">dep_id1=#{e.depId1},</if>
+			<if test="e.depId2 != null">dep_id2=#{e.depId2},</if>
+			<if test="e.positionId != null">position_id=#{e.positionId},</if>
+			<if test="e.scoreTarget1 != null">score_target1=#{e.scoreTarget1},</if>
+			<if test="e.scoreTarget2 != null">score_target2=#{e.scoreTarget2},</if>
+			<if test="e.scoreValue1 != null">score_value1=#{e.scoreValue1},</if>
+			<if test="e.scoreValue2 != null">score_value2=#{e.scoreValue2},</if>
+			<if test="e.scoreTypeId != null">score_type_id=#{e.scoreTypeId},</if>
+			<if test="e.description != null">description=#{e.description},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+		where id=#{e.id}
+	</sql>
+	
+	<select id="get" parameterType="Map" resultMap="listResultEntity">
+		SELECT 	id, qc_date, qc_person, order_id, route_id, complaint_id, jira_num, question_class_id,
+			(SELECT parent_id FROM ct_qc_question_class WHERE id=sr_score_record.question_class_id) AS question_class_id1,
+			(SELECT description FROM ct_qc_question_class WHERE id=(SELECT parent_id FROM ct_qc_question_class WHERE id=sr_score_record.question_class_id)) AS big_class_name,
+			(SELECT description FROM ct_qc_question_class WHERE id=sr_score_record.question_class_id) AS small_class_name,
+			responsible_person, improver, dep_id1, dep_id2, 
+			(SELECT dep_name FROM uc_department WHERE id=dep_id1) AS dep_name1,
+			(SELECT dep_name FROM uc_department WHERE id=dep_id2) AS dep_name2,
+			position_id, score_target1, score_target2, score_value1, score_value2, score_type_id,
+			(SELECT parent_id FROM sr_score_type WHERE id=score_type_id) AS score_type_id1,
+			(SELECT name FROM sr_score_type WHERE id=(SELECT parent_id FROM sr_score_type WHERE id=score_type_id)) AS score_type_name1,
+			(SELECT name FROM sr_score_type WHERE id=score_type_id) AS score_type_name2,
+			description, add_time, update_time, del_flag
+		FROM sr_score_record WHERE id=#{id} limit 1
+	</select>
+	
+	<delete id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/> where id =#{id}
+	</delete>
+	
+	<delete id="deleteByComplaintId" parameterType="Integer">
+		DELETE FROM sr_score_record WHERE complaint_id = #{complaintId}
+	</delete>
+	
+	<delete id="batchDel">
+		DELETE FROM sr_score_record WHERE id IN (${idStr})
+	</delete>
+	
+</mapper>

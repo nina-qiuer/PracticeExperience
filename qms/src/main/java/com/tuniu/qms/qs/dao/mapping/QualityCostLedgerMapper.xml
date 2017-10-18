@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.QualityCostLedgerMapper">
+	
+	<insert id="addBatch" parameterType="java.util.List" >
+		insert into qs_quality_cost_ledger (
+			ispId, 
+			qcId, 
+			cmpId,
+			prdLineId,
+			firstCostAccount, 
+			twoCostAccount, 
+			threeCostAccount,
+			fourCostAccount,
+			firstDepId,
+			firstDepName,
+			twoDepId,
+			twoDepName,
+			threeDepId,
+			threeDepName,
+			jobId,
+			jobName,
+			respPersonId,
+			respPersonName,
+			respRate,
+			dealPersonId,
+			dealPersonName,
+			addPerson,
+			addTime,
+			qualityCost,
+			year,
+			yearQuarter,
+			yearMonth,
+			yearWeek
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.ispId},
+			#{e.qcId},
+			#{e.cmpId},
+			#{e.prdLineId},
+			#{e.firstCostAccount},
+			#{e.twoCostAccount},
+			#{e.threeCostAccount},
+			#{e.fourCostAccount},
+			#{e.firstDepId},	
+			#{e.firstDepName},
+			#{e.twoDepId},
+			#{e.twoDepName},
+			#{e.threeDepId},
+			#{e.threeDepName},
+			#{e.jobId},
+			#{e.jobName},
+			#{e.respPersonId},
+			#{e.respPersonName},	
+			#{e.respRate},
+			#{e.dealPersonId},
+			#{e.dealPersonName},
+			#{e.addPerson},
+			#{e.addTime},
+			#{e.qualityCost},
+			#{e.year},
+			#{e.yearQuarter},
+			#{e.yearMonth},
+			#{e.yearWeek}
+        )
+        </foreach>
+    </insert>
+	
+	<delete id="deleteByQcId" parameterType="Integer">
+		DELETE FROM qs_quality_cost_ledger WHERE qcId=#{qcId} AND firstCostAccount='质量损失'
+	</delete>
+	
+	<delete id="deleteByCmpId" parameterType="Integer">
+		DELETE FROM qs_quality_cost_ledger WHERE cmpId=#{cmpId} AND firstCostAccount IN ('质量工具','不成团')
+	</delete>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qs_quality_cost_ledger WHERE id=#{id}
+	</delete>
+	
+	
+	<select id="getCmpIdFromResp" parameterType="Map" resultType="Integer">
+	
+	    select distinct cmpId from qs_quality_cost_ledger where delFlag = 0 
+	    and firstCostAccount='质量损失'
+	    and addTime &gt;= #{lastYearDay} and  addTime &lt;= concat(#{yesterday},' 23:59:59')
+	</select>
+	
+		
+	<update id="updateByCmpId" parameterType="com.tuniu.qms.qs.model.QualityCostLedger" >
+		UPDATE qs_quality_cost_ledger 
+		<set>
+			<if test="qualityCost != null">qualityCost = #{qualityCost}*respRate/100,</if> 
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE cmpId=#{cmpId} and firstCostAccount='质量损失'
+	</update>
+	
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.QualityCostLedger">
+		SELECT * FROM qs_quality_cost_ledger WHERE id=#{id} and delFlag = 0
+	</select>
+
+	<sql id="listSql">
+		SELECT qc.*,qb.ordId FROM qs_quality_cost_ledger qc LEFT JOIN qc_qc_bill  qb ON qb.id =qc.qcId and qb.delFlag =0
+		<where>
+			qc.delFlag=0 
+			and qc.qualityCost >0
+			<if test="id != null and id!='' ">AND qc.id=#{id}</if>
+			<if test="ispId != null">AND qc.ispId=#{ispId}</if>
+			<if test="qcId != null   ">AND qc.qcId=#{qcId}</if>
+			<if test="ordId != null  ">AND qb.ordId=#{ordId}</if>
+		    <if test="firstCostAccount != null and firstCostAccount!=''">AND qc.firstCostAccount=#{firstCostAccount}</if>
+			<if test="twoCostAccount != null and twoCostAccount!=''">AND qc.twoCostAccount=#{twoCostAccount}</if>
+			<if test="threeCostAccount != null and threeCostAccount!=''">AND qc.threeCostAccount=#{threeCostAccount}</if>
+			<if test="fourCostAccount != null and fourCostAccount!=''">AND qc.fourCostAccount=#{fourCostAccount}</if>	
+			<if test="firstDepId != null and firstDepId!=''">AND qc.firstDepId=#{firstDepId}</if>
+			<if test="twoDepId != null and twoDepId!=''">AND qc.twoDepId=#{twoDepId}</if>
+			<if test="threeDepId != null and threeDepId!=''">AND qc.threeDepId=#{threeDepId}</if>
+		    <if test="jobId != null and jobId!=''">AND qc.jobId=#{jobId}</if>
+			<if test="respPersonName != null and respPersonName!=''">AND qc.respPersonName=#{respPersonName}</if>
+			<if test="dealPersonName != null and dealPersonName!=''">AND qc.dealPersonName=#{dealPersonName}</if>	
+			<if test="addTimeBgn != null and addTimeBgn!='' ">AND qc.addTime &gt;=#{addTimeBgn}</if>
+			<if test="addTimeEnd != null and addTimeEnd!='' ">AND qc.addTime &lt;=concat(#{addTimeEnd},' 23:59:59')</if>						
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.QualityCostLedgerDto" resultType="com.tuniu.qms.qs.model.QualityCostLedger">
+		<include refid="listSql"/>
+		ORDER BY  
+		<if test="orderDirect !=0">
+			<if test="orderField !=null">
+				${orderField}
+				<if test="orderDirect==1">
+					desc
+				</if>
+			</if>
+		</if>
+		<if test="orderDirect==0">
+					qc.qcId desc
+		</if>
+		
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">,#{pageSize}</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qs.dto.QualityCostLedgerDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+		
+	</select>
+	
+	<select id="getCostAccount" resultType="java.lang.String">
+	  
+			
+		SELECT * FROM (
+		
+			SELECT DISTINCT firstCostAccount AS costAccount FROM qs_quality_cost_ledger  
+			UNION 
+			SELECT CONCAT (a.firstCostAccount,'-',a.twoCostAccount) AS costAccount FROM (
+			SELECT DISTINCT firstCostAccount,twoCostAccount FROM qs_quality_cost_ledger  WHERE  twoCostAccount!=''
+			) a 
+			UNION
+			
+			SELECT CONCAT (b.firstCostAccount,'-',b.twoCostAccount,'-',b.threeCostAccount) AS costAccount FROM (
+			
+			SELECT DISTINCT firstCostAccount,twoCostAccount,threeCostAccount FROM qs_quality_cost_ledger WHERE threeCostAccount!=''
+			) b
+		) c ORDER BY c.costAccount
+			
+	</select>
+	
+	
+</mapper>

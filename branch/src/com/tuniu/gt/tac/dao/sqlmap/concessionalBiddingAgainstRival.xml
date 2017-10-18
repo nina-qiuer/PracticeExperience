@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.tac.dao.sqlmap.imap.IConcessionalBiddingAgainstRivalMap"> 
+	<sql id="list">
+		SELECT * FROM tac_concessional_bidding_against_rival
+		<where>
+			<if test="addTimeBgn != null and addTimeBgn != ''">and addTime&gt;=#{addTimeBgn}</if>
+			<if test="addTimeEnd != null and addTimeEnd != ''">and addTime&lt;=concat(#{addTimeEnd},' 23:59:59')</if>
+			<if test="customer != null and customer != ''">and customer=#{customer}</if>
+			<if test="customerDepartment != null and customerDepartment != ''">and customerDepartment=#{customerDepartment}</if>
+			and delFlag=0
+		</where>
+			order by addTime desc
+	</sql>
+	<select id="fetchList" parameterType="map" resultType="com.tuniu.gt.tac.entity.ConcessionalBiddingAgainstRival">
+		<include refid="list"/>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="map"  resultType="int">
+		select count(*) as count  from (<include refid="list"></include>) cbar
+	</select>
+
+	
+	<select id="get" parameterType="int"  resultType="com.tuniu.gt.tac.entity.ConcessionalBiddingAgainstRival">
+		select * from tac_concessional_bidding_against_rival
+		where id=#{id}
+	</select>
+
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		   <if test="e.orderId != null">
+		    orderId,
+		  </if>
+		  
+		  <if test="e.rival != null">
+		    rival,
+		  </if>
+		  
+		  <if test="e.rivalPrice != null">
+		 	 rivalPrice,
+		  </if>
+
+		  <if test="e.routeHref != null">
+		  	routeHref,
+		  </if>
+
+		  <if test="e.rivalPriceProof != null">
+		  	rivalPriceProof,
+		  </if>
+
+		  <if test="e.tuniuPrice != null">
+		  	tuniuPrice,
+		  </if>
+
+		  <if test="e.concessionalLimit != null">
+		  	concessionalLimit,
+		  </if>
+
+		  <if test="e.additionPresentation != null">
+		  	additionPresentation,
+		  </if>
+
+		  <if test="e.concessionalSide != null">
+		  	concessionalSide,
+		  </if>
+
+		  <if test="e.concessionalName != null">
+		  	concessionalName,
+		  </if>
+		  
+		  <if test="e.unConcessionalReason != null">
+		  	unConcessionalReason,
+		  </if>
+
+		  <if test="e.customerDepartment != null">
+		  	customerDepartment,
+		  </if>
+
+		  <if test="e.customerGroup != null">
+		  	customerGroup,
+		  </if>
+
+		  <if test="e.productDepartment != null">
+		  	productDepartment,
+		  </if>
+
+		  <if test="e.productGroup != null">
+		  	productGroup,
+		  </if>
+
+          customer
+
+		) values  (
+		
+		<if test="e.orderId != null">
+		    #{e.orderId},
+		  </if>
+		
+		  <if test="e.rival != null">
+		    #{e.rival},
+		  </if>
+		  
+		  <if test="e.rivalPrice != null">
+		 	 #{e.rivalPrice},
+		  </if>
+
+		  <if test="e.routeHref != null">
+		  	#{e.routeHref},
+		  </if>
+
+		  <if test="e.rivalPriceProof != null">
+		  	#{e.rivalPriceProof},
+		  </if>
+
+		  <if test="e.tuniuPrice != null">
+		  	#{e.tuniuPrice},
+		  </if>
+
+		  <if test="e.concessionalLimit != null">
+		  	#{e.concessionalLimit},
+		  </if>
+
+		  <if test="e.additionPresentation != null">
+		  	#{e.additionPresentation},
+		  </if>
+
+		  <if test="e.concessionalSide != null">
+		  	#{e.concessionalSide},
+		  </if>
+
+		  <if test="e.concessionalName != null">
+		  	#{e.concessionalName},
+		  </if>
+		  
+		  <if test="e.unConcessionalReason != null">
+		  	#{e.unConcessionalReason},
+		  </if>
+
+		  <if test="e.customerDepartment != null">
+		  	#{e.customerDepartment},
+		  </if>
+
+		  <if test="e.customerGroup != null">
+		  	#{e.customerGroup},
+		  </if>
+
+		  <if test="e.productDepartment != null">
+		  	#{e.productDepartment},
+		  </if>
+
+		  <if test="e.productGroup != null">
+		  	#{e.productGroup},
+		  </if>
+
+		  #{e.customer}
+
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.tac.entity.ConcessionalBiddingAgainstRival" flushCache="true" statementType="PREPARED"> 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+		   <if test="e.orderId != null">orderId=#{e.orderId},</if>
+		  <if test="e.rival != null">rival=#{e.rival},</if>
+		  <if test="e.rivalPrice != null">rivalPrice=#{e.rivalPrice},</if>
+		  <if test="e.routeHref != null">routeHref=#{e.routeHref},</if>		  
+		  <if test="e.rivalPriceProof != null">rivalPriceProof=#{e.rivalPriceProof},</if>
+		  <if test="e.tuniuPrice != null">tuniuPrice=#{e.tuniuPrice},</if>
+		  <if test="e.concessionalLimit != null">concessionalLimit=#{e.concessionalLimit},</if>
+		  <if test="e.additionPresentation != null">additionPresentation=#{e.additionPresentation},</if>
+		  <if test="e.concessionalSide != null">concessionalSide=#{e.concessionalSide},</if>
+		  <if test="e.concessionalName != null">concessionalName=#{e.concessionalName},</if>		  
+		  <if test="e.unConcessionalReason != null">unConcessionalReason=#{e.unConcessionalReason},</if>
+		  <if test="e.customerDepartment != null">customerDepartment=#{e.customerDepartment},</if>
+		  <if test="e.customerGroup != null">customerGroup=#{e.customerGroup},</if>
+		  <if test="e.productDepartment != null">productDepartment=#{e.productDepartment},</if>
+		  <if test="e.productGroup != null">productGroup=#{e.productGroup},</if>
+		  <if test="e.delFlag != null">delFlag=#{e.delFlag},</if>
+		  <if test="e.customer != null">customer=#{e.customer},</if>
+		  updateTime=now()
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	<update id="update" parameterType="com.tuniu.gt.tac.entity.ConcessionalBiddingAgainstRival" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/>
+	</sql>
+	
+	<delete id="delete">
+		<include refid="delete"/>
+		  where id=#{e.id}
+	</delete>
+
+</mapper>

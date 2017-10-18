@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qc.dao.PunishStandardMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.PunishStandard">
+		INSERT INTO qc_punish_standard (
+			<if test="level != null">level,</if>
+			<if test="redLineFlag != null">redLineFlag,</if>
+			<if test="description != null">description,</if>
+			<if test="punishObj != null">punishObj,</if>
+			<if test="economicPunish != null">economicPunish,</if>
+			<if test="scorePunish != null">scorePunish,</if>
+			<if test="source != null">source,</if>
+			<if test="cmpQcUse != null">cmpQcUse,</if>
+			<if test="operQcUse != null">operQcUse,</if>
+			<if test="devQcUse != null">devQcUse,</if>
+			<if test="innerQcUse != null">innerQcUse,</if>
+			delFlag
+		) VALUES (
+			<if test="level != null">#{level},</if>
+			<if test="redLineFlag != null">#{redLineFlag},</if>
+			<if test="description != null">#{description},</if>
+			<if test="punishObj != null">#{punishObj},</if>
+			<if test="economicPunish != null">#{economicPunish},</if>
+			<if test="scorePunish != null">#{scorePunish},</if>
+			<if test="source != null">#{source},</if>
+			<if test="cmpQcUse != null">#{cmpQcUse},</if>
+			<if test="operQcUse != null">#{operQcUse},</if>
+			<if test="devQcUse != null">#{devQcUse},</if>
+			<if test="innerQcUse != null">#{innerQcUse},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		UPDATE qc_punish_standard SET delFlag=1 WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.PunishStandard" flushCache="true" statementType="PREPARED">
+		UPDATE qc_punish_standard 
+		<set>
+			<if test="level != null">level=#{level},</if>
+			<if test="redLineFlag != null">redLineFlag=#{redLineFlag},</if>
+			<if test="description != null">description=#{description},</if>
+			<if test="punishObj != null">punishObj=#{punishObj},</if>
+			<if test="economicPunish != null">economicPunish=#{economicPunish},</if>
+			<if test="scorePunish != null">scorePunish=#{scorePunish},</if>
+			<if test="source != null">source=#{source},</if>
+			<if test="cmpQcUse != null">cmpQcUse=#{cmpQcUse},</if>
+			<if test="operQcUse != null">operQcUse=#{operQcUse},</if>
+			<if test="devQcUse != null">devQcUse=#{devQcUse},</if>
+			<if test="innerQcUse != null">innerQcUse=#{innerQcUse},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.PunishStandard">
+		SELECT * FROM qc_punish_standard WHERE id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.PunishStandardDto" resultType="com.tuniu.qms.qc.model.PunishStandard">
+		SELECT * FROM qc_punish_standard
+		<where>delFlag = 0
+			<if test="level!=null and level!=''">and level = #{level}</if>
+			<if test="redLineFlag!=null and redLineFlag!=-1">and redLineFlag = #{redLineFlag}</if>
+			<if test="punishObj!=null and punishObj!=-1">and punishObj = #{punishObj}</if>
+			<if test="cmpQcUse!=null and cmpQcUse!=0">and cmpQcUse = #{cmpQcUse}</if>
+			<if test="operQcUse!=null and operQcUse!=0">and operQcUse = #{operQcUse}</if>
+			<if test="devQcUse!=null and devQcUse!=0">and devQcUse = #{devQcUse}</if>
+			<if test="innerQcUse!=null and innerQcUse!=0">and innerQcUse = #{innerQcUse}</if>
+		</where>
+	</select>
+	
+	<select id="getLevel" parameterType="com.tuniu.qms.qc.dto.PunishStandardDto" resultType="java.lang.String">
+	    SELECT DISTINCT level FROM qc_punish_standard
+	    <where>delFlag = 0
+	    	<if test="punishObj!=null and punishObj!=-1">and punishObj = #{punishObj}</if>
+			<if test="cmpQcUse!=null and cmpQcUse!=0">and cmpQcUse = #{cmpQcUse}</if>
+			<if test="operQcUse!=null and operQcUse!=0">and operQcUse = #{operQcUse}</if>
+			<if test="devQcUse!=null and devQcUse!=0">and devQcUse = #{devQcUse}</if>
+			<if test="innerQcUse!=null and innerQcUse!=0">and innerQcUse = #{innerQcUse}</if>
+		</where>
+		ORDER BY id
+	</select>
+	
+</mapper>

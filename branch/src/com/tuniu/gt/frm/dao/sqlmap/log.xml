@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.ILogMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.frm.entity.LogEntity">  
+		
+		<result property="userName" column="user_name" />
+		
+		<result property="userId" column="user_id" />
+		
+		<result property="clientIp" column="client_ip" />
+		
+		<result property="addTime" column="add_time" />
+		
+		<result property="url" column="url" />
+		
+		<result property="param" column="param" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="userName" column="user_name"/>
+		
+		<result property="userId" column="user_id"/>
+		
+		<result property="clientIp" column="client_ip"/>
+		
+		<result property="addTime" column="add_time"/>
+		
+		<result property="url" column="url"/>
+		
+		<result property="param" column="param"/>
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/> 
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  user_name,
+		 
+		  user_id,
+		 
+		  client_ip,
+		 
+		  add_time,
+		 
+		  url,
+		 
+		  param
+		 
+		) values  (
+		
+		  #{e.userName}, 
+		 
+		  #{e.userId}, 
+		 
+		  #{e.clientIp}, 
+		 
+		  #{e.addTime}, 
+		 
+		  #{e.url}, 
+		 
+		  #{e.param} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.userName != null">user_name=#{e.userName},</if>
+			
+				<if test="e.userId != null">user_id=#{e.userId},</if>
+			
+				<if test="e.clientIp != null">client_ip=#{e.clientIp},</if>
+			
+				<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			
+				<if test="e.url != null">url=#{e.url},</if>
+			
+				<if test="e.param != null">param=#{e.param}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+</mapper>

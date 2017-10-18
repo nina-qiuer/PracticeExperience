@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="score-score" extends="apply-default" namespace="/score/action"> 
+		<action name="*-*" class="score_action-{1}" method="{2}">
+			<result name="score_record_list">/WEB-INF/html/score/score_record_list.jsp</result>
+			<result name="score_record_form">/WEB-INF/html/score/score_record_form.jsp</result>
+			<result name="score_record_info">/WEB-INF/html/score/score_record_info.jsp</result>
+			<result name="score_record_import">/WEB-INF/html/score/score_record_import.jsp</result>
+			<result name="my_score_record">/WEB-INF/html/score/my_score_record.jsp</result>
+			<result name="score_type_config">/WEB-INF/html/score/score_type_config.jsp</result>
+			<result name="score_type_form">/WEB-INF/html/score/score_type_form.jsp</result>
+			<result name="sr_qc_team_config">/WEB-INF/html/score/sr_qc_team_config.jsp</result>
+			<result name="sr_qc_team_form">/WEB-INF/html/score/sr_qc_team_form.jsp</result>
+		</action>		
+	</package>
+</struts>

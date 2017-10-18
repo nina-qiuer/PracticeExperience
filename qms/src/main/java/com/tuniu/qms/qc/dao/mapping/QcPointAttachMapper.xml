@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.QcPointAttachMapper">
+
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcPointAttach" >
+	  insert into qc_point_attach
+	  (
+	   	 <if test="qcId != null">qcId,</if>
+		 <if test="path != null">path,</if>
+		 <if test="name != null">name,</if>
+		 <if test="type != null">type,</if>
+		 <if test="addPerson != null">addPerson,</if> 
+		 <if test="updatePerson != null">updatePerson,</if>
+		 <if test="delFlag != null">delFlag,</if>
+		 <if test="billType != null">billType,</if>
+		 addTime
+	 )values(
+	 
+	     <if test="qcId != null"> #{qcId},</if>
+		 <if test="path != null">#{path},</if>
+		 <if test="name != null">#{name},</if>
+		 <if test="type != null"> #{type},</if>
+		 <if test="addPerson != null"> #{addPerson},</if> 
+		 <if test="updatePerson != null"> #{updatePerson},</if>
+		 <if test="delFlag != null">#{delFlag},</if>
+		 <if test="billType != null">#{billType},</if>
+	     CURRENT_TIMESTAMP()
+	 )
+	</insert>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QcPointAttachDto" resultType="com.tuniu.qms.qc.model.QcPointAttach">
+		SELECT *  
+		FROM qc_point_attach 
+		where  delFlag =0 
+		 <if test="qcId != null">and qcId =#{qcId}</if>
+		 <if test="billType != null">and billType = #{billType}</if>
+	</select>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_point_attach WHERE id=#{id}
+	</delete>
+	
+	<!-- 根据条件删除附件 -->
+	<delete id="deleteByDto" parameterType="com.tuniu.qms.qc.dto.QcPointAttachDto">
+		DELETE FROM qc_point_attach WHERE id = #{upId} and billType = #{billType}
+	</delete>
+	
+	<delete id="deleteAttach" parameterType="Integer">
+	     delete from qc_point_attach  where qcId =#{qcId} and  billType = 1
+	</delete>
+	
+	<select id="listImproveAttach" parameterType="com.tuniu.qms.qc.dto.QcPointAttachDto" resultType="Map">
+		SELECT name,path  
+		FROM qc_point_attach 
+		where  delFlag =0 
+		 <if test="qcId != null">and qcId =#{qcId}</if>
+		 <if test="billType != null">and billType = #{billType}</if>
+	</select>
+</mapper>

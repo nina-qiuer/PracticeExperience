@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.infobird.vdnlog.dao.sqlmap.imap.IVDNLogMap">
+	
+	<resultMap id="listResultEntity" type="com.tuniu.infobird.vdnlog.entity.VDNLogEntity">
+
+		<result property="id" column="ID" />
+
+		<result property="vdnId" column="VDNID" />
+
+		<result property="statisticDate" column="StatisticDate" />
+		
+		<result property="callId" column="CallID" />
+
+		<result property="callType" column="CallType" />
+		
+		<result property="callingId" column="CallingID" />
+		
+		<result property="calledId" column="CalledID" />
+		
+		<result property="extDevice" column="ExtDevice" />
+		
+		<result property="answerTime" column="AnswerTime" />
+		
+		<result property="talkTime" column="TalkTime" />
+		
+		<result property="cause" column="Cause" />
+		
+		<result property="queuedTime" column="QueuedTime" />
+		
+		<result property="golbalCallId" column="GolbalCallID" />
+		
+	</resultMap>
+	
+	<select id="getVDNLogInfo" parameterType="Map" resultMap="listResultEntity">
+	<![CDATA[
+		SELECT * FROM VDNLog 
+		WHERE ID > #{maxId} AND StatisticDate>=#{recordBeginTime} AND VDNID='44101' AND ExtDevice < '60000' AND ExtDevice > '40000'
+	]]>
+	</select>
+	
+</mapper>

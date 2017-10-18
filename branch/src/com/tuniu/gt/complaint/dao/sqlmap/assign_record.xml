@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IAssignRecordMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			del_flag=0 
+			<if test="type != null">
+				and type = #{type}
+			</if>
+			<if test="tourTimeNode != null">
+				and tour_time_node = #{tourTimeNode}
+			</if>
+			<if test="statDate != null">
+				and stat_date = #{statDate}
+			</if>
+		</where>
+		order by tour_time_node
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.AssignRecordEntity">
+		<result property="type" column="type" />
+		<result property="userId" column="user_id" />
+		<result property="userName" column="user_name" />
+		<result property="departmentName" column="department_name" />
+		<result property="tourTimeNode" column="tour_time_node" />
+		<result property="statDate" column="stat_date" />
+		<result property="orderIds" column="order_ids" />
+		<result property="orderNum" column="order_num" />
+	</resultMap>
+
+	<select id="fetchListMap" parameterType="Map" resultMap="listResultMap">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		<result property="type" column="type" />
+		<result property="userId" column="user_id" />
+		<result property="userName" column="user_name" />
+		<result property="departmentName" column="department_name" />
+		<result property="tourTimeNode" column="tour_time_node" />
+		<result property="statDate" column="stat_date" />
+		<result property="orderIds" column="order_ids" />
+		<result property="orderNum" column="order_num" />
+	</resultMap>
+
+	<select id="get" parameterType="Map" resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		type, 
+		user_id, 
+		user_name, 
+		department_name, 
+		tour_time_node, 
+		stat_date, 
+		order_ids, 
+		order_num
+		) values (
+		#{e.type},
+		#{e.userId},
+		#{e.userName},
+		#{e.departmentName},
+		#{e.tourTimeNode},
+		#{e.statDate},
+		#{e.orderIds},
+		#{e.orderNum}
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<insert id="addAssignRecordBatch" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" 
+		flushCache="true" statementType="PREPARED">
+		insert into ct_assign_record (
+			type, 
+			user_id, 
+			user_name, 
+			department_name, 
+			tour_time_node, 
+			stat_date, 
+			order_ids, 
+			order_num
+		) values 
+        <foreach collection="list" item="e" index="index" separator="," >  
+        (
+            #{e.type},
+			#{e.userId},
+			#{e.userName},
+			#{e.departmentName},
+			#{e.tourTimeNode},
+			#{e.statDate},
+			#{e.orderIds},
+			#{e.orderNum}
+        )  
+        </foreach>  
+    </insert>  
+	
+</mapper>

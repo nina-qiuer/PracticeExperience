@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.common.dao.RtxRemindMapper">
+	<insert id="add" parameterType="com.tuniu.qms.common.model.RtxRemind" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO cm_rtx_remind (
+			
+			<if test="title != null">title,</if>
+			<if test="content != null">content,</if>
+			<if test="sendTime != null">sendTime,</if>
+			<if test="addPerson !=null and addPerson !=''">addPerson,</if>
+			<if test="uid != null">uid</if>
+		) VALUES (
+		
+			<if test="title != null">#{title},</if>
+			<if test="content != null">#{content},</if>
+			<if test="sendTime != null">#{sendTime},</if>
+			<if test="addPerson !=null and addPerson !=''">#{addPerson},</if>
+			<if test="uid != null">#{uid}</if>
+		)
+	</insert>
+	
+<update id="update" parameterType="com.tuniu.qms.common.model.RtxRemind" >
+	UPDATE cm_rtx_remind
+	<set>
+	        <if test="content != null">content=#{content},</if>
+	        <if test="uid != null">uid=#{uid},</if>
+	        <if test="failTimes != null">failTimes=#{failTimes},</if>
+	        <if test="title != null">title=#{title},</if>
+	        <if test="sendTime != null">sendTime=#{sendTime},</if>
+	</set>
+	WHERE id=#{id}
+</update>
+
+<select id="get" parameterType="Integer" resultType="com.tuniu.qms.common.model.RtxRemind">
+	SELECT * FROM cm_rtx_remind WHERE id=#{id}
+</select>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from cm_rtx_remind WHERE id=#{id}
+	</delete>
+	
+	<select id="getList2Send" resultType="com.tuniu.qms.common.model.RtxRemind">
+		SELECT * FROM cm_rtx_remind where failTimes &lt;3 and sendTime&lt;=CURRENT_TIMESTAMP
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.RtxRemindDto" resultType="com.tuniu.qms.common.model.RtxRemind">
+			SELECT * FROM cm_rtx_remind
+			<where>
+					<if test="addPerson !=null and addPerson !=''">addPerson=#{addPerson}</if>
+			</where>
+			ORDER BY  sendTime desc
+			<if test="dataLimitStart != null">
+        limit #{dataLimitStart}
+        <if test="pageSize != null">
+            ,#{pageSize}
+        </if>
+    </if>
+	</select>
+	
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintEmailInfoMap">
+
+<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.ComplaintEmailInfoEntity">
+		<result property="id" column="id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="emailSubject" column="email_subject" />
+		<result property="emailSender" column="email_sender" />
+		<result property="emailRec" column="email_rec" />
+		<result property="emailCc" column="email_cc" />
+		<result property="emailContent" column="email_content" />
+		<result property="addTime" column="add_time" />
+	</resultMap>
+	<select id="getByComplaintId" parameterType="Integer" resultMap="listResultEntity">
+		SELECT * FROM ct_complaint_email_info WHERE complaint_id=#{complaintId} limit 1
+	</select>
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  complaint_id,
+		  email_subject,
+		  email_sender,
+		  email_rec,
+		  email_cc,
+		  email_content,
+		  add_time
+		) values  (
+		  #{e.complaintId},
+		  #{e.emailSubject},
+		  #{e.emailSender},
+		  #{e.emailRec},
+		  #{e.emailCc},
+		  #{e.emailContent},
+		  #{e.addTime}
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+
+</mapper>

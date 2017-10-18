@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.CmpImproveMapper">
+	
+	<insert id="add" parameterType="com.tuniu.qms.qs.model.CmpImprove" useGeneratedKeys="true" keyProperty="id"  keyColumn="id">
+		INSERT INTO qs_cmp_improve(
+			<if test="cmpId != null">cmpId,</if>
+			<if test="prdId != null">prdId,</if>
+			<if test="ordId != null">ordId,</if>
+			<if test="impPersonId != null">impPersonId,</if>
+			<if test="impPerson != null">impPerson,</if>
+			<if test="state != null">state,</if>
+			<if test="cmpAffair != null">cmpAffair,</if>
+			<if test="improvePoint != null">improvePoint,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="handleEndTime != null">handleEndTime,</if>
+			<if test="handlePerson != null">handlePerson,</if>
+			<if test="firstDepId != null">firstDepId,</if>
+			<if test="firstDep != null">firstDep,</if>
+			<if test="secondDepId != null">secondDepId,</if>
+			<if test="secondDep != null">secondDep,</if>
+			<if test="delFlag != null">delFlag</if>
+		)VALUES (
+			<if test="cmpId != null">#{cmpId},</if>
+			<if test="prdId != null">#{prdId},</if>
+			<if test="ordId != null">#{ordId},</if>
+			<if test="impPersonId != null">#{impPersonId},</if>
+			<if test="impPerson != null">#{impPerson},</if>
+			<if test="state != null">#{state},</if>
+			<if test="cmpAffair != null">#{cmpAffair},</if>
+			<if test="improvePoint != null">#{improvePoint},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="handleEndTime != null">#{handleEndTime},</if>
+			<if test="handlePerson != null">#{handlePerson},</if>
+			<if test="firstDepId != null">#{firstDepId},</if>
+			<if test="firstDep != null">#{firstDep},</if>
+			<if test="secondDepId != null">#{secondDepId},</if>
+			<if test="secondDep != null">#{secondDep},</if>
+			<if test="delFlag != null">#{delFlag}</if>
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.tuniu.qms.qs.model.CmpImprove">
+		UPDATE qs_cmp_improve
+		<set>
+			<if test="cmpId != null">cmpId = #{cmpId},</if>
+			<if test="prdId != null">prdId = #{prdId},</if>
+			<if test="ordId != null">ordId = #{ordId},</if>
+			<if test="impPersonId != null">impPersonId = #{impPersonId},</if>
+			<if test="impPerson != null">impPerson = #{impPerson},</if>
+			<if test="cmpAffair != null">cmpAffair = #{cmpAffair},</if>
+			<if test="improvePoint != null">improvePoint = #{improvePoint},</if>
+			<if test="handleEndTime != null">handleEndTime = #{handleEndTime},</if>
+			<if test="handlePerson != null">handlePerson = #{handlePerson},</if>
+			<if test="otherPerson != null">otherPerson = #{otherPerson},</if>
+			<if test="otherAgencyName != null">otherAgencyName = #{otherAgencyName},</if>
+			<if test="state != null">state = #{state},</if>
+			<if test="isRespFlag != null">isRespFlag = #{isRespFlag},</if>
+			<if test="improveMethod != null">improveMethod = #{improveMethod},</if>
+			<if test="improveFinTime != null">improveFinTime = #{improveFinTime},</if>
+			<if test="improveResult != null">improveResult = #{improveResult},</if>
+			<if test="remark != null">remark = #{remark},</if>
+			<if test="firstDepId != null">firstDepId = #{firstDepId},</if>
+			<if test="firstDep != null">firstDep = #{firstDep},</if>
+			<if test="secondDepId != null">secondDepId = #{secondDepId},</if>
+			<if test="secondDep != null">secondDep = #{secondDep},</if>
+			<if test="updatePerson != null">updatePerson = #{updatePerson},</if>
+			<if test="delFlag != null">delFlag = #{delFlag},</if>
+			<if test="oaId != null">oaId = #{oaId},</if>
+			<if test="updatePerson != null">updatePerson = #{updatePerson},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qs_cmp_improve WHERE id = #{id}
+	</delete>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.CmpImprove">
+		select *, 
+			CASE WHEN state = 1 THEN '待定责'
+				 WHEN state = 2 THEN '处理中'
+				 WHEN state = 3 THEN '待确认'
+				 WHEN state = 4 THEN '已完结'
+			END AS stateStr
+		from qs_cmp_improve where id = #{id}
+	</select>
+	
+	<sql id="myCondition">
+		<where>
+			qci.delFlag = 0
+			<if test="id != null and id != ''">and qci.id = #{id}</if>
+			<if test="cmpId != null">and qci.cmpId = #{cmpId}</if>
+			<if test="prdId != null">and qci.prdId = #{prdId}</if>
+			<if test="ordId != null">and qci.ordId = #{ordId}</if>
+			<if test="impPersonId != null and impPersonId != ''">and qci.impPersonId = #{impPersonId}</if>
+			<if test="impPerson != null and impPerson != ''">and qci.impPerson = #{impPerson}</if>
+			<if test="state != null and state != -1">and qci.state = #{state}</if>
+			<if test="addTimeBgn != null and addTimeBgn != ''">and qci.addTime &gt;= #{addTimeBgn}</if>
+			<if test="addTimeEnd != null and addTimeEnd != ''">and qci.addTime &lt;= CONCAT(#{addTimeEnd}, ' 23:59:59')</if> 
+			<if test="improveFinTimeBgn != null and improveFinTimeBgn != ''">and qci.improveFinTime &gt;= #{improveFinTimeBgn}</if>
+			<if test="improveFinTimeEnd != null and improveFinTimeEnd != ''">and qci.improveFinTime &lt;= CONCAT(#{improveFinTimeEnd}, ' 23:59:59')</if> 
+			<if test="isRespFlag != null">and qci.isRespFlag = #{isRespFlag}</if>
+			<if test="handlePerson != null and handlePerson != ''">and qci.handlePerson = #{handlePerson}</if>
+			<if test="isAgencyRespFlag == 0">and qci.otherAgencyName != ''</if>
+			<if test="isAgencyRespFlag == 1">and qci.otherAgencyName = ''</if>
+		</where>
+	</sql>
+	
+	<select id="count" parameterType="com.tuniu.qms.qs.dto.CmpImproveDto" resultType="Integer">
+		select count(1)
+		from qs_cmp_improve qci
+		<include refid="myCondition"></include>		
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.CmpImproveDto" resultType="com.tuniu.qms.qs.model.CmpImprove">
+		select *, 
+			CASE WHEN state = 1 THEN '待定责'
+				 WHEN state = 2 THEN '处理中'
+				 WHEN state = 3 THEN '待确认'
+				 WHEN state = 4 THEN '已完结'
+			END AS stateStr
+		from qs_cmp_improve qci
+		<include refid="myCondition"></include>
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="loadPage" parameterType="com.tuniu.qms.qs.dto.CmpImproveDto" resultType="com.tuniu.qms.qs.model.CmpImprove">
+		select  qci.*, 
+			CASE WHEN qci.state = 1 THEN '待定责'
+				 WHEN qci.state = 2 THEN '处理中'
+				 WHEN qci.state = 3 THEN '待确认'
+				 WHEN qci.state = 4 THEN '已完结'
+			END AS stateStr,
+			ccb.cmpLevel as cmpLevel,
+			ccb.addTime as cmpAddTime,
+			ccb.comeFrom as comeFrom
+		from qs_cmp_improve qci
+		left join cm_complaint_bill ccb on ccb.id = qci.cmpId
+		<include refid="myCondition"></include>
+		order by qci.id desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>		
+	</select>
+	
+	<!-- 超过流程处理到期时间列表   -->
+	<select id="getOutHandleEndTime" resultType="com.tuniu.qms.qs.model.CmpImprove">
+		select * from qs_cmp_improve where handleEndTime &gt; CURRENT_TIMESTAMP 
+	</select>
+	
+	<select id="listByCmpId" parameterType="Integer" resultMap="improveInfo">
+		select qci.* ,
+			CASE WHEN qci.state = 1 THEN '待定责'
+				 WHEN qci.state = 2 THEN '处理中'
+				 WHEN qci.state = 3 THEN '待确认'
+				 WHEN qci.state = 4 THEN '已完结'
+			END AS stateStr,
+			qpa.name as name, qpa.path as path
+		from qs_cmp_improve qci
+		left join qc_point_attach qpa on qpa.qcId = qci.id and qpa.billType = 2 and qpa.delFlag = 0
+		where qci.delFlag = 0
+			and qci.cmpId = #{cmpId}
+	</select>
+	
+	<resultMap type="com.tuniu.qms.qs.model.CmpImprove" id="improveInfo">
+		<result property="id" column="id" />
+		<result property="ordId" column="ordId" />
+		<result property="cmpId" column="cmpId" />
+		<result property="prdId" column="prdId" />
+		<result property="state" column="state" />
+		<result property="stateStr" column="stateStr" />
+		<result property="impPerson" column="impPerson" />
+		<result property="isRespFlag" column="isRespFlag" />
+		<result property="cmpAffair" column="cmpAffair" />
+		<result property="improvePoint" column="improvePoint" />
+		<result property="improveMethod" column="improveMethod" />
+		<result property="improveFinTime" column="improveFinTime" />
+		<result property="improveResult" column="improveResult" />
+		<result property="remark" column="remark" />
+		<result property="handleEndTime" column="handleEndTime" />
+		<result property="handlePerson" column="handlePerson" />
+		<result property="otherPerson" column="otherPerson" />
+		<result property="otherAgencyName" column="otherAgencyName" />
+		<association property="product" javaType="com.tuniu.qms.common.model.Product">
+			<id property="id" column="prdId"/>
+			<result column="prdName" property="prdName" />
+			<result column="cateName" property="cateName" />
+			<result column="subCateName" property="subCateName" />
+			<result column="brandName" property="brandName" />
+			<result column="prdLineDestName" property="prdLineDestName" />
+			<result column="prdTeamId" property="prdTeamId" />
+			<result column="prdManagerId" property="prdManagerId" />
+			<result column="businessUnitName" property="businessUnitName" />
+		</association>
+		<collection property="attachList" javaType="ArrayList" ofType="java.util.Map">
+			<result property="name" column="name" />
+			<result property="path" column="path" />
+		</collection>
+	</resultMap>
+	
+	<!-- 获得有订单投诉、待分配的改进报告 -->
+	<select id="listWaitDistrib" resultMap="improveInfo">
+		SELECT qci.id, prd.prdTeamId, prd.prdManagerId
+		FROM qs_cmp_improve qci
+		LEFT JOIN cm_product prd ON qci.prdId=prd.id
+		WHERE  state = 3
+			AND qci.ordId > 0
+			AND qci.handlePerson = ''
+		ORDER BY qci.id DESC
+		LIMIT 30
+	</select>
+	
+	<!-- 获得无订单投诉、待分配的改进报告 -->
+	<select id="listWaitDistribNonOrd" resultMap="improveInfo">
+		SELECT id
+		FROM qs_cmp_improve
+		WHERE  state = 3
+			AND ordId = 0
+			AND handlePerson = ''
+		ORDER BY id DESC
+		LIMIT 30
+	</select>
+</mapper>

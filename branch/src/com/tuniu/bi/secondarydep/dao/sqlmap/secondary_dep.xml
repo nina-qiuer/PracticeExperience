@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.bi.secondarydep.dao.sqlmap.imap.ISecondaryDepMap">
+
+	<select id="getSecondaryDep" parameterType="Integer" resultType="Map">
+		SELECT Region, Department FROM organization_relation WHERE product_id=#{productLineId}
+	</select>
+	
+</mapper>

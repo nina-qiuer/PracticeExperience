@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"  
+    version="2.0">  
+      
+    <description>ui Custom Functions</description>  
+    <tlib-version>1.0</tlib-version>  
+    <short-name>ui</short-name>  
+    <uri>/WEB-INF/tld/ui.tld</uri>
+    <function>  
+        <name>makeSelect</name>  
+        <function-class>tuniu.frm.service.ui.HtmlUi</function-class>  
+        <function-signature>java.lang.String makeSelect(java.lang.Object,java.lang.Object,java.lang.Object)</function-signature>
+    </function>
+    
+     <function>  
+        <name>makeCheckbox</name>  
+        <function-class>tuniu.frm.service.ui.HtmlUi</function-class>  
+        <function-signature>java.lang.String makeCheckbox(java.lang.Object,java.lang.String,java.lang.Object,java.lang.Object)</function-signature>
+    </function>
+    
+    
+    <function>  
+        <name>makeRadio</name>  
+        <function-class>tuniu.frm.service.ui.HtmlUi</function-class>  
+        <function-signature>java.lang.String makeRadio(java.lang.Object,java.lang.String,java.lang.String,java.lang.String[])</function-signature>
+    </function>
+    
+    
+     <function>  
+        <name>str2Map</name>  
+        <function-class>tuniu.frm.service.ui.HtmlUi</function-class>  
+        <function-signature>java.uitl.Map str2Map(java.lang.String)</function-signature>
+    </function>
+    
+    
+    
+
+    
+    <!-- 
+    <function>  
+        <name>test</name>  
+        <function-class>tuniu.frm.service.ui.HtmlUi</function-class>  
+        <function-signature>java.lang.String test(java.lang.String)</function-signature>
+        <example>
+		${frm:test("javayou@gmail.com")} 
+		</example>
+    </function>
+     -->
+</taglib>
+

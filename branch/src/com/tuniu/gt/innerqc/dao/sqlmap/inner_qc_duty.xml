@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.innerqc.dao.sqlmap.imap.InnerQcDutyMap">
+	<sql id="whereSql">
+		<where>1=1
+			<if test="questionId != 0">AND question_id=#{questionId}</if>
+			and del_flag = 0 order by id asc
+		</where>
+	</sql>
+
+	<select id="getDutyList" parameterType="com.tuniu.gt.innerqc.entity.InnerQcDutyEntity" resultMap="listResultEntity">
+		SELECT 	*,
+			(SELECT dep_name FROM uc_department WHERE id=qc_inner_qc_duty.dep_id1) AS dep_name1, 
+			(SELECT dep_name FROM uc_department WHERE id=qc_inner_qc_duty.dep_id2) AS dep_name2, 
+			(SELECT real_name FROM frm_user WHERE id=qc_inner_qc_duty.resp_person_id) AS resp_person_name
+		FROM qc_inner_qc_duty
+		<include refid="whereSql" />
+	</select>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.innerqc.entity.InnerQcDutyEntity">
+		<result property="id" column="id" />
+		<result property="questionId" column="question_id" />
+		<result property="depId1" column="dep_id1" />
+		<result property="depName1" column="dep_name1" />
+		<result property="depId2" column="dep_id2" />
+		<result property="depName2" column="dep_name2" />
+		<result property="positionId" column="position_id" />
+		<result property="respPersonId" column="resp_person_id" />
+		<result property="respPersonName" column="resp_person_name" />
+		<result property="scoreValue" column="score_value" />
+		<result property="fineAmount" column="fine_amount" />
+		<result property="addPersonId" column="add_person_id" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+			question_id, 
+			dep_id1, 
+			dep_id2, 
+			position_id, 
+			resp_person_id, 
+			score_value, 
+			fine_amount, 
+			add_person_id
+		) values (
+			#{e.questionId},
+			#{e.depId1},
+			#{e.depId2},
+			#{e.positionId},
+			#{e.respPersonId},
+			#{e.scoreValue},
+			#{e.fineAmount},
+			#{e.addPersonId}
+		)
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.depId1 != null">dep_id1=#{e.depId1},</if>
+			<if test="e.depId2 != null">dep_id2=#{e.depId2},</if>
+			<if test="e.positionId != null">position_id=#{e.positionId},</if>
+			<if test="e.respPersonId != null">resp_person_id=#{e.respPersonId},</if>
+			<if test="e.scoreValue != null">score_value=#{e.scoreValue},</if>
+			<if test="e.fineAmount != null">fine_amount=#{e.fineAmount},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+		where id=#{e.id}
+	</sql>
+	
+	<select id="get" parameterType="Map" resultMap="listResultEntity">
+		SELECT 	*,
+			(SELECT dep_name FROM uc_department WHERE id=qc_inner_qc_duty.dep_id1) AS dep_name1, 
+			(SELECT dep_name FROM uc_department WHERE id=qc_inner_qc_duty.dep_id2) AS dep_name2, 
+			(SELECT real_name FROM frm_user WHERE id=qc_inner_qc_duty.resp_person_id) AS resp_person_name
+		FROM qc_inner_qc_duty WHERE id=#{id} limit 1
+	</select>
+	
+	<delete id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/> where id =#{id}
+	</delete>
+	
+	<delete id="deleteByQuestionId" parameterType="Integer">
+		DELETE FROM qc_inner_qc_duty WHERE question_id = #{questionId}
+	</delete>
+	
+</mapper>

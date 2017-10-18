@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.satisfaction.dao.sqlmap.imap.IPreSaleSatisfactionSocreMap">
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		pre_sale_satis_id,
+		
+		<if test="e.professional!= null">professional,</if>
+
+		<if test="e.professionalComment != null">professional_comment,</if>
+
+		<if test="e.timeliness!= null">timeliness,</if>
+		
+		<if test="e.timelinessComment!= null">timeliness_comment,</if>
+		
+		<if test="e.patience!= null">patience,</if>
+
+		<if test="e.patienceComment!= null">patience_comment,</if>
+
+		<if test="e.responsibility!= null">responsibility,</if>
+		
+		<if test="e.responsibilityComment!= null">responsibility_comment,</if>
+
+		<if test="e.suggestion!= null">suggestion,</if>
+		
+		<if test="e.total!= null">total,</if>
+
+		<if test="e.preSaleSatisfaction!= null">pre_sale_satisfaction,</if>
+		
+		<if test="e.status!= null">status,</if>
+		
+		<if test="e.createTime!= null">create_time,</if>
+		
+		<if test="e.lastModifyTime!= null">last_modify_time</if>
+
+		) values (
+
+		#{e.preSaleSatisId},
+
+		<if test="e.professional!= null">#{e.professional},</if>
+
+		<if test="e.professionalComment != null">#{e.professionalComment},</if>
+
+		<if test="e.timeliness!= null">#{e.timeliness},</if>
+		
+		<if test="e.timelinessComment!= null">#{e.timelinessComment},</if>
+		
+		<if test="e.patience!= null">#{e.patience},</if>
+
+		<if test="e.patienceComment!= null">#{e.patienceComment},</if>
+
+		<if test="e.responsibility!= null">#{e.responsibility},</if>
+		
+		<if test="e.responsibilityComment!= null">#{e.responsibilityComment},</if>
+
+		<if test="e.suggestion!= null">#{e.suggestion},</if>
+		
+		<if test="e.total!= null">#{e.total},</if>
+
+		<if test="e.preSaleSatisfaction!= null">#{e.preSaleSatisfaction},</if>
+		
+		<if test="e.status!= null">#{e.status},</if>
+		
+		<if test="e.createTime!= null">#{e.createTime},</if>
+		
+		<if test="e.lastModifyTime!= null">#{e.lastModifyTime}</if>
+		
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="preSaleSatisId" column="pre_sale_satis_id" />
+
+		<result property="professional" column="professional" />
+		
+		<result property="professionalComment" column="professional_comment" />
+
+		<result property="timeliness" column="timeliness" />
+
+		<result property="timelinessComment" column="timeliness_comment" />
+
+		<result property="patience" column="patience" />
+
+		<result property="patienceComment" column="patience_comment" />
+
+		<result property="responsibility" column="responsibility" />
+
+		<result property="responsibilityComment" column="responsibility_comment" />
+
+		<result property="suggestion" column="suggestion" />
+
+		<result property="total" column="total" />
+		
+		<result property="preSaleSatisfaction" column="pre_sale_satisfaction" />
+		
+		<result property="status" column="status" />
+		
+		<result property="createTime" column="create_time" />
+
+		<result property="lastModifyTime" column="last_modify_time" />
+
+	</resultMap>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.satisfaction.entity.PreSaleSatisfactionSocreEntity">
+
+		<result property="preSaleSatisId" column="pre_sale_satis_id" />
+
+		<result property="professional" column="professional" />
+		
+		<result property="professionalComment" column="professional_comment" />
+
+		<result property="timeliness" column="timeliness" />
+
+		<result property="timelinessComment" column="timeliness_comment" />
+
+		<result property="patience" column="patience" />
+
+		<result property="patienceComment" column="patience_comment" />
+
+		<result property="responsibility" column="responsibility" />
+
+		<result property="responsibilityComment" column="responsibility_comment" />
+
+		<result property="suggestion" column="suggestion" />
+
+		<result property="total" column="total" />
+		
+		<result property="preSaleSatisfaction" column="pre_sale_satisfaction" />
+		
+		<result property="status" column="status" />
+		
+		<result property="createTime" column="create_time" />
+
+		<result property="lastModifyTime" column="last_modify_time" />
+		
+	</resultMap>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+
+			<if test="e.professional!= null">professional=#{e.professional},</if>
+			
+			<if test="e.professionalComment != null">professional_comment=#{e.professionalComment},</if>
+			
+			<if test="e.timeliness != null">timeliness=#{e.timeliness},</if>
+			
+			<if test="e.timelinessComment != null">timeliness_comment=#{e.timelinessComment},</if>
+			
+			<if test="e.patience != null">patience=#{e.patience},</if>
+			
+			<if test="e.patienceComment!= null">patience_comment=#{e.patienceComment},</if>
+			
+			<if test="e.responsibility != null">responsibility=#{e.responsibility},</if>
+			
+			<if test="e.responsibilityComment!= null">responsibility_comment=#{e.responsibilityComment},</if>
+			
+			<if test="e.suggestion!= null">suggestion=#{e.suggestion},</if>
+			
+			<if test="e.total!= null">total=#{e.total},</if>
+			
+			<if test="e.preSaleSatisfaction != null">pre_sale_satisfaction=#{e.preSaleSatisfaction},</if>
+			
+			<if test="e.status!= null">status=#{e.status},</if>
+			
+			<if test="e.lastModifyTime!= null">last_modify_time=#{e.lastModifyTime}</if>
+
+		</set>
+		where pre_sale_satis_id=#{e.preSaleSatisId}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true"
+		statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	
+	<select id="getSocreCountBySatisId" parameterType="Integer" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM ct_pre_sale_satisfaction_socre
+		WHERE pre_sale_satis_id=#{preSaleSatisId}
+	</select>
+	
+	<select id="getSocreEntityBySatisId" parameterType="Integer" resultMap="listResultEntity">
+		SELECT *
+		FROM ct_pre_sale_satisfaction_socre
+		WHERE pre_sale_satis_id=#{preSaleSatisId}
+	</select>
+	
+</mapper>

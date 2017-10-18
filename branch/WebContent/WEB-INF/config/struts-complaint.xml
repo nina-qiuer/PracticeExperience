@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/2.1.dtd">
+<struts>
+	<include file="../config/complaint/package.xml"></include>
+	<include file="../config/complaint/ajax-package.xml"></include>
+	<include file="../config/complaint/webservice-package.xml"></include> 
+	<constant name="struts.multipart.maxSize" value="20971520"/>
+</struts>

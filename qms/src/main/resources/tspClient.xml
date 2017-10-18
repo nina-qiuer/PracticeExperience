@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <bean class="com.tuniu.operation.platform.tsg.client.common.AppContext"/>
+    
+    <!--监控中心配置 -->
+	<bean id="monitor" class="com.tuniu.operation.platform.tsg.monitor.Monitor" destroy-method="stop">
+	    <property name="brokerURL" value="${tsp.brokerURL}"/>
+	    <property name="queueName" value="queue.pla.tsp.monitor.log"/>
+	</bean>
+	 
+	<!-- 注册中心配置 -->
+	<bean id="registerConfig" class="com.tuniu.operation.platform.tsg.client.config.RegisterConfig">
+	    <property name="registryAddress" value="${tsp.registryAddress}"/> 
+	</bean>
+	
+	<!-- 消费者配置 -->
+	<bean id="consumerConfig" class="com.tuniu.operation.platform.tsg.client.config.ConsumerConfig" lazy-init="false">
+	    <property name="refferenceService">
+	        <list>
+	            <value>BOH.NM.ProductController.queryCommonProductInfos</value>
+	            <value>TOR.NM.TeamGuideController.batchQueryGroupAndGuideDetail</value>
+	            <value>TBS.ProductLine.ProductLineController.queryManager</value>
+	            <value>ICS.purchasepay.PurchaseController.queryPurchaseListByOrderIds</value>
+	            <value>PCS.BFM.ProductController.changeProductStatus</value>
+	            <value>PLA.EMAIL.EdmController.sendInternalEmail</value>
+	            <value>PLA.RTX.RtxController.send</value>
+	            <value>PLA.SMS.SmsController.sendSms</value>
+	            <value>VND.ams.AgencyController.agencyDetail</value>
+	            <value>VND.ams.AgencyController.searchAgencyList</value>
+	            <value>SOA.SOA.Flow2ResourceController.launchCollaborationForTsp</value>
+	            <!-- 订单详情页url资源 -->
+	            <value>PGA.NWS.PipelineController.getAdaptedApiConf</value>
+	        </list>
+	    </property>
+	</bean>
+	
+	<!-- TSP客户端配置  -->
+	<bean id="tspCommonClient" class="com.tuniu.operation.platform.tsg.client.proxy.tsg.TSPCommonClient" destroy-method="stop">
+	    <property name="consumerConfig" ref="consumerConfig"/>
+	    <property name="registerConfig" ref="registerConfig"/>
+	</bean>
+	
+</beans>

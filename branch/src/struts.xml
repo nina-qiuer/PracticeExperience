@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<constant name="struts.locale" value="zh_CN" />
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.enable.SlashesInActionNames" value="true" />
+	<constant name="struts.objectFactory" value="spring" />
+	<constant name="struts.objectFactory.spring.useClassCache" value="false" /> 
+	<!-- 不在生tr,td表格 -->
+	<constant name="struts.ui.theme" value="simple" /> 
+	
+
+	<package name="global-default" extends="struts-default">
+	   <default-action-ref name="notFound" />
+	   <action name="notFound">
+	    <result>/success.jsp</result>
+	   </action>
+	</package>
+	 
+	<package name="frm-default" extends="json-default" namespace="/com/tuniu/gt/">  
+		<global-results>  
+			<result name="login">/WEB-INF/html/login.jsp</result> 
+			<result name="consumerlogin">/WEB-INF/html/consumerlogin.jsp</result> 
+			<result name="success">/WEB-INF/html/success.jsp</result> 
+			<result name="redirect" type="redirect">${redirctUrl}</result> 
+			<result name="sql_error">/WEB-INF/html/error.jsp</result>
+			<result name="authority_not_enough">/WEB-INF/html/authority_not_enough.jsp</result>  
+			<result type="json" name="info">
+                	<param name="root">info</param>
+			</result>
+		</global-results>
+		
+		<global-exception-mappings>
+       		<exception-mapping result="sql_error" exception="com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException"></exception-mapping>
+       		<exception-mapping result="db_error" exception="com.mysql.jdbc.exceptions.jdbc4.CommunicationsException"></exception-mapping>
+       		<exception-mapping result="db_error" exception="org.springframework.jdbc.CannotGetJdbcConnectionException"></exception-mapping>
+       	</global-exception-mappings>
+       	
+	</package>
+
+	<package name="apply-default" extends="frm-default" namespace="/com/tuniu/gt/frm/action"> 
+		<interceptors>
+			<interceptor name="strutsStart" class="tuniu.frm.interceptor.StrutsStartInterceptor"></interceptor>
+			<interceptor name="strutsDispatchAction" class="tuniu.frm.interceptor.StrutsDispatchActionInterceptor"></interceptor>
+			<interceptor name="accessLog" class="com.tuniu.gt.frm.interceptor.AcessLogInterceptor"></interceptor>
+			<interceptor name="privilege" class="com.tuniu.gt.frm.interceptor.PrivilegeInterceptor"></interceptor>
+			<interceptor name="strutsCheckboxFix" class="tuniu.frm.interceptor.StrutsCheckboxFixInterceptor"></interceptor>
+			<interceptor-stack name="frmStack"> 
+				<interceptor-ref name="strutsStart"></interceptor-ref>
+				<!-- struts的默认拦截器 -->
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="accessLog"></interceptor-ref>
+				<interceptor-ref name="privilege"></interceptor-ref>
+				<interceptor-ref name="strutsDispatchAction"></interceptor-ref>
+				<interceptor-ref name="strutsCheckboxFix"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="frmStack"></default-interceptor-ref>
+	</package>
+
+	<include file="../config/struts-frm.xml"></include>
+	<include file="../config/struts-complaint.xml"></include>
+	<include file="../config/struts-uc.xml"></include>
+	<include file="../config/struts-supply.xml"></include>
+	<include file="../config/struts-warning.xml"></include>
+	<include file="../config/struts-callloss.xml"></include>
+	<include file="../config/struts-score.xml"></include>
+	<include file="../config/struts-innerqc.xml"></include>
+	<include file="../config/struts-punishprd.xml"></include>
+	<include file="../config/struts-wo.xml"></include>
+	<include file="../config/struts-ts.xml"></include>
+	<include file="../config/struts-rv.xml"></include>
+	<include file="../config/struts-tac.xml"></include>
+</struts>

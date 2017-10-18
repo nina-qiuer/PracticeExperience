@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintReasonMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			del_flag = 1
+			<if test="complaintId!=null">
+				and complaint_id=#{complaintId}
+			</if>
+			<if test="orderId!=null">
+				and order_id=#{orderId}
+			</if>
+		</where>
+		order by id
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+		
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.ComplaintReasonEntity">  
+		
+		<result property="addTime" column="add_time" />
+		
+		<result property="descript" column="descript" />
+		
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="updateTime" column="update_time" />
+		
+		<result property="orderId" column="order_id" />
+		
+		<result property="typeDescript" column="type_descript" />
+		
+		<result property="type" column="type" />
+		
+		<result property="secondType" column="second_type" />
+		
+		<result property="complaintId" column="complaint_id" />
+		
+		<result property="accuracy" column="accuracy" />
+		
+		<result property="accuracyRe" column="accuracy_reason" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="addTime" column="add_time"/>
+		
+		<result property="descript" column="descript"/>
+		
+		<result property="delFlag" column="del_flag"/>
+		
+		<result property="updateTime" column="update_time"/>
+		
+		<result property="orderId" column="order_id"/>
+		
+		<result property="typeDescript" column="type_descript"/>
+		
+		<result property="type" column="type"/>
+		
+		<result property="secondType" column="second_type" />
+		
+		<result property="complaintId" column="complaint_id"/>
+		
+		<result property="accuracy" column="accuracy" />
+		
+		<result property="accuracyRe" column="accuracy_reason" />
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  add_time,
+		 
+		  descript,
+		 
+		  del_flag,
+		 
+		  update_time,
+		 
+		  order_id,
+		 
+		  type_descript,
+		 
+		  type,
+		  
+		  second_type,
+		 
+		  complaint_id
+		 
+		) values  (
+		
+		  #{e.addTime}, 
+		 
+		  #{e.descript}, 
+		 
+		  #{e.delFlag}, 
+		 
+		  #{e.updateTime}, 
+		 
+		  #{e.orderId}, 
+		 
+		  #{e.typeDescript}, 
+		 
+		  #{e.type}, 
+		  
+		  #{e.secondType}, 
+		 
+		  #{e.complaintId} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			
+				<if test="e.descript != null">descript=#{e.descript},</if>
+			
+				<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			
+				<if test="e.updateTime != null">update_time=#{e.updateTime},</if>
+			
+				<if test="e.orderId != null">order_id=#{e.orderId},</if>
+			
+				<if test="e.typeDescript != null">type_descript=#{e.typeDescript},</if>
+			
+				<if test="e.type != null">type=#{e.type},</if>
+				
+				<if test="e.secondType != null">second_type=#{e.secondType},</if>
+			
+				<if test="e.complaintId != null">complaint_id=#{e.complaintId},</if>
+				
+				<if test="e.accuracy != null">accuracy=#{e.accuracy},</if>
+				
+				<if test="e.accuracyRe != null">accuracy_reason=#{e.accuracyRe}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<select id="queryReasonById" parameterType="Integer" resultMap="complaintReasonEntity">
+		SELECT * FROM ct_complaint_reason WHERE complaint_id=#{complaintId} order by add_time asc limit 1
+	</select>
+	
+	<select id="queryReasonCountById" parameterType="Integer"  resultType="Integer">
+		SELECT count(*) FROM ct_complaint_reason WHERE complaint_id=#{complaintId}
+	</select>
+	
+	<resultMap id="complaintReasonEntity" type="Map">
+
+		<result property="addTime" column="add_time" />
+
+		<result property="descript" column="descript" />
+
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="updateTime" column="update_time" />
+
+		<result property="orderId" column="order_id" />
+
+		<result property="typeDescript" column="type_descript" />
+
+		<result property="type" column="type" />
+
+		<result property="secondType" column="second_type" />
+
+		<result property="complaintId" column="complaint_id" />
+
+		<result property="id" column="id" />
+
+		<result property="accuracy" column="accuracy" />
+		
+		<result property="accuracyRe" column="accuracy_reason" />
+	</resultMap>
+	
+	<select id="getReasonAndQualitycostList" parameterType="Map" resultMap="rqcListResultEntity">
+		SELECT t1.*,t2.agency_problem,t2.company_problem,t2.quality_tool,t2.others 
+		FROM ct_complaint_reason t1 LEFT JOIN ct_qualitycost_type t2 
+		ON t1.type=t2.r_type AND t1.second_type=t2.r_second_type WHERE t1.complaint_id=#{complaintId} and t1.del_flag=#{del_flag}
+	</select>
+	
+	<resultMap id="rqcListResultEntity" type="com.tuniu.gt.complaint.entity.ComplaintReasonEntity">  
+		<result property="addTime" column="add_time" />
+		<result property="descript" column="descript" />
+		<result property="delFlag" column="del_flag" />
+		<result property="updateTime" column="update_time" />
+		<result property="orderId" column="order_id" />
+		<result property="typeDescript" column="type_descript" />
+		<result property="type" column="type" />
+		<result property="secondType" column="second_type" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="accuracy" column="accuracy" />
+		<result property="accuracyRe" column="accuracy_reason" />
+		<result property="agencyProblem" column="agency_problem" />
+		<result property="companyProblem" column="company_problem" />
+		<result property="qualityTool" column="quality_tool" />
+		<result property="others" column="others" />
+	</resultMap>
+	
+	<select id="getDistDesc" parameterType="Integer" resultType="Map">
+		SELECT DISTINCT type_descript,add_time FROM ct_complaint_reason WHERE complaint_id=#{complaintId} AND del_flag=1
+	</select>
+	
+	<select id="getNotDisSatisfiedReasonCountByCmpId" parameterType="int" resultType="int">
+		select count(*) as count from ct_complaint_reason where complaint_id=#{complaintId} AND del_flag=1 and  second_type!='满意度小于等于百分之50'
+	</select>
+	
+	<select id="getCrmComplaintReason" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ReasonSynchCrmEntity">
+		SELECT 
+		id AS reason_id,
+		complaint_id,
+		type,
+		second_type,
+		DATE_FORMAT(add_time,'%Y-%m-%d %H:%i:%s') AS add_time,
+		DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') AS update_time,
+		type_descript,
+		descript
+		<include refid="getCrmComplaintReasonSql" />
+		<if test="pageStart != null and pageSize != null">
+			limit #{pageStart},#{pageSize}
+	    </if>
+	</select>
+	
+	<select id="getCrmComplaintReasonCount" parameterType="Map"
+		resultType="Integer">
+		  SELECT COUNT(1)
+		  <include refid="getCrmComplaintReasonSql" />
+	</select>
+	
+	<sql id="getCrmComplaintReasonSql">
+		FROM ct_complaint_reason
+		WHERE 
+		del_flag=1
+		<if test="complaint_id != null">
+			AND complaint_id = #{complaint_id}
+		</if>
+		<if test="complaint_id == null">
+			AND (add_time &gt;= #{startDate}
+			AND add_time &lt;= #{endDate})
+			OR (update_time &gt;= #{startDate}
+			AND update_time &lt;= #{endDate})
+		</if>
+	</sql>
+</mapper>

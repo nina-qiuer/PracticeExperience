@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.IControlMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.frm.entity.ControlEntity">  
+		
+		<result property="controlHtml" column="control_html" />
+		
+		<result property="controlName" column="control_name" />
+		
+		<result property="dataSource" column="data_source" />
+		
+		<result property="needDs" column="need_ds" />
+		
+		<result property="controlRes" column="control_res" />
+		
+		<result property="userDefine" column="user_define" />
+		
+		<result property="aftCode" column="aft_code" />
+		
+		<result property="initCode" column="init_code" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="controlHtml" column="control_html"/>
+		
+		<result property="controlName" column="control_name"/>
+		
+		<result property="dataSource" column="data_source"/>
+		
+		<result property="needDs" column="need_ds"/>
+		
+		<result property="controlRes" column="control_res"/>
+		
+		<result property="userDefine" column="user_define"/>
+		
+		<result property="aftCode" column="aft_code"/>
+		
+		<result property="initCode" column="init_code"/>
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  control_html,
+		 
+		  control_name,
+		 
+		  data_source,
+		 
+		  need_ds,
+		 
+		  control_res,
+		 
+		  user_define,
+		 
+		  aft_code,
+		 
+		  init_code
+		 
+		) values  (
+		
+		  #{e.controlHtml}, 
+		 
+		  #{e.controlName}, 
+		 
+		  #{e.dataSource}, 
+		 
+		  #{e.needDs}, 
+		 
+		  #{e.controlRes}, 
+		 
+		  #{e.userDefine}, 
+		 
+		  #{e.aftCode}, 
+		 
+		  #{e.initCode} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.controlHtml != null">control_html=#{e.controlHtml},</if>
+			
+				<if test="e.controlName != null">control_name=#{e.controlName},</if>
+			
+				<if test="e.dataSource != null">data_source=#{e.dataSource},</if>
+			
+				<if test="e.needDs != null">need_ds=#{e.needDs},</if>
+			
+				<if test="e.controlRes != null">control_res=#{e.controlRes},</if>
+			
+				<if test="e.userDefine != null">user_define=#{e.userDefine},</if>
+			
+				<if test="e.aftCode != null">aft_code=#{e.aftCode},</if>
+			
+				<if test="e.initCode != null">init_code=#{e.initCode}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+</mapper>

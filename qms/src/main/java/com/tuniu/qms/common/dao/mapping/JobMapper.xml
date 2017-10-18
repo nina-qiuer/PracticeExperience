@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.JobMapper">
+	<insert id="add" parameterType="com.tuniu.qms.common.model.Job">
+		INSERT INTO uc_job (
+			<if test="id != null">id,</if>
+			<if test="name != null">name,</if>
+			<if test="addTime != null">addTime,</if>
+			delFlag
+		) VALUES (
+			<if test="id != null">#{id},</if>
+			<if test="name != null">#{name},</if>
+			<if test="addTime != null">#{addTime},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM uc_job WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.Job" flushCache="true" statementType="PREPARED">
+		UPDATE uc_job 
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultMap="jobMap">
+		SELECT * FROM uc_job WHERE id=#{id}
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.JobDto" resultMap="jobMap">
+		SELECT * FROM uc_job WHERE delFlag=0
+	</select>
+	
+	<resultMap type="com.tuniu.qms.common.model.Job" id="jobMap">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="addTime" property="addTime" />
+		<result column="updateTime" property="updateTime" />
+		<result column="delFlag" property="delFlag" />
+	</resultMap>
+
+    <select id="getJobIdByName" parameterType="java.lang.String" resultType="Integer">
+     
+       select id  from uc_job where name =#{jobName}
+    
+    </select>
+    
+    <select id="getJobByName" parameterType="java.lang.String" resultType="com.tuniu.qms.common.model.Job">
+        
+        select * from uc_job  where name =#{jobName} and delFlag = 0
+    
+    </select>
+
+</mapper>

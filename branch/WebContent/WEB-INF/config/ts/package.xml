@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="ts" extends="apply-default" namespace="/ts/action"> 
+		<action name="*-*" class="ts_action-{1}" method="{2}">
+			<result name="index">/WEB-INF/html/ts/index.jsp</result>
+		</action>
+	</package>
+</struts>

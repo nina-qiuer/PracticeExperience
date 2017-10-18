@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.CommonTypeMapper">
+	
+	<insert id="add" parameterType="com.tuniu.qms.common.model.CommonType">
+		INSERT INTO cm_type (
+			<if test="pid != null">pid,</if>
+			<if test="name != null">name,</if>
+			<if test="typeFlag != null">typeFlag,</if>
+			delFlag
+		) VALUES (
+			<if test="pid != null">#{pid},</if>
+			<if test="name != null">#{name},</if>
+			<if test="typeFlag != null">#{typeFlag},</if>
+			0
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.CommonType">
+		UPDATE cm_type 
+		<set>
+			<if test="name != null">name = #{name},</if>
+			<if test="typeFlag != null">typeFlag = #{typeFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from cm_type where id = #{id}
+	</delete>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.common.model.CommonType">
+		select * from cm_type where id = #{id}
+	</select>
+	
+	<sql id="myCondition">
+		<where>
+			delFlag = 0
+			<if test="pid != null">and pid = #{pid}</if>
+			<if test="name != null">and name = #{name}</if>
+			<if test="typeFlag != null">and typeFlag = #{typeFlag}</if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.CommonTypeDto" resultType="com.tuniu.qms.common.model.CommonType">
+		select id, pid, name, typeFlag
+		from cm_type
+		<include refid="myCondition"/>	
+	</select>
+</mapper>

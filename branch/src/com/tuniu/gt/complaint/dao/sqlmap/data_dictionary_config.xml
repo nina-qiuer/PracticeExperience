@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IDataDictionaryConfigMap">
+
+	<sql id="list">
+		ct_data_dictionary_config
+		<where>
+			del_flag = 0
+			<if test="father_id !=null">
+				and father_id = #{father_id}
+			</if>
+		</where>
+	</sql>
+
+	<select id="fetchList" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.DataDictionaryConfigEntity">
+		select * from
+		<include refid="list" />
+		order by sort,id
+	</select>
+
+	<select id="getDictionaryConfigLists" parameterType="Integer"
+		resultType="com.tuniu.gt.common.BaseEntity">
+		select id,name
+		from ct_data_dictionary_config
+		where
+		del_flag=0
+		and father_id=#{father_id}
+		order by
+		sort,id desc
+	</select>
+
+	<select id="getDictionaryConfigCount" parameterType="Map"
+		resultType="Integer">
+		select count(1) from
+		<include refid="list" />
+	</select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		<if test="e.name != null">name,</if>
+		<if test="e.father_id != null">father_id,</if>
+		<if test="e.add_id != null">add_id,</if>
+		<if test="e.can_delete != null">can_delete,</if>
+		<if test="e.sort != null">sort,</if>
+		add_time,
+		del_flag
+		) values (
+		<if test="e.name != null">#{e.name},</if>
+		<if test="e.father_id != null">#{e.father_id},</if>
+		<if test="e.add_id != null">#{e.add_id},</if>
+		<if test="e.can_delete != null">#{e.can_delete},</if>
+		<if test="e.sort != null">#{e.sort},</if>
+		CURRENT_TIMESTAMP(),
+		0
+		)
+	</insert>
+
+	<update id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.name != null">name=#{e.name},</if>
+			<if test="e.update_id != null">update_id=#{e.update_id},</if>
+			<if test="e.sort != null">sort=#{e.sort},</if>
+			<if test="e.del_flag != null">del_flag=#{e.del_flag},</if>
+			update_time=CURRENT_TIMESTAMP()
+		</set>
+		where id=#{e.id}
+	</update>
+
+	<select id="get" parameterType="map"
+		resultType="com.tuniu.gt.complaint.entity.DataDictionaryConfigEntity">
+		select * from ct_data_dictionary_config
+		<where>
+			<if test="id!=null and id != 0">id=#{id}</if>
+			and del_flag = 0
+		</where>
+		limit 1
+	</select>
+</mapper>

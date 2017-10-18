@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.satisfaction.dao.sqlmap.imap.IPreSaleSatisfactionMap">
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		order_id,
+		<if test="e.telCnt != null">tel_cnt,</if>
+		<if test="e.routeName != null">route_name,</if>
+		<if test="e.salerName != null">saler_name,</if>
+		<if test="e.salermanagerName != null">salermanager_name,</if>
+		<if test="e.orderType != null">order_type,</if>
+		<if test="e.startTime != null">start_time,</if>
+		<if test="e.backTime != null">back_time,</if>
+		<if test="e.contactId != null">contact_id,</if>
+		<if test="e.contactName != null">contact_name,</if>
+		<if test="e.contactTel != null">contact_tel,</if>
+		<if test="e.addTime != null">add_time,</if>
+		<if test="e.delFlag != null">del_flag,</if>
+		<if test="e.updateTime != null">update_time,</if>
+		<if test="e.commentStatus != null">comment_status,</if>
+		<if test="e.star_level !=null">star_level,</if>
+		pre_sale_satisfaction
+		) values (
+		#{e.orderId},
+		<if test="e.telCnt != null">#{e.telCnt},</if>
+		<if test="e.routeName != null">#{e.routeName},</if>
+		<if test="e.salerName != null">#{e.salerName},</if>
+		<if test="e.salermanagerName != null">#{e.salermanagerName},</if>
+		<if test="e.orderType != null">#{e.orderType},</if>
+		<if test="e.startTime != null">#{e.startTime},</if>
+		<if test="e.backTime != null">#{e.backTime},</if>
+		<if test="e.contactId != null">#{e.contactId},</if>
+		<if test="e.contactName != null">#{e.contactName},</if>
+		<if test="e.contactTel != null">#{e.contactTel},</if>
+		<if test="e.addTime != null">#{e.addTime},</if>
+		<if test="e.delFlag != null">#{e.delFlag},</if>
+		<if test="e.updateTime != null">#{e.updateTime},</if>
+		<if test="e.commentStatus != null">#{e.commentStatus},</if>
+		<if test="e.star_level !=null">#{e.star_level},</if>
+		#{e.preSaleSatisfaction}
+		)
+	</sql>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>1=1 
+			AND DATE_FORMAT(add_time, '%Y-%m') = #{yearMonth}
+			<if test="orderId != null and orderId != ''">
+				and order_id = #{orderId} 
+			</if>
+			<if test="salerName != null and salerName != ''">
+				and saler_name = #{salerName} 
+			</if>
+			<if test="salermanagerName != null and salermanagerName != ''">
+				and salermanager_name = #{salermanagerName} 
+			</if>
+			<if test="salerNames != null and salerNames != ''">
+				and saler_name in (${salerNames})
+			</if>
+			<if test="outDateBegin != null and outDateBegin != ''">
+				and start_time >= #{outDateBegin}
+			</if>
+			<if test="outDateEnd != null and outDateEnd != ''">
+			<![CDATA[
+				and start_time <= #{outDateEnd}
+				]]>
+			</if>
+			<if test="contactName != null and contactName != ''">
+				and contact_name = #{contactName}
+			</if>
+			<if test="updateTime != null and updateTime != ''">
+				and update_time = #{updateTime}
+			</if>
+			<if test="commentStatus != null and commentStatus != ''">
+				and comment_status = #{commentStatus}
+			</if>
+			<if test="dayNums != null and dayNums != ''">
+				and start_time = DATE_FORMAT(DATE_ADD(NOW(),INTERVAL #{dayNums} DAY),'%Y-%m-%d')
+			</if>
+			<if test="guestLevel != null and guestLevel != ''">
+				and star_level = #{guestLevel}
+			</if>
+		</where>
+		order by id desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+	
+	<select id="fetchListMap" parameterType="Map" resultMap="listResultMap">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="orderId" column="order_id" />
+
+		<result property="telCnt" column="tel_cnt" />
+		
+		<result property="routeName" column="route_name" />
+
+		<result property="salerName" column="saler_name" />
+
+		<result property="salermanagerName" column="salermanager_name" />
+
+		<result property="orderType" column="order_type" />
+		
+		<result property="startTime" column="start_time" />
+		
+		<result property="backTime" column="back_time" />
+		
+		<result property="contactId" column="contact_id" />
+		
+		<result property="contactName" column="contact_name" />
+
+		<result property="contactTel" column="contact_tel" />
+
+		<result property="addTime" column="add_time" />
+		
+		<result property="updateTime" column="update_time" />
+
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="commentStatus" column="comment_status" />
+		
+		<result property="preSaleSatisfaction" column="pre_sale_satisfaction" />
+
+
+	</resultMap>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.satisfaction.entity.PreSaleSatisfactionEntity">
+
+		<result property="orderId" column="order_id" />
+
+		<result property="telCnt" column="tel_cnt" />
+		
+		<result property="routeName" column="route_name" />
+
+		<result property="salerName" column="saler_name" />
+
+		<result property="salermanagerName" column="salermanager_name" />
+
+		<result property="orderType" column="order_type" />
+		
+		<result property="startTime" column="start_time" />
+		
+		<result property="backTime" column="back_time" />
+		
+		<result property="contactId" column="contact_id" />
+		
+		<result property="contactName" column="contact_name" />
+
+		<result property="contactTel" column="contact_tel" />
+
+		<result property="addTime" column="add_time" />
+		
+		<result property="updateTime" column="update_time" />
+
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="commentStatus" column="comment_status" />
+		
+		<result property="preSaleSatisfaction" column="pre_sale_satisfaction" />
+
+	</resultMap>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.orderId != null">order_id=#{e.orderId},</if>
+			<if test="e.telCnt != null">tel_cnt=#{e.telCnt},</if>
+			<if test="e.routeName != null">route_name=#{e.routeName},</if>
+			<if test="e.salerName != null">saler_name=#{e.salerName},</if>
+			<if test="e.salermanagerName != null">salermanager_name=#{e.salermanagerName},</if>
+			<if test="e.orderType != null">order_type=#{e.orderType},</if>
+			<if test="e.startTime != null">start_time=#{e.startTime},</if>
+			<if test="e.backTime != null">back_time=#{e.backTime},</if>
+			<if test="e.contactId != null">contact_id=#{e.contactId},</if>
+			<if test="e.contactName != null">contact_name=#{e.contactName},</if>
+			<if test="e.contactTel != null">contact_tel=#{e.contactTel},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			<if test="e.commentStatus != null">comment_status=#{e.commentStatus},</if>
+			<if test="e.preSaleSatisfaction != null">pre_sale_satisfaction=#{e.preSaleSatisfaction},</if>
+			<if test="e.star_level != null">star_level=#{e.star_level},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+		where order_id=#{e.orderId}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true"
+		statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	
+	<select id="getCountByOrderId" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) 
+		FROM ct_pre_sale_satisfaction 
+		WHERE order_id=#{orderId} and EXTRACT(YEAR_MONTH  FROM add_time)=EXTRACT(YEAR_MONTH  FROM NOW())
+	</select>
+	
+	<update id="updateOrderStatusByOrderId" parameterType="Map">
+  		update ct_pre_sale_satisfaction 
+  		set
+			order_status = #{orderStatus},
+			create_time = #{createTime}
+		where 
+			order_id = #{orderId}
+    </update>
+	
+	<update id="updateTelCountByOrderId" parameterType="Map">
+  		update ct_pre_sale_satisfaction 
+  		set
+			tel_count = #{telCount}
+		where 
+			order_id = #{orderId}
+    </update>
+	
+	<select id="getOrderIdById" parameterType="Integer"  resultType="Integer">
+		SELECT order_id from ct_pre_sale_satisfaction where id=#{id} limit 1
+	</select>
+	
+	<select id="getInfoByDept" parameterType="map" resultMap="listResultEntity">
+		<!-- select * from ct_pre_sale_satisfaction where saler_name in (select real_name from frm_user where dep_id=#{id } and del_flag=0); -->
+		SELECT a.* FROM ct_pre_sale_satisfaction a LEFT JOIN frm_user b ON a.saler_name=b.real_name WHERE b.dep_id=#{id } AND b.del_flag=0
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</select>
+</mapper>

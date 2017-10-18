@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    
+    <!-- 当Spring容器启动完成后执行下面的这个Bean, 进行系统初始化 -->
+    <bean class="com.tuniu.qms.common.init.StartInitListener"/>
+    
+    <bean id="mailSendTask" class="com.tuniu.qms.common.task.MailSendTask"/>
+    
+    <bean id="rtxRemindTask" class="com.tuniu.qms.common.task.RtxRemindTask"/>
+    
+    <bean id="dataSyncTask" class="com.tuniu.qms.common.task.DataSyncTask"/>
+    
+    <bean id="qsReportTask" class="com.tuniu.qms.qs.task.QsReportTask"/>
+    
+    <bean id="assignQcTask" class="com.tuniu.qms.qc.task.AssignQcTask"/>
+    
+    <bean id="jiraSyncTask" class="com.tuniu.qms.qc.task.JiraSyncTask"/>
+    
+    <bean id="productMonitor" class="com.tuniu.qms.qs.monitor.ProductMonitor"/>
+    
+    <bean id="orderMonitor" class="com.tuniu.qms.qs.monitor.OrderMonitor"/>
+    
+    <bean id="dataMonitor" class="com.tuniu.qms.qs.monitor.DataMonitor"/>
+    
+    <bean id="qualityTask" class="com.tuniu.qms.qc.task.QualityTask"/>
+    
+    <bean id="expirationTimeTask" class="com.tuniu.qms.qc.task.ExpirationTimeTask"/>
+
+   <bean id="depAllocationTask" class="com.tuniu.qms.qc.task.DepAllocationTask"/>
+   
+   <bean id="operateQcSyncTask" class="com.tuniu.qms.qc.task.OperateQcSyncTask"/>
+   
+   <bean id="qualityCostTask" class="com.tuniu.qms.qs.task.QualityCostTask"/>
+   
+   <bean id="scanOfflineRouteTask" class="com.tuniu.qms.qs.task.ScanOfflineRouteTask"/>
+   
+   <bean id="punishBillSectionedTask" class="com.tuniu.qms.qc.task.PunishBillSectionedTask"/>
+   
+   <bean id="qcBillCancelTask" class="com.tuniu.qms.qc.task.QcBillCancelTask"/>
+   
+   <bean id="cmpImproveTask" class="com.tuniu.qms.qs.task.CmpImproveTask"></bean>
+   
+</beans>

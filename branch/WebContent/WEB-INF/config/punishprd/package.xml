@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="punishprd" extends="apply-default" namespace="/punishprd/action"> 
+		<action name="*-*" class="punishprd_action-{1}" method="{2}">
+			<result name="punishprd_list">/WEB-INF/html/punishprd/punishprd_list.jsp</result>
+			<result name="punishprd_lowsatisfy_detail">/WEB-INF/html/punishprd/punishprd_lowsatisfy_detail.jsp</result>
+			<result name="punishprd_lowquality_detail">/WEB-INF/html/punishprd/punishprd_lowquality_detail.jsp</result>
+		</action>
+	</package>
+</struts>

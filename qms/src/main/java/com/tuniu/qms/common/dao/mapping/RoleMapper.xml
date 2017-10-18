@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.RoleMapper">
+	<insert id="add" parameterType="com.tuniu.qms.common.model.Role">
+		INSERT INTO cm_role (
+			<if test="name != null">name,</if>
+			<if test="type != null">type,</if>
+			<if test="addPerson != null">addPerson,</if>
+			delFlag
+		) VALUES (
+			<if test="name != null">#{name},</if>
+			<if test="type != null">#{type},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM cm_role WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.Role" flushCache="true" statementType="PREPARED">
+		UPDATE cm_role 
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="type != null">type=#{type},</if>
+			<if test="updatePerson != null">updatePerson=#{updatePerson},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultMap="roleMap">
+		SELECT * FROM cm_role WHERE id=#{id}
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.RoleDto" resultMap="roleMap">
+		SELECT * FROM cm_role 
+		<where>delFlag=0
+			<if test="name != null">AND name=#{name}</if>
+		</where>
+	</select>
+	
+	<resultMap type="com.tuniu.qms.common.model.Role" id="roleMap">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="type" property="type" />
+		<result column="addPerson" property="addPerson" />
+		<result column="addTime" property="addTime" />
+		<result column="updatePerson" property="updatePerson" />
+		<result column="updateTime" property="updateTime" />
+		<result column="delFlag" property="delFlag" />
+	</resultMap>
+	
+	<delete id="deleteResources" parameterType="Integer">
+		DELETE FROM cm_role_resource_rel WHERE roleId=#{id}
+	</delete>
+	
+	<insert id="addResources" useGeneratedKeys="true" parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		INSERT INTO cm_role_resource_rel (roleId, resourceId) VALUES 
+		<foreach collection="list" item="e" index="index" separator=",">
+        (
+			#{e.roleId},
+			#{e.resId}
+        )
+        </foreach>
+    </insert>
+    
+</mapper>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.ProductMapper">
+	<insert id="addPrdSyncTask" parameterType="Integer">
+		INSERT INTO cm_product_sync_task (prdId) VALUES (#{prdId})
+	</insert>
+	
+	
+	<insert id="addAttachPrdSyncTask"  parameterType="java.util.List" >
+		insert into cm_product_sync_task (
+			prdId
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.prdId}
+        )
+        </foreach>
+    </insert>
+	
+	<select id="listPrdSyncTask" resultType="Integer">
+	<![CDATA[
+		SELECT DISTINCT prdId FROM cm_product_sync_task WHERE failTimes < 3
+	]]>
+	</select>
+	
+	<update id="increFailTimes" parameterType="Integer">
+		UPDATE cm_product_sync_task set failTimes=(failTimes+1) WHERE prdId=#{prdId} AND failTimes &lt; 3
+	</update>
+	
+	<delete id="deletePrdSyncTask" parameterType="Integer">
+		DELETE FROM cm_product_sync_task WHERE prdId=#{prdId}
+	</delete>
+	
+	<insert id="add" parameterType="com.tuniu.qms.common.model.Product" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO cm_product (
+			<if test="id != null">id,</if>
+			<if test="prdName != null">prdName,</if>
+			<if test="cateId != null">cateId,</if>
+			<if test="cateName != null">cateName,</if>
+			<if test="subCateId != null">subCateId,</if>
+			<if test="subCateName != null">subCateName,</if>
+			<if test="brandId != null">brandId,</if>
+			<if test="brandName != null">brandName,</if>
+			<if test="productLineId != null">productLineId,</if>
+			<if test="prdLineDestName != null">prdLineDestName,</if>
+			<if test="destCateId != null">destCateId,</if>
+			<if test="destCateName != null">destCateName,</if>
+			<if test="businessUnitId != null">businessUnitId,</if>
+			<if test="businessUnitName != null">businessUnitName,</if>
+			<if test="prdDepId != null">prdDepId,</if>
+			<if test="prdDepName != null">prdDepName,</if>
+			<if test="prdTeamId != null">prdTeamId,</if>
+			<if test="prdTeamName != null">prdTeamName,</if>
+			<if test="prdManagerId != null">prdManagerId,</if>
+			<if test="prdManager != null">prdManager,</if>
+			<if test="producterId != null">producterId,</if>
+			<if test="producter != null">producter,</if>
+			delFlag
+		) VALUES (
+			<if test="id != null">#{id},</if>
+			<if test="prdName != null">#{prdName},</if>
+			<if test="cateId != null">#{cateId},</if>
+			<if test="cateName != null">#{cateName},</if>
+			<if test="subCateId != null">#{subCateId},</if>
+			<if test="subCateName != null">#{subCateName},</if>
+			<if test="brandId != null">#{brandId},</if>
+			<if test="brandName != null">#{brandName},</if>
+			<if test="productLineId != null">#{productLineId},</if>
+			<if test="prdLineDestName != null">#{prdLineDestName},</if>
+			<if test="destCateId != null">#{destCateId},</if>
+			<if test="destCateName != null">#{destCateName},</if>
+			<if test="businessUnitId != null">#{businessUnitId},</if>
+			<if test="businessUnitName != null">#{businessUnitName},</if>
+			<if test="prdDepId != null">#{prdDepId},</if>
+			<if test="prdDepName != null">#{prdDepName},</if>
+			<if test="prdTeamId != null">#{prdTeamId},</if>
+			<if test="prdTeamName != null">#{prdTeamName},</if>
+			<if test="prdManagerId != null">#{prdManagerId},</if>
+			<if test="prdManager != null">#{prdManager},</if>
+			<if test="producterId != null">#{producterId},</if>
+			<if test="producter != null">#{producter},</if>
+			0
+		)ON DUPLICATE KEY UPDATE
+			<if test="prdName != null">prdName=VALUES(prdName),</if>
+			<if test="cateId != null">cateId=VALUES(cateId),</if>
+			<if test="cateName != null">cateName=VALUES(cateName),</if>
+			<if test="subCateId != null">subCateId=VALUES(subCateId),</if>
+			<if test="subCateName != null">subCateName=VALUES(subCateName),</if>
+			<if test="brandId != null">brandId=VALUES(brandId),</if>
+			<if test="brandName != null">brandName=VALUES(brandName),</if>
+			<if test="productLineId != null">productLineId=VALUES(productLineId),</if>
+			<if test="prdLineDestName != null">prdLineDestName=VALUES(prdLineDestName),</if>
+			<if test="destCateId != null">destCateId=VALUES(destCateId),</if>
+			<if test="destCateName != null">destCateName=VALUES(destCateName),</if>
+			<if test="businessUnitId != null">businessUnitId=VALUES(businessUnitId),</if>
+			<if test="businessUnitName != null">businessUnitName=VALUES(businessUnitName),</if>
+			<if test="prdDepId != null">prdDepId=VALUES(prdDepId),</if>
+			<if test="prdDepName != null">prdDepName=VALUES(prdDepName),</if>
+			<if test="prdTeamId != null">prdTeamId=VALUES(prdTeamId),</if>
+			<if test="prdTeamName != null">prdTeamName=VALUES(prdTeamName),</if>
+			<if test="prdManagerId != null">prdManagerId=VALUES(prdManagerId),</if>
+			<if test="prdManager != null">prdManager=VALUES(prdManager),</if>
+			<if test="producterId != null">producterId=VALUES(producterId),</if>
+			<if test="producter != null">producter=VALUES(producter),</if>
+			 delFlag = VALUES(delFlag)       	
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM cm_product WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.Product" flushCache="true" statementType="PREPARED">
+		UPDATE cm_product 
+		<set>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.common.model.Product">
+		SELECT * FROM cm_product WHERE id=#{id}
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.ProductDto" resultType="com.tuniu.qms.common.model.Product">
+		SELECT * FROM cm_product 
+		WHERE id IN (${idStr})
+	</select>
+
+</mapper>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="wo" extends="apply-default" namespace="/wo/action"> 
+		<action name="*-*" class="wo_action-{1}" method="{2}">
+			<result name="index">/WEB-INF/html/wo/index.jsp</result>
+			<result name="config_list">/WEB-INF/html/wo/config_list.jsp</result>
+			<result name="config_form">/WEB-INF/html/wo/config_form.jsp</result>
+			<result name="work_order_list">/WEB-INF/html/wo/work_order_list.jsp</result>
+			<result name="work_order_form">/WEB-INF/html/wo/work_order_form.jsp</result>
+			<result name="work_order_deal_list">/WEB-INF/html/wo/work_order_deal_list.jsp</result>
+			<result name="work_order_deal_form">/WEB-INF/html/wo/work_order_deal_form.jsp</result>
+			<result name="work_order_info">/WEB-INF/html/wo/work_order_info.jsp</result>
+			<result name="follow_time">/WEB-INF/html/wo/work_order_follow_time.jsp</result>
+			<result name="work_order_report">/WEB-INF/html/wo/work_order_report.jsp</result>
+		</action>
+	</package>
+</struts>

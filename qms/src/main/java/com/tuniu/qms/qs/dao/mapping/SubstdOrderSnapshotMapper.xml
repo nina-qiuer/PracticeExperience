@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.SubstdOrderSnapshotMapper">
+	
+	<delete id="deleteAllOrdExts">
+		DELETE FROM qs_order_bill_ext
+	</delete>
+	
+	<insert id="addOrdExts" parameterType="java.util.List">
+		insert into qs_order_bill_ext (
+			id,
+			prdId,
+			prdName,
+			destCate,
+			businessUnit,
+			prdDep,
+			prdTeam,
+			prdManagerId,
+			prdManager,
+			producterId,
+			producter,
+			customerManagerId,
+			customerManager,
+			customerId,
+			customer,
+			departDate,
+			noticeSendDate
+		) values 
+        <foreach collection="list" item="e" separator=",">
+        (
+            #{e.id},
+			#{e.prdId},
+			#{e.prdName},
+			#{e.destCate},
+			#{e.businessUnit},
+			#{e.prdDep},
+			#{e.prdTeam},
+			#{e.prdManagerId},
+			#{e.prdManager},
+			#{e.producterId},
+			#{e.producter},
+			#{e.customerManagerId},
+			#{e.customerManager},
+			#{e.customerId},
+			#{e.customer},
+			#{e.departDate},
+			#{e.noticeSendDate}
+        )
+        </foreach>
+    </insert>
+	
+	<select id="listFromOrderExt" parameterType="Map" resultType="com.tuniu.qms.qs.model.SubstdOrderSnapshot">
+		SELECT id AS ordId, prdId, prdName, destCate, businessUnit, prdDep, prdTeam, prdManagerId, prdManager, producterId, producter, 
+			   customerManagerId, customerManager, customerId, customer, departDate, noticeSendDate
+		FROM qs_order_bill_ext LIMIT #{dataLimitStart}, #{pageSize}
+	</select>
+	
+	<insert id="addBatch" parameterType="java.util.List">
+		insert into qs_substd_order_snapshot (
+			ordId, 
+			prdId, 
+			prdName, 
+			destCate, 
+			businessUnit, 
+			prdDep, 
+			prdTeam, 
+			prdManagerId, 
+			prdManager, 
+			producterId, 
+			producter, 
+			customerManagerId, 
+			customerManager, 
+			customerId, 
+			customer, 
+			statisticDate, 
+			departDate, 
+			noticeSendDate, 
+			timeOutDays
+		) values 
+        <foreach collection="list" item="e" index="index" separator="," >
+        (
+            #{e.ordId},
+            #{e.prdId},
+			#{e.prdName},
+			#{e.destCate},
+			#{e.businessUnit},
+			#{e.prdDep},
+			#{e.prdTeam},
+			#{e.prdManagerId},
+			#{e.prdManager},
+			#{e.producterId},
+			#{e.producter},
+			#{e.customerManagerId},
+			#{e.customerManager},
+			#{e.customerId},
+			#{e.customer},
+			#{e.statisticDate},
+			#{e.departDate},
+			#{e.noticeSendDate},
+			#{e.timeOutDays}
+        )
+        </foreach>
+    </insert>
+    
+    <insert id="addDepOrdNumSnapshot" parameterType="java.sql.Date" statementType="PREPARED">
+		INSERT INTO qs_dep_ordnum_snapshot (businessUnit, prdDep, prdTeam, statisticDate, noticeTimeOutOrdNum, signedOrdNum)
+		SELECT t1.businessUnit, t1.prdDep, t1.prdTeam, #{statisticDate}, IFNULL(t2.noticeTimeOutOrdNum, 0) AS noticeTimeOutOrdNum, t1.signedOrdNum FROM 
+		(SELECT businessUnit, prdDep, prdTeam, COUNT(1) AS signedOrdNum FROM qs_order_bill_ext GROUP BY businessUnit, prdDep, prdTeam) t1 LEFT JOIN 
+		(SELECT businessUnit, prdDep, prdTeam, COUNT(1) AS noticeTimeOutOrdNum FROM qs_substd_order_snapshot WHERE statisticDate=#{statisticDate} AND timeOutDays>0 GROUP BY businessUnit, prdDep, prdTeam) t2
+		ON t1.businessUnit=t2.businessUnit AND t1.prdDep=t2.prdDep AND t1.prdTeam=t2.prdTeam
+    </insert>
+    
+    <delete id="deleteByStatisticDate" parameterType="java.sql.Date">
+		DELETE FROM qs_substd_order_snapshot WHERE statisticDate=#{statisticDate}
+	</delete>
+	
+	<delete id="deleteDepOrdNumSnapshot" parameterType="java.sql.Date">
+		DELETE FROM qs_dep_ordnum_snapshot WHERE statisticDate=#{statisticDate}
+	</delete>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.SubstdOrderSnapshot">
+		SELECT * FROM qs_substd_order_snapshot WHERE id=#{id}
+	</select>
+	
+	<sql id="whereSql">
+		<where>1=1
+			<if test="destCate != null and destCate != '全部'">AND destCate=#{destCate}</if>
+			<if test="statisticDate != null and statisticDate != ''">AND statisticDate=#{statisticDate}</if>
+			<if test="ordId != null and ordId != ''">AND ordId=#{ordId}</if>
+			<if test="prdId != null and prdId != ''">AND prdId=#{prdId}</if>
+			<if test="businessUnit != null and businessUnit != ''">AND businessUnit LIKE #{businessUnit}</if>
+			<if test="prdDep != null and prdDep != ''">AND prdDep LIKE #{prdDep}</if>
+			<if test="prdTeam != null and prdTeam != ''">AND prdTeam LIKE #{prdTeam}</if>
+			<if test="prdManager != null and prdManager != ''">AND prdManager LIKE #{prdManager}</if>
+			<if test="producter != null and producter != ''">AND producter LIKE #{producter}</if>
+			<if test="customerManager != null and customerManager != ''">AND customerManager LIKE #{customerManager}</if>
+			<if test="customer != null and customer != ''">AND customer LIKE #{customer}</if>
+			<if test="departDate != null and departDate != ''">AND departDate=#{departDate}</if>
+		</where>
+	</sql>
+	
+	<select id="count" parameterType="com.tuniu.qms.qs.dto.SubstdOrderSnapshotDto" resultType="Integer">
+		SELECT COUNT(1) FROM qs_substd_order_snapshot
+		<include refid="whereSql"/>
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.SubstdOrderSnapshotDto" resultType="com.tuniu.qms.qs.model.SubstdOrderSnapshot">
+		SELECT * FROM qs_substd_order_snapshot 
+		<include refid="whereSql"/>
+		ORDER BY timeOutDays DESC
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="getBusinessUnits" parameterType="com.tuniu.qms.qs.dto.SubstdOrderSnapshotDto" resultType="String">
+		SELECT DISTINCT businessUnit FROM qs_dep_ordnum_snapshot 
+		<if test="statisticDate!=null and statisticDate!=''">WHERE statisticDate=#{statisticDate}</if>
+	</select>
+	
+	<select id="getPrdDeps" parameterType="com.tuniu.qms.qs.dto.SubstdOrderSnapshotDto" resultType="String">
+		SELECT DISTINCT prdDep FROM qs_dep_ordnum_snapshot WHERE businessUnit=#{businessUnit}
+		<if test="statisticDate!=null and statisticDate!=''">AND statisticDate=#{statisticDate}</if>
+	</select>
+	
+	<select id="statDepNoticeTimeOutRate" parameterType="com.tuniu.qms.qs.dto.SubstdOrderSnapshotDto" resultType="Map">
+		<if test="businessUnit == null or businessUnit == ''">
+			SELECT businessUnit AS depName,SUM(noticeTimeOutOrdNum) AS noticeTimeOutOrdNumTotal,SUM(signedOrdNum) AS signedOrdNumTotal 
+			FROM qs_dep_ordnum_snapshot 
+			WHERE statisticDate=#{statisticDate} AND noticeTimeOutOrdNum > 0 GROUP BY businessUnit
+			ORDER BY noticeTimeOutOrdNumTotal DESC
+		</if>
+		<if test="businessUnit != null and businessUnit != ''">
+			<if test="prdDep == null or prdDep == ''">
+				SELECT prdDep AS depName,SUM(noticeTimeOutOrdNum) AS noticeTimeOutOrdNumTotal,SUM(signedOrdNum) AS signedOrdNumTotal 
+				FROM qs_dep_ordnum_snapshot 
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND noticeTimeOutOrdNum > 0 GROUP BY prdDep
+				ORDER BY noticeTimeOutOrdNumTotal DESC
+			</if>
+			<if test="prdDep != null and prdDep != ''">
+				SELECT prdTeam AS depName,SUM(noticeTimeOutOrdNum) AS noticeTimeOutOrdNumTotal,SUM(signedOrdNum) AS signedOrdNumTotal 
+				FROM qs_dep_ordnum_snapshot 
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND prdDep=#{prdDep} 
+				AND noticeTimeOutOrdNum > 0 GROUP BY prdTeam ORDER BY noticeTimeOutOrdNumTotal DESC
+			</if>
+		</if>
+	</select>
+	
+	<select id="statDateNoticeTimeOutRate" parameterType="com.tuniu.qms.qs.dto.SubstdProductSnapshotDto" resultType="Map">
+		SELECT statisticDate,SUM(noticeTimeOutOrdNum) AS noticeTimeOutOrdNumTotal,SUM(signedOrdNum) AS signedOrdNumTotal 
+		FROM qs_dep_ordnum_snapshot WHERE #{statisticDateBgn} &lt;= statisticDate AND statisticDate &lt;= #{statisticDateEnd} 
+		<if test="businessUnit != null and businessUnit != ''">
+			AND businessUnit=#{businessUnit} 
+			<if test="prdDep != null and prdDep != ''">
+				AND prdDep=#{prdDep} 
+			</if>
+		</if>
+		AND noticeTimeOutOrdNum > 0 GROUP BY statisticDate
+	</select>
+	
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qc.dao.QcTypeMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcType">
+		INSERT INTO qc_qc_type (
+			<if test="pid != null">pid,</if>
+			<if test="name != null">name,</if>
+			delFlag
+		) VALUES (
+			<if test="pid != null">#{pid},</if>
+			<if test="name != null">#{name},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		UPDATE qc_qc_type SET delFlag=1 WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcType" flushCache="true" statementType="PREPARED">
+		UPDATE qc_qc_type 
+		<set>
+			<if test="name != null">name=#{name},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcType">
+		SELECT * FROM qc_qc_type WHERE id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QcTypeDto" resultType="com.tuniu.qms.qc.model.QcType">
+		SELECT * FROM qc_qc_type WHERE delFlag = 0
+	</select>
+	
+	<select id="getQtByFullName" parameterType="com.tuniu.qms.qc.dto.QcTypeDto" resultType="com.tuniu.qms.qc.model.QcType">
+	   
+	   select * from qc_qc_type where delFlag =0 and name =#{qtName} and  pid=#{pid} limit 1
+	
+	</select>
+	
+	<select id="getTypeName" parameterType="java.lang.String" resultType="com.tuniu.qms.qc.model.QcType">
+	 
+	    select * from qc_qc_type where name =#{name} and delFlag =0  limit 1
+	    
+	</select>
+	
+	<select id="getQcTypeCount" parameterType="Integer" resultType="Integer">
+	   select count(1) from qc_qc_type where pid = #{id} and delFlag = 0
+	</select>
+	
+	<select id="getQcTypeByName" parameterType="java.lang.String" resultType="com.tuniu.qms.qc.model.QcType">
+	
+	  select id ,name from qc_qc_type where pid = (select id from qc_qc_type where name=#{name} and delFlag =0) and delFlag =0
+	</select>
+	
+</mapper>

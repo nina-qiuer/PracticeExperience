@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IAgencyCommitMapper">
+   
+   
+    <!-- 聊天记录字段-->
+	<resultMap type="com.tuniu.gt.complaint.entity.AgencyToChatEntity" id="agencyToChat">
+		<result property="complaintId" column="complaint_id" />
+		<result property="orderId" column="order_id" />
+		<result property="commitTime" column="comm_time" />
+		<result property="userIp" column="user_ip" />
+		<result property="dealName" column="deal_name" />
+		<result property="deal" column="deal" />
+		<result property="descript" column="descript" />
+		<result property="statusNum" column="status" />
+		<result property="statusName" column="status_name" />
+		<result property="typeNum" column="type" />
+		<result property="typeName" column="type_name" />
+		<result property="agencyName" column="agency_name" />
+		<result property="agencyId" column="agency_id" />
+		<result property="flag" column="flag" />
+	</resultMap>
+	
+	<resultMap type="com.tuniu.gt.complaint.entity.AttachEntity" id="attachBean">
+		<result property="path" column="path" />
+		<result property="roomId" column="roomId" />
+	</resultMap>
+	
+	<resultMap type="com.tuniu.gt.complaint.entity.AgencyDetailEntity" id="complaintDetail">
+		<result property="complaintId" column="complaint_id" />
+		<result property="orderId" column="order_id" />
+		<result property="guestNum" column="guest_num" />
+		<result property="route" column="route" />
+		<result property="routeId" column="route_id" />
+		<result property="startTime" column="start_time" />
+		<result property="agencyId" column="agency_id" />
+		<result property="agencyName" column="agency_name" />
+		<result property="productLeader" column="product_leader" />
+		<result property="startCity" column="start_city" />
+		<result property="statusName" column="status_name" />
+		<result property="status" column="status" />
+		<result property="typeName" column="type_name" />
+		<result property="type" column="type" />
+		<result property="supplierTotal" column="supplier_total" />
+		<result property="addTime" column="add_time" />
+		<result property="auditFlag" column="audit_flag" />
+		<result property="audit_Flag_Name" column="audit_flag_name" />
+		<result property="salerId" column="deal" />
+		<result property="salerName" column="real_name" />
+		<result property="mobile" column="mobile" />
+		<result property="tel" column="tel" />
+		<result property="extension" column="extension" />
+		<result property="confirmState" column="confirm_state" />
+	</resultMap>
+	
+	
+	<select id="queryChatDetail" parameterType="java.util.Map"  resultMap="agencyToChat">
+			
+			SELECT
+				  id,
+				  complaint_id,
+				  order_id,
+				  agency_name,
+				  agency_id,
+				  user_ip,
+				  deal_name,
+				  descript,
+				  status_name,
+				  type_name,
+				  flag,
+				  roomId,
+				  DATE_FORMAT(comm_time,'%Y-%m-%d %H:%i:%s')  AS comm_time 
+				  FROM ct_chat_to_agency
+				 <!--  where complaint_id = #{complaintId} -->
+				  where roomId =#{roomId}
+				  ORDER BY comm_time
+		
+	</select>
+	
+	
+	<select id="queryMaxChat" parameterType="java.util.Map" resultMap="agencyToChat">
+	   
+			SELECT 
+				  complaint_id,
+				  order_id,
+				  agency_name,
+				  agency_id,
+				  deal_name,
+				  deal,
+				  status_name,
+				  status,
+				  type,
+				  type_name,
+				  roomId
+				  FROM ct_chat_to_agency 
+				  WHERE flag=#{flag} AND
+				   complaint_id = #{complaintId}  
+				   <if test="roomId != null and roomId !=''">
+				    AND roomId=#{roomId}
+				    </if>
+				  AND comm_time= (
+				  SELECT MAX(comm_time) 
+				  FROM ct_chat_to_agency WHERE flag=#{flag} 
+				   and complaint_id = #{complaintId} 
+				  <if test="roomId != null and roomId !=''">
+				    AND roomId=#{roomId}
+				    </if>
+				    ) 
+	                limit 1
+	</select>
+	
+	
+	
+	<insert id="saveCommitDetail" parameterType="java.util.Map">
+	
+	   insert into ct_chat_to_agency
+	   (
+		   complaint_id,
+		   order_id,
+		   agency_name,
+		   agency_id,
+		   user_ip,
+		   deal_name,
+		   deal,
+		   descript,
+		   status,
+		   status_name,
+		   type,
+		   type_name,
+		   flag,
+		   comm_time,
+		   roomId
+	   
+	   )values(
+	   
+	      #{complaintId},
+	      #{orderId},
+	      #{agencyName},
+	      #{agencyId},
+	      #{userIp},
+	      #{userName},
+	      #{userId},
+		  #{commitDetail},
+		  #{statusNum},
+		  #{statusName},
+		  #{typeNum},
+		  #{typeName},
+		  #{flag},
+		  CURRENT_TIMESTAMP() ,
+		  #{roomId}
+	   )
+	
+	</insert>
+	
+	<select id="queryComplaintDetail" parameterType="java.util.Map" resultMap="complaintDetail">
+	 	SELECT cf.*,fu.real_name,fu.tel,fu.mobile,fu.extension  
+	 	 FROM (
+	   		  SELECT  
+				 ct.id AS complaint_id,
+				 ct.order_id,
+				 ct.guest_num,
+				 ct.route_id,
+				 ct.route,
+				 DATE_FORMAT(ct.start_time,'%Y-%m-%d %H:%i:%s')  AS start_time, 
+				 ct.product_leader,
+				 ct.start_city,
+				 cp.confirm_state,
+				 ch.status_name,
+				 ch.status,
+				 ch.deal,
+				 ch.type,
+				 ch.type_name,
+				 ch.agency_id,
+				 ch.agency_name,
+				 IFNULL(cp.number ,0) AS supplier_total,
+				 DATE_FORMAT(cs.add_time,'%Y-%m-%d %H:%i:%s')  AS add_time, 
+				 cs.audit_flag,
+				 cs.audit_flag_name
+				 FROM ct_complaint ct
+				 LEFT JOIN (SELECT 
+							  complaint_id,
+							  order_id,
+							  agency_name,
+							  agency_id,
+							  deal,
+							  deal_name,
+							  status_name,
+							  STATUS,
+							  TYPE,
+							  type_name
+							  FROM ct_chat_to_agency 
+							  WHERE flag=1 AND complaint_id = #{complaintId} and roomId =#{roomId}
+							  AND comm_time= (
+							  SELECT MAX(comm_time) 
+							  FROM ct_chat_to_agency WHERE flag=1 AND complaint_id= #{complaintId} and roomId =#{roomId})) ch 
+							  ON ct.id =ch.complaint_id AND ct.order_id =ch.order_id
+				 LEFT JOIN ( SELECT 
+							add_time ,
+							audit_flag,
+							 (CASE audit_flag WHEN -1 THEN '无需审核' WHEN 0 THEN '待审核'  WHEN 1 THEN '已初审'  WHEN 2 THEN '已复审一'  WHEN 3 THEN '已复审二'  WHEN 4 THEN '通过审核' WHEN 5 THEN '审核不通过' END) audit_flag_name,
+							complaint_id,
+							order_id 
+							FROM ct_share_solution  
+							WHERE  complaint_id = #{complaintId} AND del_flag = 1 ORDER BY update_time DESC LIMIT 0,1)cs
+				ON ct.id =cs.complaint_id AND ct.order_id =cs.order_id
+				LEFT JOIN ct_support_share cp  
+				ON
+				cp.complaint_id = ct.id AND cp.code = #{agencyId} and cp.del_flag =1
+			    WHERE ct.id = #{complaintId} and ct.del_flag = 0
+				)cf
+			    LEFT JOIN frm_user fu
+			     ON cf.deal = fu.id	
+	
+	</select>	 
+	
+    <select id="queryUserName" parameterType="int" resultType="java.lang.String">
+        select user_name as userName  from frm_user where id=#{deal}
+    </select>
+	
+</mapper>

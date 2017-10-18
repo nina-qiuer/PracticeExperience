@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.DevRespBillMapper">
+
+  <resultMap type="com.tuniu.qms.qc.model.DevRespBill" id="devRespMap">
+	
+	     <result property="id" column="id"  />
+	     <result property="devId" column="devId"  />
+	     <result property="respPersonId" column="respPersonId"  />
+	     <result property="respPersonName" column="respPersonName"  />
+	     <result property="depId" column="depId"  />
+	     <result property="jobId" column="jobId"  /> 
+	      <result property="depName" column="depName"  />
+	     <result property="jobName" column="jobName"  /> 
+	     <result property="scoreValue" column="score_value"  />
+	     <result property="fineAmount" column="fine_amount"  />
+	     <result property="impPersonId" column="impPersonId"  />
+	     <result property="impPersonName" column="impPersonName"  />
+	  	 <result property="addPerson" column="addPerson"  />
+	  	 <result property="addTime" column="addTime"  />
+	  	 <result property="updatePerson" column="updatePerson"  />
+	  	 <result property="updateTime" column="updateTime"  />
+	  	 <result property="delFlag" column="delFlag"  />
+	</resultMap>
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.DevRespBill">
+		INSERT INTO qc_dev_resp_bill (
+			<if test="devId != null">devId,</if>
+			<if test="respPersonId != null">respPersonId,</if>
+			<if test="respPersonName != null">respPersonName,</if>
+			<if test="depId != null">depId,</if>
+			<if test="jobId != null">jobId,</if>
+			<if test="impPersonId != null">impPersonId,</if>
+			<if test="impPersonName != null">impPersonName,</if>
+			<if test="respReason != null">respReason,</if>	
+			<if test="addPerson != null">addPerson,</if>
+			addTime,
+			<if test="updatePerson != null">updatePerson,</if>
+			updateTime,
+			delFlag
+		) VALUES (
+			<if test="devId != null">#{devId},</if>
+			<if test="respPersonId != null">#{respPersonId},</if>
+			<if test="respPersonName != null">#{respPersonName},</if>
+			<if test="depId != null">#{depId},</if>
+			<if test="jobId != null">#{jobId},</if>
+			<if test="impPersonId != null">#{impPersonId},</if>
+			<if test="impPersonName != null">#{impPersonName},</if>
+			<if test="respReason != null">#{respReason},</if>	
+			<if test="addPerson != null">#{addPerson},</if>
+			 CURRENT_TIMESTAMP() ,
+			<if test="updatePerson != null">#{updatePerson},</if>
+			 CURRENT_TIMESTAMP() ,
+			0
+		)
+	</insert>
+	
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_dev_resp_bill WHERE id=#{id}
+	</delete>
+	
+	
+	<sql id="listSql">
+		SELECT qd.*, dep.name as depName,job.name as jobName from  qc_dev_resp_bill qd 
+		LEFT JOIN uc_department  dep
+			ON qd.depId = dep.id and dep.delFlag =0
+			LEFT JOIN uc_job job  
+			ON qd.jobId= job.id and job.delFlag =0
+		<where>
+			qd.delFlag=0 
+			<if test="id != null and id!=''">AND qd.id=#{id}</if>
+			<if test="devId != null and devId!=''">AND qd.devId=#{devId}</if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.DevRespBillDto" resultMap="devRespMap">
+		<include refid="listSql"/>
+		ORDER BY qd.id 
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.DevRespBillDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+		
+	</select>
+	
+	<select id="getDevRespIsExist" parameterType="com.tuniu.qms.qc.model.DevRespBill" resultType="Integer">
+	
+	    select count(1) from qc_dev_resp_bill where devId =#{devId} and respPersonId =#{respPersonId}
+	     
+	</select>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.DevRespBill">
+	
+		SELECT qd.*, dep.name as depName,job.name as jobName from  qc_dev_resp_bill qd 
+		LEFT JOIN uc_department  dep
+			ON qd.depId = dep.id and dep.delFlag =0
+			LEFT JOIN uc_job job  
+			ON qd.jobId= job.id and job.delFlag =0
+			where qd.id =#{id} and qd.delFlag =0
+	</select>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.DevRespBill" >
+		UPDATE qc_dev_resp_bill 
+		<set>
+			<if test="respPersonId != null">respPersonId = #{respPersonId},</if>
+			<if test="respPersonName != null">respPersonName = #{respPersonName},</if>
+			<if test="impPersonId != null">impPersonId = #{impPersonId},</if>
+			<if test="impPersonName != null">impPersonName = #{impPersonName},</if>
+			<if test="depId != null">depId = #{depId},</if>
+			<if test="jobId != null">jobId = #{jobId},</if>
+			<if test="respReason != null">respReason =#{respReason},</if>	
+			<if test="updatePerson != null">updatePerson =#{updatePerson},</if>
+			updateTime = CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<delete id="deleteDevRespBill" parameterType="Integer">
+	   
+	     delete from qc_dev_resp_bill  where devId =#{devId}
+	   
+	</delete>
+</mapper>

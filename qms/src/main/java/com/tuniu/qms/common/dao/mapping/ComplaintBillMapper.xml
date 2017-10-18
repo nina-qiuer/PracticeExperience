@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.ComplaintBillMapper">
+	
+	<insert id="addCmpSyncTasks">
+		INSERT INTO cm_complaint_sync_task (cmpId) 
+		SELECT id AS cmpId FROM cm_complaint_bill 
+		WHERE state != 4 and state !=9
+	</insert>
+	
+	<insert id="addCmpSyncTask" parameterType="Integer">
+		INSERT INTO cm_complaint_sync_task (cmpId) 
+		VALUES (#{cmpId})
+	</insert>
+	
+	<select id="listCmpSyncTask" resultType="com.tuniu.qms.common.model.DataSyncModel">
+		SELECT DISTINCT cmpId as dataId, failTimes 
+		FROM cm_complaint_sync_task 
+		WHERE failTimes &lt; 3 
+		LIMIT 30
+	</select>
+	
+	<update id="increFailTimes" parameterType="com.tuniu.qms.common.model.DataSyncModel">
+		UPDATE cm_complaint_sync_task set failTimes = #{failTimes} WHERE cmpId = #{dataId} 
+	</update>
+	
+	<delete id="deleteCmpSyncTask" parameterType="Integer">
+		DELETE FROM cm_complaint_sync_task WHERE cmpId=#{cmpId}
+	</delete>
+	
+	<insert id="add" parameterType="com.tuniu.qms.common.model.ComplaintBill" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO cm_complaint_bill (
+			<if test="id != null">id,</if>
+			<if test="ordId != null">ordId,</if>
+			<if test="cmpLevel != null">cmpLevel,</if>
+			<if test="state != null">state,</if>
+			<if test="stateName != null">stateName,</if>
+			<if test="addTime != null">addTime,</if>
+			<if test="finishTime != null">finishTime,</if>
+			<if test="dealPersonId != null">dealPersonId,</if>
+			<if test="dealPerson != null">dealPerson,</if>
+			<if test="indemnifyAmount != null">indemnifyAmount,</if>
+			<if test="claimAmount != null">claimAmount,</if>
+			<if test="qualityToolAmount != null">qualityToolAmount,</if>
+			<if test="repVoucherAmount != null">repVoucherAmount,</if>
+			<if test="giftAmount != null">giftAmount,</if>
+			<if test="comeFrom != null">comeFrom,</if>
+			delFlag
+		) VALUES (
+			<if test="id != null">#{id},</if>
+			<if test="ordId != null">#{ordId},</if>
+			<if test="cmpLevel != null">#{cmpLevel},</if>
+			<if test="state != null">#{state},</if>
+			<if test="stateName != null">#{stateName},</if>
+			<if test="addTime != null">#{addTime},</if>
+			<if test="finishTime != null">#{finishTime},</if>
+			<if test="dealPersonId != null">#{dealPersonId},</if>
+			<if test="dealPerson != null">#{dealPerson},</if>
+			<if test="indemnifyAmount != null">#{indemnifyAmount},</if>
+			<if test="claimAmount != null">#{claimAmount},</if>
+			<if test="qualityToolAmount != null">#{qualityToolAmount},</if>
+			<if test="repVoucherAmount != null">#{repVoucherAmount},</if>
+			<if test="giftAmount != null">#{giftAmount},</if>
+			<if test="comeFrom != null">#{comeFrom},</if>
+			0
+		)ON DUPLICATE KEY UPDATE
+			<if test="ordId != null">ordId = VALUES(ordId),</if>
+			<if test="cmpLevel != null">cmpLevel = VALUES(cmpLevel),</if>
+			<if test="state != null">state=VALUES(state),</if>
+			<if test="stateName != null">stateName=VALUES(stateName),</if>
+			<if test="addTime != null">addTime=VALUES(addTime),</if>
+			<if test="finishTime != null">finishTime=VALUES(finishTime),</if>
+			<if test="dealPersonId != null">dealPersonId=VALUES(dealPersonId),</if>
+			<if test="dealPerson != null">dealPerson=VALUES(dealPerson),</if>
+			<if test="indemnifyAmount != null">indemnifyAmount=VALUES(indemnifyAmount),</if>
+			<if test="claimAmount != null">claimAmount=VALUES(claimAmount),</if>
+			<if test="qualityToolAmount != null">qualityToolAmount=VALUES(qualityToolAmount),</if>
+			<if test="repVoucherAmount != null">repVoucherAmount=VALUES(repVoucherAmount),</if>
+			<if test="giftAmount != null">giftAmount=VALUES(giftAmount),</if>
+			<if test="comeFrom != null">comeFrom=VALUES(comeFrom),</if>
+			 delFlag = VALUES(delFlag)       	
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM cm_complaint_bill WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.ComplaintBill" flushCache="true" statementType="PREPARED">
+		UPDATE cm_complaint_bill 
+		<set>
+			<if test="cmpLevel != null">cmpLevel=#{cmpLevel},</if>
+			<if test="qcFlag != null">qcFlag=#{qcFlag},</if>
+			<if test="state != null">state=#{state},</if>
+			<if test="stateName != null">stateName=#{stateName},</if>
+			<if test="finishTime != null">finishTime=#{finishTime},</if>
+			<if test="dealPersonId != null">dealPersonId=#{dealPersonId},</if>
+			<if test="dealPerson != null">dealPerson=#{dealPerson},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="deleteBatch" parameterType="com.tuniu.qms.common.dto.ComplaintBillDto">
+		DELETE FROM cm_complaint_bill WHERE id IN (${idStr})
+	</delete>
+	
+	<insert id="addBatch" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		insert into cm_complaint_bill (
+			id, 
+			ordId, 
+			cmpLevel, 
+			state, 
+			stateName, 
+			finishTime, 
+			dealPersonId, 
+			dealPerson
+		) values 
+        <foreach collection="list" item="e" index="index" separator="," >
+        (
+            #{e.id},
+			#{e.ordId},
+			#{e.cmpLevel},
+			#{e.state},
+			#{e.stateName},
+			#{e.finishTime},
+			#{e.dealPersonId},
+			#{e.dealPerson}
+        )
+        </foreach>
+    </insert>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.common.model.ComplaintBill">
+		SELECT * FROM cm_complaint_bill WHERE id=#{id}
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.ComplaintBillDto" resultType="com.tuniu.qms.common.model.ComplaintBill">
+		SELECT * FROM cm_complaint_bill 
+		WHERE id IN (${idStr})
+	</select>
+	
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="ordId" column="ordId" />
+		<result property="cmpId" column="cmpId" />
+		<result property="qcId" column="qcId" />
+		<result property="cmpStateName" column="cmpStateName" />
+		<result property="qcStateName" column="qcStateName" />
+		
+	</resultMap>
+	
+	<select id="queryHasCtOrders" parameterType="java.util.Map" resultType="com.tuniu.qms.qc.model.QcSameGroupBill">
+	
+			SELECT  qb.ordId as orderId,qb.cmpId,qb.id AS qcId,cb.stateName AS cmpStateName,qb.qcPerson,
+				(CASE  qb.state  WHEN '1' THEN '发起中' WHEN '2' THEN '待分配' WHEN '3' THEN '质检中' WHEN '4' THEN '已完成' WHEN '5' THEN '已撤销' END)  qcStateName
+			 FROM qc_qc_bill  qb INNER JOIN cm_complaint_bill cb ON
+				qb.cmpId = cb.id AND cb.delFlag = 0 AND cb.state!=9
+			WHERE  qb.delFlag = 0 AND qb.ordId IN 
+			<foreach collection="orderIds" item="orderId"
+			      open="(" close=")" separator=",">
+			  	 #{orderId}
+		   </foreach>
+			
+	</select>
+	
+</mapper>

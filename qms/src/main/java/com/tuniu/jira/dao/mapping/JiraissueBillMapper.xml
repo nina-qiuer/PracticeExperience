@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.jira.dao.JiraIssueBillMapper">
+	
+	<select id="getJiraSource" parameterType="Map" resultType="com.tuniu.qms.qc.model.JiraBill">
+	    
+		SELECT  jira.ID as jiraId,
+		        jira.project,
+		        CONCAT(prk.pkey,'-',jira.issuenum) AS jiraName,
+				jira.issuestatus as statusNum,
+		  		(CASE  istatus.pname WHEN 'Resolved' THEN '已解决' WHEN 'Closed' THEN '已关闭' WHEN '已关闭（正常）' THEN '已关闭（正常）' ELSE '' END)   statusName,
+		  		jira.issuetype as typeNum,
+		  		itype.pname AS typeName ,
+		  		jira.summary,
+		  	    jira.DESCRIPTION, 
+		  		jira.CREATED,
+		  		jira.UPDATED
+			FROM jiraissue jira
+			INNER JOIN  project  prk ON jira.project = prk.id 
+			INNER JOIN issuestatus istatus ON jira.issuestatus = istatus.id
+			AND istatus.pname IN
+			 <foreach collection="statusNames" item="statusName"
+		      open="(" close=")" separator=",">
+			   #{statusName}
+			  </foreach>
+			INNER JOIN issuetype itype ON jira.issuetype =itype.id AND itype.pname in
+			 <foreach collection="typeNames" item="typeName"
+		      open="(" close=")" separator=",">
+			    #{typeName}
+			  </foreach>
+		
+		   WHERE jira.UPDATED &gt;= #{updateTimeBgn} AND jira.UPDATED &lt;= #{updateTimeEnd}
+			
+	</select>
+	
+	
+	<select id="getJiraMessage" parameterType="java.util.Map" resultType="java.lang.String">
+	
+	        SELECT CONCAT( IFNULL(a.textvalue,''),IFNULL(custom.customvalue,''))  textvalue
+ 			  FROM (SELECT * FROM customfieldvalue cusfile WHERE cusfile.issue= #{jiraId}
+ 			  AND cusfile.customfield in (SELECT id FROM customfield WHERE cfname = #{cfname})) a
+			  LEFT JOIN  customfieldoption custom  ON custom.id  =   a.STRINGVALUE 
+	
+	</select>
+	
+	<select id="getJiraPeople" parameterType="java.util.Map" resultType="java.lang.String">
+	
+	        SELECT cwd.display_name
+   			FROM (SELECT * FROM customfieldvalue cusfile WHERE 
+   			cusfile.issue= #{jiraId}
+   			 AND cusfile.customfield =(SELECT id FROM customfield WHERE cfname =#{cfname})) a
+			LEFT JOIN  cwd_user cwd  ON cwd.user_name  =  a.STRINGVALUE
+	
+	</select>
+	
+    <select id="getProjectFromJira" resultType="com.tuniu.qms.qc.model.JiraProject">
+    
+           SELECT  id as projectId, pname as projectName FROM  project   ORDER BY pname
+    
+    </select>
+	
+	
+</mapper>

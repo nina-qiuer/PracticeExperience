@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.RespDepartmentMapper">
+
+	<insert id="add" parameterType="com.tuniu.qms.qs.model.RespDepartment">
+		INSERT INTO qs_resp_department (
+			<if test="firstDepId != null">firstDepId,</if>
+			<if test="firstDepName != null">firstDepName,</if>
+			<if test="twoDepId != null">twoDepId,</if>
+			<if test="twoDepName != null">twoDepName,</if>
+			<if test="threeDepId != null">threeDepId,</if>
+			<if test="threeDepName != null">threeDepName,</if>
+			<if test="addPerson != null">addPerson,</if>
+			delFlag
+			
+		) VALUES (
+			<if test="firstDepId != null">#{firstDepId},</if>
+			<if test="firstDepName != null">#{firstDepName},</if>
+			<if test="twoDepId != null">#{twoDepId},</if>
+			<if test="twoDepName != null">#{twoDepName},</if>
+			<if test="threeDepId != null">#{threeDepId},</if>
+			<if test="threeDepName != null">#{threeDepName},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			0
+		)
+	</insert>
+	
+	
+	<insert id="addBatch"  parameterType="java.util.List" >
+		insert into qs_resp_department (
+			firstDepId,
+			firstDepName,
+			twoDepId,
+			twoDepName,
+			threeDepId,
+			threeDepName,
+			addPerson,
+			addTime,
+			delFlag
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+		(
+			#{e.firstDepId},	
+			#{e.firstDepName},
+			#{e.twoDepId},
+			#{e.twoDepName},
+			#{e.threeDepId},
+			#{e.threeDepName},
+			'robot',
+			 CURRENT_TIMESTAMP() ,
+			 0
+        )
+        </foreach>
+    </insert>
+	
+	<insert id="addIsNotExist" parameterType="com.tuniu.qms.qs.model.RespDepartment">
+	
+	    INSERT INTO qs_resp_department
+            (
+	             firstDepId,
+	             firstDepName,
+	             twoDepId,
+	             twoDepName,
+	             threeDepId,
+	             threeDepName,
+	             addPerson,
+	             delFlag
+             )
+              SELECT  #{firstDepId},
+		              #{firstDepName}, 
+		              #{twoDepId},
+		              #{twoDepName},
+		              #{threeDepId},
+		              #{threeDepName},
+		              'robot', 
+		              0 
+                    FROM DUAL
+               WHERE NOT EXISTS(SELECT firstDepId,twoDepId,threeDepId 
+               FROM qs_resp_department WHERE  firstDepId = #{firstDepId} AND twoDepId = #{twoDepId} AND threeDepId = #{threeDepId})
+	
+	</insert>
+	
+	
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qs_resp_department WHERE id=#{id}
+	</delete>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.RespDepartment">
+		SELECT * FROM qs_resp_department WHERE id=#{id} and delFlag = 0
+	</select>
+
+	<sql id="listSql">
+		SELECT * from qs_resp_department
+		<where>
+			delFlag=0 
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.RespDepartmentDto" resultType="com.tuniu.qms.qs.model.RespDepartment">
+		<include refid="listSql"/>
+		ORDER BY id 
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">,#{pageSize}</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qs.dto.RespDepartmentDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+		
+	</select>
+</mapper>

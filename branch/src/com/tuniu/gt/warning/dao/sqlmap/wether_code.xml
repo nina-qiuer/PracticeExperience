@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.warning.dao.sqlmap.imap.WetherCodeMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>1=1
+			<if test="keyWordFlag != null">
+			   and key_word_flag=#{keyWordFlag} 
+			</if>
+			and del_flag=0
+		</where>
+	</sql>
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.warning.entity.WetherCodeEntity">
+		<result property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="name" column="name" />
+		<result property="keyWordFlag" column="key_word_flag" />
+	</resultMap>
+
+	<update id="keywordSet" parameterType="Map" flushCache="true" statementType="PREPARED">
+		UPDATE ew_wether_code SET key_word_flag=#{keyWordFlag} WHERE id=#{id}
+	</update>
+
+
+</mapper>

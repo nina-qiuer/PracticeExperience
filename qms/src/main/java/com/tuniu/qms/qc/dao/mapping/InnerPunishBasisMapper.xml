@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.InnerPunishBasisMapper">
+	<resultMap type="com.tuniu.qms.qc.model.InnerPunishBasis" id="basisMap">
+			<id column="id" property="id" />
+			<result column="ipbId" property="ipbId" />
+			<result column="psId" property="psId" />
+			<result column="execFlag" property="execFlag" />
+			<result column="addPerson" property="addPerson" />
+			<result column="addTime" property="addTime" />
+			<result column="updatePerson" property="updatePerson" />
+			<result column="updateTime" property="updateTime" />
+			<result column="delFlag" property="delFlag" />
+			<association property="punishStandard" javaType="com.tuniu.qms.qc.model.PunishStandard">
+				<id property="id" column="standardId"/>
+				<result column="level" property="level" />
+				<result column="redLineFlag" property="redLineFlag" />
+				<result column="description" property="description" />
+				<result column="punishObj" property="punishObj" />
+				<result column="economicPunish" property="economicPunish" />
+				<result column="scorePunish" property="scorePunish" />
+				<result column="source" property="source" />
+				<result column="cmpQcUse" property="cmpQcUse" />
+				<result column="operQcUse" property="operQcUse" />
+				<result column="devQcUse" property="devQcUse" />
+			</association>
+		</resultMap>
+
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.InnerPunishBasis">
+		INSERT INTO qc_inner_punish_basis (
+		
+			<if test="ipbId != null">ipbId,</if>
+			<if test="psId != null">psId,</if>
+			<if test="execFlag != null">execFlag,</if>
+			<if test="addPerson != null">addPerson,</if>
+			addTime,
+			<if test="updatePerson != null">updatePerson,</if>
+			updateTime,
+			delFlag
+			
+		) VALUES (
+			<if test="ipbId != null">#{ipbId},</if>
+			<if test="psId != null">#{psId},</if>
+			<if test="execFlag != null">#{execFlag},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			 CURRENT_TIMESTAMP() ,
+			<if test="updatePerson != null">#{updatePerson},</if>
+			 CURRENT_TIMESTAMP() ,
+			0
+		)
+	</insert>
+	
+	
+	<insert id="addCopyInnerBasis" parameterType="java.util.Map" >
+	   insert into qc_inner_punish_basis
+	   (
+		    ipbId,
+		    psId,
+		    execFlag,
+			addPerson,
+			delFlag
+	   )
+	   select #{punishId},
+	           b.psId,
+			   b.execFlag,
+			   #{addPerson},
+			   b.delFlag
+	   from qc_inner_punish_basis b where b.ipbId =#{oldPunishId} and b.delFlag =0 
+	</insert>
+	
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_inner_punish_basis WHERE id=#{id}
+	</delete>
+	
+	
+	<sql id="listSql">
+		SELECT ipb.*,ps.level,ps.redLineFlag,ps.description,ps.economicPunish,ps.scorePunish 
+		 from qc_inner_punish_basis ipb left join qc_punish_standard ps
+		 on ipb.psId = ps.id and ps.delFlag = 0
+		 where ipb.delFlag =0 
+			<if test="id != null ">AND ipb.id=#{id}</if>
+			<if test="ipbId != null ">AND ipb.ipbId=#{ipbId}</if>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.InnerPunishBasisDto" resultMap="basisMap">
+		<include refid="listSql"/>
+		ORDER BY ipb.id 
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.InnerPunishBasisDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+		
+	</select>
+	
+	
+	<select id="get" parameterType="Integer"  resultMap="basisMap">
+	
+		SELECT ipb.*,ps.level,ps.redLineFlag,ps.description,ps.economicPunish,ps.scorePunish 
+		 from qc_inner_punish_basis ipb left join qc_punish_standard ps
+		 on ipb.psId = ps.id and ps.delFlag = 0
+		 where ipb.delFlag =0 
+		<if test="id != null ">AND ipb.id=#{id}</if>
+		<if test="ipbId != null ">AND ipb.ipbId=#{ipbId}</if>
+	</select>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.InnerPunishBasis" >
+		UPDATE qc_inner_punish_basis 
+		<set>
+			<if test="ipbId != null">ipbId = #{ipbId},</if>
+			<if test="psId != null">psId = #{psId},</if>
+			<if test="execFlag != null">execFlag = #{execFlag},</if>
+			<if test="updatePerson != null">updatePerson =#{updatePerson},</if>
+			updateTime = CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<delete id="deletePunish" parameterType="com.tuniu.qms.qc.model.InnerPunishBasis">
+	
+	     delete from qc_inner_punish_basis where ipbId =#{ipbId}
+	
+	</delete>
+	
+	<update id="updatePunish" parameterType="com.tuniu.qms.qc.model.InnerPunishBasis" >
+		UPDATE qc_inner_punish_basis
+		 set execFlag = #{execFlag}
+		 WHERE ipbId=#{ipbId}
+	</update>
+	
+	<update id="updatePunishBill" parameterType="com.tuniu.qms.qc.model.InnerPunishBasis">
+	    UPDATE qc_inner_punish_bill qb
+			  INNER JOIN (SELECT
+			                ipb.ipbId,
+			                ps.economicPunish,
+			                ps.scorePunish
+			                FROM qc_inner_punish_basis ipb
+			                INNER JOIN qc_punish_standard ps
+			                 ON ipb.psId = ps.id
+			                 AND ps.delFlag = 0
+			               WHERE ipb.id = #{id} and ipb.ipbId =#{ipbId}
+			                  AND ipb.delFlag = 0) qc
+			    ON qb.id = qc.ipbId
+			SET qb.economicPunish = qc.economicPunish,
+			  qb.scorePunish = qc.scorePunish
+			WHERE  qb.id = #{ipbId}
+	
+	
+	</update>
+	
+	<delete id="deletePunishByIpb" parameterType="java.util.Map">
+	
+	  DELETE FROM qc_inner_punish_basis WHERE ipbId IN (
+	    <foreach collection="innerList" item="ipbId" separator=",">
+	   	#{ipbId}
+	  	</foreach> 
+		)
+	</delete>
+	
+	
+	<select id="getPunishBasisIsExist" parameterType="java.util.Map" resultType="Integer">
+	
+	  select count(1) from qc_inner_punish_basis where ipbId =#{ipbId} and delFlag = 0
+	 
+	</select>
+	
+</mapper>

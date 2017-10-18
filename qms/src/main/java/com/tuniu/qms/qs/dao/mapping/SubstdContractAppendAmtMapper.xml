@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.SubstdContractAppendAmtMapper">
+	<insert id="addBatch" parameterType="java.util.List">
+		insert into qs_substd_contract_append_amt (
+			caId, 
+			signDate, 
+			addDate, 
+			price, 
+			addPerson, 
+			monthTotalAmount, 
+			diffMonthFlag, 
+			ordId, 
+			businessUnit, 
+			prdDep, 
+			prdTeam, 
+			prdManagerId, 
+			prdManager, 
+			producterId, 
+			producter, 
+			customerManagerId, 
+			customerManager, 
+			customerId, 
+			customer
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.caId},
+            #{e.signDate},
+			#{e.addDate},
+			#{e.price},
+			#{e.addPerson},
+			#{e.monthTotalAmount},
+			#{e.diffMonthFlag},
+			#{e.ordId},
+			#{e.businessUnit},
+			#{e.prdDep},
+			#{e.prdTeam},
+			#{e.prdManagerId},
+			#{e.prdManager},
+			#{e.producterId},
+			#{e.producter},
+			#{e.customerManagerId},
+			#{e.customerManager},
+			#{e.customerId},
+			#{e.customer}
+        )
+        </foreach>
+    </insert>
+    
+    <delete id="deleteByAddDate" parameterType="java.sql.Date">
+		DELETE FROM qs_substd_contract_append_amt WHERE addDate=#{addDate}
+	</delete>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.SubstdContractAppendAmt">
+		SELECT * FROM qs_substd_contract_append_amt WHERE id=#{id}
+	</select>
+	
+	<select id="getBusinessUnits" parameterType="com.tuniu.qms.qs.dto.SubstdContractAppendAmtDto" resultType="String">
+		SELECT DISTINCT businessUnit FROM qs_substd_contract_append_amt 
+		<if test="addDate!=null and addDate!=''">WHERE addDate=#{addDate}</if>
+	</select>
+	
+	<select id="getPrdDeps" parameterType="com.tuniu.qms.qs.dto.SubstdContractAppendAmtDto" resultType="String">
+		SELECT DISTINCT prdDep FROM qs_substd_contract_append_amt WHERE businessUnit=#{businessUnit}
+		<if test="addDate!=null and addDate!=''">AND addDate=#{addDate}</if>
+	</select>
+	
+	<sql id="whereSql">
+		<where>1=1
+			<if test="addDate != null and addDate != ''">AND addDate=#{addDate}</if>
+			<if test="ordId != null and ordId != ''">AND ordId=#{ordId}</if>
+			<if test="businessUnit != null and businessUnit != ''">AND businessUnit LIKE #{businessUnit}</if>
+			<if test="prdDep != null and prdDep != ''">AND prdDep LIKE #{prdDep}</if>
+			<if test="prdTeam != null and prdTeam != ''">AND prdTeam LIKE #{prdTeam}</if>
+			<if test="prdManager != null and prdManager != ''">AND prdManager LIKE #{prdManager}</if>
+			<if test="producter != null and producter != ''">AND producter LIKE #{producter}</if>
+			<if test="customerManager != null and customerManager != ''">AND customerManager LIKE #{customerManager}</if>
+			<if test="customer != null and customer != ''">AND customer LIKE #{customer}</if>
+			<include refid="statItemSql"/>
+		</where>
+	</sql>
+	
+	<select id="count" parameterType="com.tuniu.qms.qs.dto.SubstdContractAppendAmtDto" resultType="Integer">
+		SELECT COUNT(1) FROM qs_substd_contract_append_amt
+		<include refid="whereSql"/>
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.SubstdContractAppendAmtDto" resultType="com.tuniu.qms.qs.model.SubstdContractAppendAmt">
+		SELECT * FROM qs_substd_contract_append_amt 
+		<include refid="whereSql"/>
+		ORDER BY ordId
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<sql id="statItemSql">
+		AND diffMonthFlag=1
+	</sql>
+	
+	<select id="statGraphDepByNum" parameterType="com.tuniu.qms.qs.dto.SubstdContractAppendAmtDto" resultType="Map">
+		<if test="businessUnit == null or businessUnit == ''">
+			SELECT businessUnit AS depName,COUNT(1) AS num FROM qs_substd_contract_append_amt
+			WHERE addDate=#{addDate} 
+			<include refid="statItemSql"/>
+			GROUP BY businessUnit ORDER BY num
+		</if>
+		<if test="businessUnit != null and businessUnit != ''">
+			<if test="prdDep == null or prdDep == ''">
+				SELECT prdDep AS depName,COUNT(1) AS num FROM qs_substd_contract_append_amt
+				WHERE addDate=#{addDate} AND businessUnit=#{businessUnit} 
+				<include refid="statItemSql"/>
+				GROUP BY prdDep ORDER BY num
+			</if>
+			<if test="prdDep != null and prdDep != ''">
+				SELECT prdTeam AS depName,COUNT(1) AS num FROM qs_substd_contract_append_amt
+				WHERE addDate=#{addDate} AND businessUnit=#{businessUnit} AND prdDep=#{prdDep} 
+				<include refid="statItemSql"/>
+				GROUP BY prdTeam ORDER BY num
+			</if>
+		</if>
+	</select>
+	
+	<select id="statGraphDepByTotPrice" parameterType="com.tuniu.qms.qs.dto.SubstdContractAppendAmtDto" resultType="Map">
+		<if test="businessUnit == null or businessUnit == ''">
+			SELECT businessUnit AS depName,SUM(price) AS totPrice FROM qs_substd_contract_append_amt
+			WHERE addDate=#{addDate} 
+			<include refid="statItemSql"/>
+			GROUP BY businessUnit ORDER BY totPrice
+		</if>
+		<if test="businessUnit != null and businessUnit != ''">
+			<if test="prdDep == null or prdDep == ''">
+				SELECT prdDep AS depName,SUM(price) AS totPrice FROM qs_substd_contract_append_amt
+				WHERE addDate=#{addDate} AND businessUnit=#{businessUnit} 
+				<include refid="statItemSql"/>
+				GROUP BY prdDep ORDER BY totPrice
+			</if>
+			<if test="prdDep != null and prdDep != ''">
+				SELECT prdTeam AS depName,SUM(price) AS totPrice FROM qs_substd_contract_append_amt
+				WHERE addDate=#{addDate} AND businessUnit=#{businessUnit} AND prdDep=#{prdDep} 
+				<include refid="statItemSql"/>
+				GROUP BY prdTeam ORDER BY totPrice
+			</if>
+		</if>
+	</select>
+	
+	<select id="statGraphDateByNum" parameterType="com.tuniu.qms.qs.dto.SubstdContractAppendAmtDto" resultType="Map">
+		SELECT addDate,COUNT(1) AS num FROM qs_substd_contract_append_amt
+		WHERE #{addDateBgn} &lt;= addDate AND addDate &lt;= #{addDateEnd} 
+		<if test="businessUnit != null and businessUnit != ''">
+			AND businessUnit=#{businessUnit} 
+			<if test="prdDep != null and prdDep != ''">
+				AND prdDep=#{prdDep} 
+			</if>
+		</if>
+		<include refid="statItemSql"/>
+		GROUP BY addDate
+	</select>
+	
+	<select id="statGraphDateByTotPrice" parameterType="com.tuniu.qms.qs.dto.SubstdContractAppendAmtDto" resultType="Map">
+		SELECT addDate,SUM(price) AS totPrice FROM qs_substd_contract_append_amt
+		WHERE #{addDateBgn} &lt;= addDate AND addDate &lt;= #{addDateEnd} 
+		<if test="businessUnit != null and businessUnit != ''">
+			AND businessUnit=#{businessUnit} 
+			<if test="prdDep != null and prdDep != ''">
+				AND prdDep=#{prdDep} 
+			</if>
+		</if>
+		<include refid="statItemSql"/>
+		GROUP BY addDate
+	</select>
+	
+</mapper>

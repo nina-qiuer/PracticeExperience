@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qc.dao.QcPunishSegmentTaskMapper">
+	
+	<!-- 获得全部任务数据 -->
+	<select id="getTaskList" resultType="com.tuniu.qms.qc.model.QcPunishSegmentTask">
+		 SELECT id, 
+		 	dataId,
+			taskType,
+			failedTimes
+		 FROM qc_punish_segment_task
+	</select>
+	
+	<!-- 更新执行失败次数 -->
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcPunishSegmentTask">
+		UPDATE qc_punish_segment_task
+		SET failedTimes = #{failedTimes}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 删除任务 -->
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_punish_segment_task
+ 		WHERE id = #{id}
+	</delete>
+	
+	<!-- 添加任务 -->
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcPunishSegmentTask">
+		INSERT INTO qc_punish_segment_task
+			(dataId, taskType)
+		VALUES
+		(#{dataId},
+		 #{taskType}
+		)
+	</insert>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.bi.dao.OrderUncollectionMapper">
+	
+	<select id="getUncollectionList" parameterType="Map" resultMap="resultData">
+SELECT  t1.follow_saler_name as saler_name, t2.*, DATEDIFF(t2.start_date , #{dateStart}) AS day_num
+		FROM ol_itf_order_uncollection t1
+		INNER JOIN ol_itf_order_uncollection t2 ON t1.datekey = t2.datekey AND t1.order_id = t2.order_id
+		WHERE t1.datekey = #{datekey} AND t1.order_lost_amount > 0 AND t1.start_date >= #{dateStart} 
+			AND t1.start_date &lt;= #{dateEnd}
+		    AND  (t1.one_producttype_name="定制游" OR t1.one_producttype_name="跟团游" OR t1.one_producttype_name="签证" 
+		          OR t1.one_producttype_name="团队游"	OR t1.one_producttype_name="自驾游" OR t1.one_producttype_name="自助游" )
+		    AND  (t1.sale_type_key=1 OR t1.sale_type_key=3 OR t1.sale_type_key=5 OR t1.sale_type_key=6)
+UNION ALL
+		SELECT  t1.follow_saler_name as saler_name, t2.*, DATEDIFF(t2.start_date , #{dateStart}) AS day_num
+		FROM ol_itf_order_uncollection t1
+		INNER JOIN ol_itf_order_uncollection t2 ON t1.datekey = t2.datekey AND t1.order_id = t2.order_id
+		WHERE t1.datekey = #{datekey} AND t1.order_lost_amount > 0 AND t1.start_date >= #{dateStart} 
+			AND t1.start_date &lt;= #{dateEnd}
+		    AND t1.one_producttype_name="邮轮"
+		    AND  (t1.sale_type_key=3  OR t1.sale_type_key=5 OR t1.sale_type_key=6 )
+	</select>
+	
+	<resultMap type="com.tuniu.qms.qs.model.OrderUncollection" id="dataList">
+		<id column="datekey" property="datekey" />
+		<id column="order_id" property="orderId" />
+		<result column="one_producttype_name" property="oneProducttypeName" />
+		<result column="sign_time" property="signTime" />
+		<result column="start_date" property="startDate" />
+		<result column="sale_type_key" property="saleTypeKey" />
+		<result column="saler_manager_name" property="salerManagerName" />
+		<result column="saler_manager_one_dept" property="salerManagerOneDept" />
+		<result column="saler_manager_two_dept" property="salerManagerTwoDept" />
+		<result column="saler_manager_three_dept" property="salerManagerThreeDept" />
+		<result column="follow_saler_name" property="followSalerName" />
+		<result column="follow_one_dept" property="followOneDept" />
+		<result column="follow_two_dept" property="followTwoDept" />	
+		<result column="follow_three_dept" property="followThreeDept" />
+		<result column="travel_amount" property="travelAmount" />
+		<result column="coupon_amount" property="couponAmount" />
+		<result column="adult_num" property="adultNum" />
+		<result column="children_num" property="childrenNum" />
+		<result column="refund_all" property="refundAll" />
+		<result column="received" property="received" />
+		<result column="order_amount" property="orderAmount" />
+		<result column="fact_received" property="factReceived" />
+		<result column="order_lost_amount" property="orderLostAmount" />
+		<result column="day_num" property="distanceTravelDayNum" />
+		
+		<!-- 后面添加的 -->
+	  <result column="sale_type" property="saleType" />
+	  <result column="distributor_id" property="distributorId" />
+	  <result column="distribute_company_brand" property="distributeCompanyBrand" />
+	  <result column="distribute_manager" property="distributeManager" />
+	  <result column="saler_manager" property="salerManager" />
+	  <result column="manager_one_dept" property="managerOneDept" />
+	  <result column="manager_two_dept" property="managerTwoDept" />
+	  <result column="manager_three_dept" property="managerThreeDept" />   
+	  <result column="order_mortgage_sum" property="orderMortgageSum"  /> 
+	   <result column="estimate_recovery_date" property="estimateRecoveryDate"  /> 
+	</resultMap>
+	
+	<resultMap type="com.tuniu.qms.qs.model.OrderUncollectionMonitor" id="resultData">
+		<result column="saler_name" property="salerName" />
+		<collection  property="orderList" resultMap="dataList" />
+	</resultMap>
+	
+</mapper>

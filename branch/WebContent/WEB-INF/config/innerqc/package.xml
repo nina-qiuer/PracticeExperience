@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="qc-inner_qc" extends="apply-default" namespace="/innerqc/action"> 
+		<action name="*-*" class="innerqc_action-{1}" method="{2}">
+			<result name="inner_qc_list">/WEB-INF/html/innerqc/inner_qc_list.jsp</result>
+			<result name="inner_qc_form">/WEB-INF/html/innerqc/inner_qc_form.jsp</result>
+			<result name="inner_qc_back">/WEB-INF/html/innerqc/inner_qc_back.jsp</result>
+			<result name="inner_qc_bill">/WEB-INF/html/innerqc/inner_qc_bill.jsp</result>
+			<result name="inner_qc_info">/WEB-INF/html/innerqc/inner_qc_info.jsp</result>
+			<result name="inner_qc_question_list">/WEB-INF/html/innerqc/inner_qc_question_list.jsp</result>
+			<result name="inner_qc_question_form">/WEB-INF/html/innerqc/inner_qc_question_form.jsp</result>
+			<result name="inner_qc_duty_list">/WEB-INF/html/innerqc/inner_qc_duty_list.jsp</result>
+			<result name="inner_qc_duty_form">/WEB-INF/html/innerqc/inner_qc_duty_form.jsp</result>
+			<result name="inner_qc_report">/WEB-INF/html/innerqc/inner_qc_report.jsp</result>
+			<result name="inner_qc_type_list">/WEB-INF/html/innerqc/inner_qc_type_list.jsp</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qc.dao.QualityProblemTypeMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QualityProblemType">
+		INSERT INTO qc_quality_problem_type (
+			<if test="pid != null">pid,</if>
+			<if test="name != null">name,</if>
+			<if test="touchRedFlag != null">touchRedFlag,</if>
+			<if test="cmpQcUse != null">cmpQcUse,</if>
+			<if test="operQcUse != null">operQcUse,</if>
+			<if test="devQcUse != null">devQcUse,</if>
+			<if test="innerQcUse != null">innerQcUse,</if>
+			delFlag
+		) VALUES (
+			<if test="pid != null">#{pid},</if>
+			<if test="name != null">#{name},</if>
+			<if test="touchRedFlag != null">#{touchRedFlag},</if>
+			<if test="cmpQcUse != null">#{cmpQcUse},</if>
+			<if test="operQcUse != null">#{operQcUse},</if>
+			<if test="devQcUse != null">#{devQcUse},</if>
+			<if test="innerQcUse != null">#{innerQcUse},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		UPDATE qc_quality_problem_type SET delFlag=1 WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QualityProblemType" flushCache="true" statementType="PREPARED">
+		UPDATE qc_quality_problem_type 
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="touchRedFlag != null">touchRedFlag=#{touchRedFlag},</if>
+			<if test="cmpQcUse != null">cmpQcUse=#{cmpQcUse},</if>
+			<if test="operQcUse != null">operQcUse=#{operQcUse},</if>
+			<if test="devQcUse != null">devQcUse=#{devQcUse},</if>
+			<if test="innerQcUse != null">innerQcUse=#{innerQcUse},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QualityProblemType">
+		SELECT * FROM qc_quality_problem_type WHERE id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QualityProblemTypeDto" resultType="com.tuniu.qms.qc.model.QualityProblemType">
+		SELECT * FROM qc_quality_problem_type WHERE delFlag = 0 
+		<if test="cmpQcUse != null"> and cmpQcUse =#{cmpQcUse} </if>
+		<if test="operQcUse != null"> and operQcUse =#{operQcUse} </if>
+		<if test="devQcUse != null"> and devQcUse =#{devQcUse} </if>
+		<if test="innerQcUse != null"> and innerQcUse =#{innerQcUse} </if>
+		<if test="pid != null"> and pid =#{pid} </if>
+		<if test="name != null"> and name =#{name} </if>
+	</select>
+	
+	<select id="getQpTypeCount" parameterType="Integer" resultType="Integer">
+	   select count(1) from qc_quality_problem_type where pid = #{id} and delFlag = 0
+	</select>
+	
+	<select id="getChildrenTypeIds" parameterType="int" resultType="int">
+		select id from qc_quality_problem_type where  pid = #{pid} and delFlag = 0
+	</select>
+	
+	<select id="getQpTypeByFullName" parameterType="com.tuniu.qms.qc.dto.QualityProblemTypeDto" resultType="com.tuniu.qms.qc.model.QualityProblemType">
+	   
+	   select * from qc_quality_problem_type where delFlag =0 and name =#{qpTypeName} and  pid=#{pid} limit 1
+	
+	</select>
+	
+</mapper>

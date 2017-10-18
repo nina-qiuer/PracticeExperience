@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.CompSatisRateMonitorMapper">
+	
+		<insert id="addBatch" parameterType="java.util.List">
+			insert into qs_product_satisfy (
+			
+				businessUnit, 
+				prdDep, 
+				prdTeam, 
+				prdManager,
+				prdSpecialist, 
+				ordNum, 
+				cmpNum, 
+				commentNum, 
+				commentScore, 
+				year, 
+				yearQuarter, 
+				yearMonth, 
+				statisticDate
+				
+			) values 
+	        <foreach collection="list" item="e" index="index" separator=",">
+	        (
+				 #{e.businessUnit}, 
+				 #{e.prdDep}, 
+				 #{e.prdTeam}, 
+				 #{e.prdManager},
+				 #{e.prdSpecialist},
+				 #{e.ordNum}, 
+				 #{e.cmpNum}, 
+				 #{e.commentNum}, 
+				 #{e.commentScore}, 
+				 #{e.year}, 
+				 #{e.yearQuarter}, 
+				 #{e.yearMonth}, 
+				 #{e.statisticDate}
+	        )
+	        </foreach>
+    </insert>
+    
+    <delete id="deleteByAddDate" parameterType="java.sql.Date">
+		DELETE FROM qs_product_satisfy WHERE statisticDate=#{statisticDate}
+	</delete>
+	
+	
+	<sql id="timeSql">
+			    <if test="timeType == 1">
+			     	 AND yearQuarter =#{searchQuarter}
+			     </if>
+			     <if test="timeType == 2">
+			        AND yearMonth =#{searchMonth} 
+			     </if>
+	</sql>
+	
+
+		<select id="list" parameterType="com.tuniu.qms.qs.dto.CompSatisRateMonitorDto" resultType="com.tuniu.qms.qs.model.CompSatisRateMonitor">
+
+	       <if test="(businessUnit == null or businessUnit =='') and (prdDep ==null or prdDep =='') and (prdTeam ==null or prdTeam =='')">
+	           	select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	from (
+	           	  SELECT businessUnit,year,yearQuarter,
+	           	      IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+			       FROM qs_product_satisfy
+			       WHERE 1=1 
+			       <include refid="timeSql"/>
+			       GROUP BY businessUnit
+			       ) t left join qs_target_config qs on t.businessUnit = qs.businessUnit and qs.prdDep='' and qs.prdTeam='' and t.year =qs.year 
+			       
+			  </if>
+	     	<if test="businessUnit != null and (prdDep ==null or prdDep =='') and (prdTeam ==null or prdTeam =='') ">
+	     	 
+	     	 	select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	            from (
+	     	     SELECT businessUnit,prdDep,year,yearQuarter,
+	     	          IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+			       FROM qs_product_satisfy
+			       WHERE 1=1 
+			       and businessUnit=#{businessUnit}
+			       <include refid="timeSql"/>
+	               GROUP BY businessUnit,prdDep
+	               ) t left join qs_target_config qs on t.businessUnit = qs.businessUnit and t.prdDep = qs.prdDep and qs.prdTeam='' and t.year =qs.year 
+	        </if>
+	    	<if test="businessUnit!=null and prdDep != null and (prdTeam ==null or prdTeam =='')">
+	    		select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	            from (
+	    	  	  SELECT businessUnit,prdDep,prdTeam,year,yearQuarter,
+	    	  	       IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+			       FROM qs_product_satisfy
+			       WHERE 1=1 
+			        and businessUnit=#{businessUnit} and prdDep =#{prdDep}
+			       <include refid="timeSql"/>
+	               GROUP BY businessUnit,prdDep,prdTeam
+	              ) t left join qs_target_config qs on t.businessUnit = qs.businessUnit and t.prdDep = qs.prdDep and t.prdTeam =qs.prdTeam and t.year =qs.year 
+	        </if>
+	    	<if test=" businessUnit!=null and prdDep != null and prdTeam!= null and (prdManager == null or prdManager == '')">
+	    		select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	from(
+	    	  	 	SELECT  businessUnit,prdDep,prdTeam,prdManager,year,yearQuarter,
+	    	  	      IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+			    	  	<!--  0 as oneTargetValue,0 as twoTargetValue,0 as threeTargetValue,0 as fourTargetValue,
+			    	  	 0 as targetId -->
+				     FROM qs_product_satisfy
+				     WHERE 1=1 
+				     and businessUnit=#{businessUnit} and prdDep =#{prdDep} and prdTeam =#{prdTeam}
+				     <include refid="timeSql"/>
+		             GROUP BY businessUnit,prdDep,prdTeam,prdManager
+			   )t left join qs_target_config qs on t.businessUnit = qs.businessUnit and t.prdDep = qs.prdDep and t.prdTeam =qs.prdTeam and t.year =qs.year 
+	         </if>
+	         
+	         <if test=" businessUnit!=null and prdDep != null and prdTeam!= null and prdManager != null">
+	    		select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	from(
+	    	  	 	SELECT  businessUnit,prdDep,prdTeam,prdManager, prdSpecialist,year,yearQuarter,
+	    	  	      IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				     FROM qs_product_satisfy
+				     WHERE 1=1 
+				     and businessUnit=#{businessUnit} and prdDep =#{prdDep} and prdTeam =#{prdTeam} and prdManager = #{prdManager}
+				     <!-- and prdSpecialist != '' -->
+				     <include refid="timeSql"/>
+		             GROUP BY businessUnit,prdDep,prdTeam,prdManager,prdSpecialist
+			   )t left join qs_target_config qs on t.businessUnit = qs.businessUnit and t.prdDep = qs.prdDep and t.prdTeam =qs.prdTeam and t.year =qs.year 
+	         </if>
+	    
+	</select>
+	
+	
+	<select id="getDepSatisfy"  parameterType="com.tuniu.qms.qs.dto.CompSatisRateMonitorDto" resultType="com.tuniu.qms.qs.model.CompSatisRateMonitor">
+	
+	     	<if test="businessUnit != '' and (prdDep ==null or prdDep =='') and (prdTeam ==null or prdTeam =='') ">
+	          
+	           	select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	from (
+	           	  SELECT businessUnit,year,yearQuarter,
+	           	    IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+			       FROM qs_product_satisfy
+			       WHERE 1=1 
+			       and businessUnit =#{businessUnit}
+			       <include refid="timeSql"/>
+			       GROUP BY businessUnit
+			       ) t left join qs_target_config qs on t.businessUnit = qs.businessUnit and qs.prdDep='' and qs.prdTeam='' and t.year =qs.year 
+			       
+			  </if>
+	     	<if test="businessUnit!='' and prdDep!='' and (prdTeam ==null or prdTeam =='')">
+	     
+	     	 	select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	            from (
+	     	     SELECT businessUnit,prdDep,year,yearQuarter,
+	 				      IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				 	 	   FROM qs_product_satisfy
+			       WHERE 1=1 
+			       and businessUnit=#{businessUnit}  and prdDep =#{prdDep}   
+			       <include refid="timeSql"/>
+	               GROUP BY businessUnit,prdDep
+	               ) t left join qs_target_config qs on t.businessUnit = qs.businessUnit and t.prdDep = qs.prdDep and qs.prdTeam='' and t.year =qs.year
+	           
+	        </if>
+	      <if test=" businessUnit!='' and prdDep != '' and prdTeam!= ''">
+	    		select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	            from (
+	    	  	  SELECT businessUnit,prdDep,prdTeam,year,yearQuarter,
+	    	  	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+			       FROM qs_product_satisfy
+			       WHERE 1=1 
+			        and businessUnit=#{businessUnit} and prdDep =#{prdDep} and prdTeam=#{prdTeam}
+			       <include refid="timeSql"/>
+	               GROUP BY businessUnit,prdDep,prdTeam
+	              ) t left join qs_target_config qs on t.businessUnit = qs.businessUnit and t.prdDep = qs.prdDep and t.prdTeam =qs.prdTeam and t.year =qs.year 
+	        </if>
+	
+	</select>
+	
+	<select id="getAllDep" resultType="java.lang.String">
+	
+	     	SELECT * FROM (
+		
+			SELECT DISTINCT businessUnit AS businessUnit FROM qs_product_satisfy  where year = YEAR(CURDATE())
+			UNION 
+			SELECT CONCAT (a.businessUnit,'-',a.prdDep) AS businessUnit FROM (
+			SELECT DISTINCT businessUnit,prdDep FROM qs_product_satisfy  WHERE prdDep!='' and   year = YEAR(CURDATE())
+			) a 
+			UNION
+			
+			SELECT CONCAT (b.businessUnit,'-',b.prdDep,'-',b.prdTeam) AS businessUnit FROM (
+			
+			SELECT DISTINCT businessUnit,prdDep,prdTeam FROM qs_product_satisfy WHERE prdTeam!='' and   year = YEAR(CURDATE())
+			) b
+		) c ORDER BY c.businessUnit
+	
+	</select>
+	
+	<select id="getBusinessUnit" resultType="java.lang.String">
+	
+	     	SELECT DISTINCT businessUnit AS businessUnit FROM qs_product_satisfy  
+	
+	</select>
+	
+	<select id="getTrendGraph" parameterType="com.tuniu.qms.qs.dto.CompSatisRateMonitorDto" resultType="com.tuniu.qms.qs.model.CompSatisRateMonitor">
+	   <if test="timeType == 1 ">
+			  	select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	           from (
+			
+				    SELECT IFNULL(yearQuarter,#{quarter1})  as statisDate,IFNULL(year,0) as year,IFNULL(yearQuarter,#{quarter1}) as yearQuarter,
+				 	 	   IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+					 FROM qs_product_satisfy  
+					 where 1=1  
+				     AND businessUnit=#{businessUnit}
+				     AND yearQuarter = #{quarter1}
+					 
+					 UNION
+					SELECT IFNULL(yearQuarter,#{quarter2})  as statisDate,IFNULL(year,0) as year,IFNULL(yearQuarter,#{quarter2})  as yearQuarter,
+				 	 	   IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+					 FROM qs_product_satisfy  
+					 where 1=1  
+				     AND businessUnit=#{businessUnit}
+				     AND yearQuarter = #{quarter2}
+				     UNION
+				     
+				   SELECT IFNULL(yearQuarter,#{quarter3})  as statisDate,IFNULL(year,0) as year,IFNULL(yearQuarter,#{quarter3})  as yearQuarter,
+				 	 	   IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+					 FROM qs_product_satisfy  
+					 where 1=1  
+				     AND businessUnit=#{businessUnit}
+				     AND yearQuarter = #{quarter3}
+				     UNION
+				    SELECT IFNULL(yearQuarter,#{quarter4})  as statisDate,IFNULL(year,0) as year,IFNULL(yearQuarter,#{quarter4})  as yearQuarter,
+				 	 	   IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+					 FROM qs_product_satisfy  
+					 where 1=1  
+				     AND businessUnit=#{businessUnit}
+				     AND yearQuarter = #{quarter4}
+					 
+					 
+			) t left join qs_target_config qs on t.businessUnit = qs.businessUnit and qs.prdDep='' and qs.prdTeam='' and t.year =qs.year 
+	    </if>
+		<if test="timeType == 2 ">
+				select t.*,IFNULL(qs.oneTargetValue,0) as oneTargetValue,
+	           			   IFNULL(qs.twoTargetValue,0) as twoTargetValue,
+	           			   IFNULL(qs.threeTargetValue,0) as threeTargetValue,
+	           	           IFNULL(qs.fourTargetValue ,0) as fourTargetValue,
+	           	           IFNULL(qs.id,0) as targetId
+	           	           from (
+			    SELECT IFNULL(yearMonth,#{month1})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month1}
+			       UNION
+			        SELECT IFNULL(yearMonth,#{month2})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month2}
+			     UNION
+			         SELECT IFNULL(yearMonth,#{month3})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month3}
+			      UNION
+			           SELECT IFNULL(yearMonth,#{month4})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month4}
+			       UNION
+			           SELECT IFNULL(yearMonth,#{month5})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month5}
+			       UNION
+			           SELECT IFNULL(yearMonth,#{month6})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month6}
+			       UNION
+			           SELECT IFNULL(yearMonth,#{month7})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month7}
+			       UNION
+			           SELECT IFNULL(yearMonth,#{month8})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month8}
+			       UNION
+			           SELECT IFNULL(yearMonth,#{month9})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month9}
+			       UNION
+			           SELECT IFNULL(yearMonth,#{month10})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month10}
+			       UNION
+			           SELECT IFNULL(yearMonth,#{month11})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month11}
+			       UNION
+			           SELECT IFNULL(yearMonth,#{month12})  as  statisDate, IFNULL(year,0) as  year,IFNULL(yearQuarter,0) as yearQuarter,
+			 	       IFNULL(businessUnit,#{businessUnit}) as businessUnit,IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				       IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore
+				FROM qs_product_satisfy  
+				where 1=1  
+			       AND businessUnit=#{businessUnit}
+			       AND yearMonth = #{month12}
+			      
+				 ) t left join qs_target_config qs on t.businessUnit = qs.businessUnit and qs.prdDep='' and qs.prdTeam='' and t.year =qs.year 
+	   </if>
+	</select>
+	
+	
+	<select id="getNationalGraph" parameterType="com.tuniu.qms.qs.dto.CompSatisRateMonitorDto" resultType="com.tuniu.qms.qs.model.CompSatisRateMonitor">
+	   <if test="timeType == 1 ">
+			
+				    SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,a.yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT  #{quarter1} AS statisDate, #{searchYear} as YEAR ,  #{quarter1} AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearQuarter,  #{quarter1})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter,  #{quarter1}) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearQuarter =  #{quarter1}
+					 GROUP BY businessUnit
+					 )t ON a.yearQuarter = t.yearQuarter
+					 ) t  
+					 UNION
+					 
+					  SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,a.yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT  #{quarter2} AS statisDate, #{searchYear} as YEAR ,  #{quarter2} AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearQuarter,  #{quarter1})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter,  #{quarter2}) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearQuarter =  #{quarter2}
+					 GROUP BY businessUnit
+					 )t ON a.yearQuarter = t.yearQuarter
+					 ) t  
+				     UNION
+				     
+				        SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,a.yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT  #{quarter3} AS statisDate, #{searchYear} as YEAR ,  #{quarter3} AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearQuarter,  #{quarter1})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter,  #{quarter3}) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearQuarter =  #{quarter3}
+					 GROUP BY businessUnit
+					 )t ON a.yearQuarter = t.yearQuarter
+					 ) t  
+				     UNION
+				   SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,a.yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT  #{quarter4} AS statisDate, #{searchYear} as YEAR ,  #{quarter4} AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearQuarter,  #{quarter1})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter,  #{quarter4}) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearQuarter =  #{quarter4}
+					 GROUP BY businessUnit
+					 )t ON a.yearQuarter = t.yearQuarter
+					 ) t 
+					 
+	    </if>
+		<if test="timeType == 2 ">
+				
+			         SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter ,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT    #{month1} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month1})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month1}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			       UNION
+			         SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT    #{month2} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month2})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month2}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			     UNION
+			       SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT    #{month3} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month3})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month3}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			      UNION
+			         SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT    #{month4} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month4})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month4}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			       UNION
+			         SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT   #{month5} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month5})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month5}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			       UNION
+			            SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT   #{month6} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month6})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month6}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			       UNION
+			           SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT   #{month7} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month7})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month7}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			       UNION
+			          SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT   #{month8} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month8})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month8}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			       UNION
+			         SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT   #{month9} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month9})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month9}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			       UNION
+			            SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT   #{month10} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month10})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month10}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			       UNION
+			            SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT   #{month11} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month11})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month11}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			       UNION
+			            SELECT statisDate,YEAR, yearQuarter,SUM(ordNum) AS ordNum,SUM(cmpNum) AS cmpNum,
+				 	     SUM(commentNum) AS commentNum, SUM(commentScore) AS commentScore
+				 	FROM (
+				 	SELECT a.statisDate,a.year,IFNULL(t.yearQuarter,0) as yearQuarter,  IFNULL(t.ordNum,0) AS ordNum,IFNULL(t.cmpNum,0) AS cmpNum,
+				 	IFNULL(t.commentNum,0) AS commentNum,IFNULL(t.commentScore,0) AS commentScore ,t.businessUnit FROM 
+				 	(SELECT   #{month12} AS statisDate, #{searchYear}  AS  YEAR ,  0 AS yearQuarter FROM DUAL )a LEFT JOIN (
+				    SELECT IFNULL(yearMonth, #{month12})  AS statisDate,IFNULL(YEAR,#{searchYear}) AS YEAR,IFNULL(yearQuarter, 0) AS yearQuarter,
+				 	 	  IFNULL(SUM(ordNum),0) AS ordNum,IFNULL(SUM(cmpNum),0) AS cmpNum,
+				 	 	  IFNULL(SUM(commentNum),0) AS commentNum, IFNULL(SUM(commentScore),0) AS commentScore,businessUnit
+					 FROM qs_product_satisfy  
+					 WHERE 1=1  
+				     AND yearMonth =  #{month12}
+					 GROUP BY businessUnit
+					 )t ON a.statisDate = t.statisDate
+					 ) t  
+			      
+	   </if>
+	</select>
+	    
+	
+	
+</mapper>

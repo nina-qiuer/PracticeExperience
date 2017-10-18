@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.ITableMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		order by id desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+		
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.frm.entity.TableEntity">  
+		
+		<result property="makeModuleTime" column="make_module_time" />
+		
+		<result property="makeFormTime" column="make_form_time" />
+		
+		<result property="makeListTime" column="make_list_time" />
+		
+		<result property="tableName" column="table_name" />
+		
+		<result property="appId" column="app_id" />
+		
+		<result property="tableType" column="table_type" />
+		
+		<result property="formAction" column="form_action" />
+		
+		<result property="tableExist" column="table_exist" />
+		
+		<result property="addTime" column="add_time" />
+		
+		<result property="updateTime" column="update_time" />
+		
+		<result property="cacheData" column="cache_data" />
+		
+		<result property="dirPath" column="dir_path" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="makeModuleTime" column="make_module_time"/>
+		
+		<result property="makeFormTime" column="make_form_time"/>
+		
+		<result property="makeListTime" column="make_list_time"/>
+		
+		<result property="tableName" column="table_name"/>
+		
+		<result property="appId" column="app_id"/>
+		
+		<result property="tableType" column="table_type"/>
+		
+		<result property="formAction" column="form_action"/>
+		
+		<result property="tableExist" column="table_exist"/>
+		
+		<result property="addTime" column="add_time"/>
+		
+		<result property="updateTime" column="update_time"/>
+		
+		<result property="cacheData" column="cache_data"/>
+		
+		<result property="dirPath" column="dir_path"/>
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  make_module_time,
+		 
+		  make_form_time,
+		 
+		  make_list_time,
+		 
+		  table_name,
+		 
+		  app_id,
+		 
+		  table_type,
+		 
+		  form_action,
+		 
+		  table_exist,
+		 
+		  add_time,
+		 
+		  update_time,
+		 
+		  cache_data,
+		 
+		  dir_path
+		 
+		) values  (
+		
+		  #{e.makeModuleTime}, 
+		 
+		  #{e.makeFormTime}, 
+		 
+		  #{e.makeListTime}, 
+		 
+		  #{e.tableName}, 
+		 
+		  #{e.appId}, 
+		 
+		  #{e.tableType}, 
+		 
+		  #{e.formAction}, 
+		 
+		  #{e.tableExist}, 
+		 
+		  #{e.addTime}, 
+		 
+		  #{e.updateTime}, 
+		 
+		  #{e.cacheData}, 
+		 
+		  #{e.dirPath} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.makeModuleTime != null">make_module_time=#{e.makeModuleTime},</if>
+			
+				<if test="e.makeFormTime != null">make_form_time=#{e.makeFormTime},</if>
+			
+				<if test="e.makeListTime != null">make_list_time=#{e.makeListTime},</if>
+			
+				<if test="e.tableName != null">table_name=#{e.tableName},</if>
+			
+				<if test="e.appId != null">app_id=#{e.appId},</if>
+			
+				<if test="e.tableType != null">table_type=#{e.tableType},</if>
+			
+				<if test="e.formAction != null">form_action=#{e.formAction},</if>
+			
+				<if test="e.tableExist != null">table_exist=#{e.tableExist},</if>
+			
+				<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			
+				<if test="e.updateTime != null">update_time=#{e.updateTime},</if>
+			
+				<if test="e.cacheData != null">cache_data=#{e.cacheData},</if>
+			
+				<if test="e.dirPath != null">dir_path=#{e.dirPath}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+</mapper>

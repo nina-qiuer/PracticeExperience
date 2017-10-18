@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:property-placeholder location="classpath:config.properties"/>
+	
+	<context:component-scan base-package="com.tuniu.qms.*.service"/>
+	
+	<context:component-scan base-package="com.tuniu.operation.platform.llt"/>
+	
+	<import resource="classpath*:dataSource/MyBatis.xml"/>
+	<import resource="classpath:memcache.xml"/>
+	<import resource="classpath:mail.xml"/>
+	<import resource="classpath:shiro.xml"/>
+	<import resource="classpath:log.xml"/>
+	<import resource="classpath:task.xml"/>
+	<import resource="classpath:tspClient.xml"/>
+
+</beans>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintThirdPartMap">
+
+	<sql id="list">
+		ct_complaint_third_part
+		<where>
+			del_flag = 0
+			<if test="complaint_id !=null and complaint_id !=''">
+				and complaint_id =#{complaint_id}
+			</if>
+		</where>
+	</sql>
+
+	<select id="fetchList" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintThirdPartEntity">
+		select * from
+		<include refid="list" />
+		order by id desc
+	</select>
+
+	<select id="getComplaintThirdPartCount" parameterType="Map"
+		resultType="Integer">
+		select count(1) from
+		<include refid="list" />
+	</select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		<if test="e.complaint_id != null">complaint_id,</if>
+		<if test="e.deal_depart != null">deal_depart,</if>
+		<if test="e.deal_id != null">deal_id,</if>
+		<if test="e.deal_name != null">deal_name,</if>
+		<if test="e.third_type != null">third_type,</if>
+		<if test="e.third_second_type != null">third_second_type,</if>
+		<if test="e.content != null">content,</if>
+		<if test="e.add_id != null">add_id,</if>
+		add_time,
+		del_flag
+		) VALUES
+		(
+		<if test="e.complaint_id != null">#{e.complaint_id},</if>
+		<if test="e.deal_depart != null">#{e.deal_depart},</if>
+		<if test="e.deal_id != null">#{e.deal_id},</if>
+		<if test="e.deal_name != null">#{e.deal_name},</if>
+		<if test="e.third_type != null">#{e.third_type},</if>
+		<if test="e.third_second_type != null">#{e.third_second_type},</if>
+		<if test="e.content != null">#{e.content},</if>
+		<if test="e.add_id != null">#{e.add_id},</if>
+		CURRENT_TIMESTAMP(),
+		0
+		)
+	</insert>
+
+	<update id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.complaint_id != null">complaint_id=#{e.complaint_id},</if>
+			<if test="e.deal_depart != null">deal_depart=#{e.deal_depart},</if>
+			<if test="e.deal_id != null">deal_id=#{e.deal_id},</if>
+			<if test="e.deal_name != null">deal_name=#{e.deal_name},</if>
+			<if test="e.third_type != null">third_type=#{e.third_type},</if>
+			<if test="e.third_second_type != null">third_second_type=#{e.third_second_type},</if>
+			<if test="e.content != null">content=#{e.content},</if>
+			<if test="e.update_id != null">update_id=#{e.update_id},</if>
+			<if test="e.del_flag != null">del_flag=#{e.del_flag},</if>
+			update_time=CURRENT_TIMESTAMP()
+		</set>
+		where id=#{e.id}
+	</update>
+
+	<select id="getComplaintThirdPartLists" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintThirdPartEntity">
+		SELECT cctp.*,cddc1.name AS third_type_name,cddc2.name AS
+		third_second_type_name
+		FROM ct_complaint_third_part cctp
+		LEFT JOIN
+		ct_data_dictionary_config cddc1 ON cctp.third_type=cddc1.id
+		LEFT JOIN
+		ct_data_dictionary_config cddc2 ON
+		cctp.third_second_type=cddc2.id
+		WHERE 
+		cctp.del_flag=0
+		AND cctp.complaint_id = #{complaint_id}
+	</select>
+	
+	<select id="get" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.ComplaintThirdPartEntity">
+		select * from ct_complaint_third_part
+		<where>
+			<if test="id!=null and id != 0">id=#{id}</if>
+			and del_flag = 0
+		</where>
+		limit 1
+	</select>
+</mapper>

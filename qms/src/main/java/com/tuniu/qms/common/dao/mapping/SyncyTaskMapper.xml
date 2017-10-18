@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.common.dao.SyncyTaskMapper">
+
+	<insert id="add" parameterType="com.tuniu.qms.common.model.SyncyTask">
+		INSERT INTO cm_sync_task (
+			<if test="dataId != null">data_id,</if>
+			<if test="taskType != null">task_type,</if>
+			del_flag
+		) VALUES (
+			<if test="dataId != null">#{dataId},</if>
+			<if test="taskType != null">#{taskType},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		delete from cm_sync_task where id = #{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.SyncyTask">
+		UPDATE cm_sync_task 
+		SET fail_times = #{failTimes} , 
+			update_time = CURRENT_TIMESTAMP
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 任务表中并且投诉已完成的数据， -->
+	<select id="getTasksWithCmpFinish" resultType="com.tuniu.qms.common.model.SyncyTask">
+		SELECT cst.id as id, cst.data_id AS dataId,  cst.fail_times as failTimes, ccb.claimAmount as SupplierAmount, ccb.dealPersonId as dealPersonId
+		FROM cm_sync_task cst
+		INNER JOIN cm_complaint_bill ccb ON ccb.id = cst.data_id AND ccb.state= 4 AND ccb.delFlag=0
+		WHERE cst.task_type = 1 and cst.fail_times  &lt; 3
+	</select>	
+</mapper>

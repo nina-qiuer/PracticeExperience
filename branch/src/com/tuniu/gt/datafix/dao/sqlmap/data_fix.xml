@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.datafix.dao.sqlmap.imap.IDataFixMap">
+	
+	<select id="getSignSatisfactionDataFixMaxId" resultType="Integer" >
+		SELECT max_id FROM ct_data_fix WHERE id=1;
+	</select>
+	
+	<select id="getNextSignSatisfactionDataFixId" resultType="Integer"  resultMap="signSatisfactionEntity" >
+		SELECT * FROM ct_sign_satisfaction WHERE id>#{maxId} order by id asc limit 1;
+	</select>
+	
+	<update id="updateCityInfo">
+		UPDATE ct_sign_satisfaction
+		SET 	
+			<if test="bookCityCode != null and bookCityCode != '' ">
+				book_city_code=#{bookCityCode},
+			</if>
+			<if test="bookCity != null and bookCity != '' ">
+				book_city=#{bookCity},
+			</if>
+			<if test="startCityCode != null and startCityCode != '' ">
+				start_city_code=#{startCityCode},
+			</if>
+			<if test="startCity != null and startCity != '' ">
+				start_city=#{startCity},
+			</if>
+			<if test="desCityCode != null and desCityCode != '' ">
+				des_city_code=#{desCityCode},
+			</if>
+			<if test="desCity != null and desCity != '' ">
+				des_city=#{desCity},
+			</if>
+			id = #{id}
+		where id=#{id}
+	</update>
+	
+	<update id="updateMaxId" parameterType="Integer">
+		UPDATE ct_data_fix
+		SET 	max_id=#{id}
+		where id=1
+	</update>
+	
+	
+	<resultMap id="signSatisfactionEntity" type="com.tuniu.gt.satisfaction.entity.SignSatisfactionEntity">
+		<result property="orderId" column="order_id" />
+		<result property="faceSaleId" column="face_sale_id" />
+		<result property="faceSaleName" column="face_sale_name" />
+		<result property="faceSaleSatisfaction" column="face_sale_satisfaction" />
+		<result property="signType" column="sign_type" />
+		<result property="customerLeaderId" column="customer_leader_id" />
+		<result property="customerLeader" column="customer_leader" />
+		<result property="productLeaderId" column="product_leader_id" />
+		<result property="productLeader" column="product_leader" />
+		<result property="orderType" column="order_type" />
+		<result property="routeId" column="route_id" />
+		<result property="outDate" column="out_date" />
+		<result property="backDate" column="back_date" />
+		<result property="customName" column="custom_name" />
+		<result property="telNo" column="tel_no" />
+		<result property="createTime" column="create_time" />
+		<result property="lastModifyTime" column="last_modify_time" />
+		<result property="bookCityCode" column="book_city_code" />
+		<result property="bookCity" column="book_city" />
+		<result property="startCityCode" column="start_city_code" />
+		<result property="startCity" column="start_city" />
+		<result property="desCityCode" column="des_city_code" />
+		<result property="desCity" column="des_city" />
+	</resultMap>
+	
+</mapper>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.punishprd.dao.sqlmap.imap.PunishPrdMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<include refid="listWhere"></include>
+	</sql>
+	
+	<sql id="listWhere">
+		<where>
+			delFlag = 0
+			<if test="routeId!=null">and routeId=#{routeId}</if>
+			<choose>
+				<when test="menuId==2">
+					and status=2
+					<if test="offlineOperPerson !=null and offlineOperPerson !=''">and (offlineOperPerson = #{offlineOperPerson})</if>
+					<if test="prdManager!=null and prdManager!=''">and prdManager=#{prdManager}</if>
+				</when>
+				<when test="menuId==3">
+					<if test="prdManager!=null and prdManager!=''">and prdManager=#{prdManager}</if>
+					and status=4 and offlineOperPerson is not null
+				</when>
+				<otherwise>
+					<if test="triggerTimeFrom!=null">and triggerTime&gt;=#{triggerTimeFrom}</if>
+					<if test="triggerTimeTo!=null">and triggerTime&lt;=#{triggerTimeTo}</if>
+					<if test="orderId!=null">and orderId=#{orderId}</if>
+					<if test="BU!=null and BU!=''">and BU like '%${BU}%'</if>
+					<if test="prdManager!=null and prdManager!=''">and prdManager=#{prdManager}</if>
+					<if test="prdOfficer!=null and prdOfficer!=''">and prdOfficer=#{prdOfficer}</if>
+					<if test="supplier!=null and supplier!=''">and supplier like '%${supplier}%'</if>
+					<if test="offlineType!=null">and offlineType=#{offlineType}</if>
+					<if test="status!=null">and status=#{status}</if>
+					<if test="offlineCount!=null">and offlineCount=#{offlineCount}</if>
+				</otherwise>
+			</choose>
+		</where>
+	</sql>
+	<select id="fetchList" parameterType="Map"
+		resultType="com.tuniu.gt.punishprd.entity.PunishPrdEntity">
+		<include refid="list" />
+		order by triggerTime desc
+		<if test="exports ==null or exports==''">
+			<if test="dataLimitStart != null">
+				limit #{dataLimitStart}
+				<if test="dataLimitEnd != null">
+					,#{dataLimitEnd}
+				</if>
+			</if>
+		</if>
+	</select>
+	
+	<select id="getListCount"  parameterType="map"  resultType="integer">
+			select count(*) as count from (select 1 from pp_punish_prd  <include refid="listWhere"></include>)  t
+	</select>
+	
+	<select id="fetchListMap" parameterType="Map" resultType="map">
+		<include refid="list" />
+	</select>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+
+		<if test="e.travelDateBgn!=null">travelDateBgn,</if>
+		<if test="e.qcId!=null">qcId,</if>
+		<if test="e.offlineCause!=null">offlineCause,</if>
+		<if test="e.gmvRankId!=null">gmvRankId,</if>
+		<if test="e.system !=null">system,</if>
+		<if test="e.cmpId !=null">cmpId,</if>
+		orderId,
+
+		routeId,
+
+		routeName,
+
+		BU,
+
+		prdManager,
+
+		prdOfficer,
+
+		supplier,
+
+		status,
+
+		offlineType,
+
+		offlineCount,
+
+		offlineTime,
+
+		onlineTime,
+
+		triggerTime
+
+		) values (
+
+		<if test="e.travelDateBgn!=null">#{e.travelDateBgn},</if>
+		<if test="e.qcId!=null">#{e.qcId},</if>
+		<if test="e.offlineCause!=null">#{e.offlineCause},</if>
+		<if test="e.gmvRankId!=null">#{e.gmvRankId},</if>
+		<if test="e.system !=null">#{e.system},</if>
+		<if test="e.cmpId !=null">#{e.cmpId},</if>
+
+		#{e.orderId},
+
+		#{e.routeId},
+
+		#{e.routeName},
+
+		#{e.BU},
+
+		#{e.prdManager},
+
+		#{e.prdOfficer},
+
+		#{e.supplier},
+
+		#{e.status},
+
+		#{e.offlineType},
+
+		#{e.offlineCount},
+
+		#{e.offlineTime},
+
+		#{e.onlineTime},
+
+		CURRENT_DATE
+		)
+	</sql>
+
+	<update id="update" parameterType="Map" flushCache="true"
+		statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	
+	<update id="offlineByRouteId" parameterType="long">
+		UPDATE pp_punish_prd SET STATUS=4,onlineTime=NULL WHERE routeId=#{routeId} AND delFlag=0
+	</update>
+
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.status != null">status=#{e.status},</if>
+			<if test="e.onlineTime != null">onlineTime=#{e.onlineTime},</if>
+			<if test="e.offlineOperPerson != null and e.offlineOperPerson!=''">offlineOperPerson=#{e.offlineOperPerson},</if>
+			<if test="e.offlineOperTime != null">offlineOperTime=#{e.offlineOperTime}</if>
+			<if test="e.delFlag != null">delFlag=#{e.delFlag},</if>
+			<if test="e.onlineOperPerson != null and e.onlineOperPerson!=''">onlineOperPerson=#{e.onlineOperPerson},</if>
+			<if test="e.onlineOperTime != null">onlineOperTime=#{e.onlineOperTime}</if>
+		</set>
+		<where>
+			<if test="e.id != null">id=#{e.id}</if>
+			<if test="e.routeId != null">routeId=#{e.routeId} and (status=1 or status=2)</if>
+		</where>
+	</sql>
+	<!-- 获取状态为待整改和整改中的同产品的处罚列表 -->
+	<select id="getMaxOnlineTime" parameterType="long"
+		resultType="date">
+		SELECT max(onlineTime) FROM pp_punish_prd WHERE delFlag=0
+		AND routeId=#{routeId}
+	</select>
+	
+	<select id="getAllwaysOfflineCount" parameterType="long" resultType="Integer">
+		SELECT COUNT(1)
+		FROM(
+		SELECT DISTINCT(routeId) FROM pp_punish_prd WHERE routeId=#{routeId} AND delFlag=0 AND status=4
+		) t
+	</select>
+	
+	<update id="updateOnlineTimeByRouteId" parameterType="map">
+		UPDATE pp_punish_prd SET onlineTime=#{onlineTime} WHERE routeId=#{routeId} AND delFlag=0
+	</update>
+	
+	<select id="get" parameterType="map" resultType="com.tuniu.gt.punishprd.entity.PunishPrdEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<select id="getHistoryOfflineListOper" parameterType="map" resultType="com.tuniu.gt.punishprd.entity.PunishPrdEntity">
+		select * from pp_punish_prd 
+		where routeId=#{routeId} and offlineType=2 and offlineOperPerson is not null order by triggerTime
+	</select>
+	
+	<!-- 触红和低满意度使用 -->
+	<select id="getMaxOfflineCount" parameterType="map" resultType="integer">
+		select max(offlineCount) from pp_punish_prd
+		where delFlag=0 and  routeId=#{routeId} and offlineType=#{offlineType}
+		<if test="triggerTime!=null">and triggerTime&lt;#{triggerTime}</if>
+	</select>
+	
+	<select id="getOfflineHistoryDateList" parameterType="map" resultType="date">
+		SELECT triggerTime FROM pp_punish_prd
+		WHERE delFlag=0 AND routeId=#{routeId} AND offlineType=#{offlineType}
+		<if test="triggerTime!=null">AND triggerTime&lt;#{triggerTime}</if>
+	</select>
+	
+	<select id="getPreMonthOfflineIds" parameterType="map" resultType="integer">
+		SELECT routeId FROM pp_punish_prd  
+		WHERE delFlag=0 AND offlineType=#{offlineType} 
+		AND offlineOperTime IS NOT NULL AND DATE_FORMAT(triggerTime,'%Y-%m')=DATE_FORMAT(SUBDATE(CURDATE(),INTERVAL 1 MONTH),'%Y-%m')
+		group by routeId having count(1)&gt;=
+		<!-- 触红类型则大于等于两条，低满意度类型大于等于1条 -->
+		<choose>
+			<when test="offlineType==1">2</when>
+			<otherwise>1</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 获取低质量下线原因信息 -->
+	<select id="getOfflineCauseInfo" parameterType="map" resultType="com.tuniu.gt.punishprd.entity.PunishPrdEntity">
+		SELECT * FROM pp_punish_prd  
+		WHERE routeId=#{routeId} AND delFlag=0 AND offlineType=1 
+		AND offlineOperTime IS NOT NULL AND DATE_FORMAT(triggerTime,'%Y-%m')=DATE_FORMAT(SUBDATE(#{triggerTime},INTERVAL 1 MONTH),'%Y-%m')
+	</select>
+	
+	<!-- 获取需要排除的线路列表 -->
+	<select id="queryExcludeRouteIds" parameterType="map" resultType="long">
+		select distinct(routeId) from  pp_punish_prd
+		where delFlag=0 AND offlineType=2
+		AND ( (status=2) OR (onlineOperTime&gt;=#{lastWeekBgn}) )
+	</select>
+
+</mapper>

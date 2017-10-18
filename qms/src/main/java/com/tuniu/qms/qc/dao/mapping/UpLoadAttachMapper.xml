@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.UpLoadAttachMapper">
+
+   <resultMap type="com.tuniu.qms.qc.model.UpLoadAttach" id="upLoadMap">
+        <result property="id" column="id"  />
+        <result property="qpId" column="qpId"  />
+        <result property="path" column="path"  />
+        <result property="name" column="name"  />
+        <result property="type" column="type"  />
+        <result property="addPerson" column="addPerson"  />
+        <result property="updatePerson" column="updatePerson"  />
+        <result property="addTime" column="addTime"  />
+        <result property="updateTime" column="updateTime"  />
+        <result property="delFlag" column="delFlag"  />
+    </resultMap>
+  
+	
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.UpLoadAttach" >
+	
+	  insert into qc_quality_problem_attach
+	  (
+	   	 <if test="qpId != null">qpId,</if>
+		 <if test="path != null">path,</if>
+		 <if test="name != null">name,</if>
+		 <if test="type != null">type,</if>
+		 <if test="addPerson != null">addPerson,</if> 
+		 <if test="updatePerson != null">updatePerson,</if>
+		 <if test="delFlag != null">delFlag,</if>
+		 addTime,
+		 updateTime
+	 )
+	 values(
+	 
+	     <if test="qpId != null"> #{qpId},</if>
+		 <if test="path != null">#{path},</if>
+		 <if test="name != null">#{name},</if>
+		 <if test="type != null"> #{type},</if>
+		 <if test="addPerson != null"> #{addPerson},</if> 
+		 <if test="updatePerson != null"> #{updatePerson},</if>
+		 <if test="delFlag != null">delFlag,</if>
+	     CURRENT_TIMESTAMP() ,
+	     CURRENT_TIMESTAMP() 
+	 )
+	
+	</insert>
+	
+	<insert id="addCopyFile" parameterType="java.util.Map" >
+	
+	   insert into qc_quality_problem_attach
+	   (
+		    qpId,
+		    path,
+		    name,
+		    type,
+			addPerson,
+			delFlag
+	   )
+	   select #{qpId},
+	           b.path,
+			   b.name,
+			   b.type,
+			   #{addPerson},
+			   b.delFlag
+	    from qc_quality_problem_attach b where b.qpId =#{oldQpId} and b.delFlag =0 
+	
+	</insert>
+	
+	
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.UpLoadAttachDto" resultType="com.tuniu.qms.qc.model.UpLoadAttach">
+		SELECT *  FROM qc_quality_problem_attach 
+		where  delFlag =0 and qpId =#{qpId}
+	</select>
+	
+	<delete id="delete" parameterType="Integer">
+	
+		DELETE FROM qc_quality_problem_attach WHERE id=#{id}
+		
+	</delete>
+	
+	<delete id="deleteAttach" parameterType="Integer">
+	   
+	     delete from qc_quality_problem_attach  where qpId =#{qpId}
+	   
+	</delete>
+</mapper>

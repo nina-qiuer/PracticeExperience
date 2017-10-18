@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.tac.dao.sqlmap.imap.IPrdProcurementIssuesFeedbackMap"> 
+	<sql id="list">
+		<where>
+			<if test="addTimeBgn != null and addTimeBgn != ''">and fppif.addTime&gt;=#{addTimeBgn}</if>
+			<if test="addTimeEnd != null and addTimeEnd != ''">and fppif.addTime&lt;=concat(#{addTimeEnd},' 23:59:59')</if>
+			<if test="addPerson != null and addPerson != ''">and fppif.addPerson=#{addPerson}</if>
+			<if test="department != null and department != ''">and fppif.department=#{department}</if>
+			<if test="area != null and area != ''">and fppif.area=#{area}</if>
+			and fppif.delFlag=0
+		</where>
+			order by fppif.addTime desc
+	</sql>
+	<select id="fetchList" parameterType="map" resultType="com.tuniu.gt.tac.entity.PrdProcurementIssusFeedbak">
+		SELECT
+		fppif.*,
+		CONCAT(IFNULL(ud3.dep_name,''),'-',IFNULL(ud2.dep_name,''),'-',IFNULL(ud1.dep_name,'')) AS prdManagerDep
+		FROM tac_product_procurement_issues_feedback fppif
+		LEFT JOIN frm_user fu
+		ON fu.real_name = fppif.prdManager AND fppif.prdManager!=''
+		LEFT JOIN uc_department ud1
+		ON fu.dep_id = ud1.id
+		LEFT JOIN uc_department ud2
+		ON ud1.father_id = ud2.id
+		LEFT JOIN uc_department ud3
+		ON ud2.father_id = ud3.id
+		<include refid="list"/>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="map"  resultType="int">
+		select count(1) as count  from tac_product_procurement_issues_feedback fppif
+		<include refid="list"></include>
+	</select>
+
+	
+	<select id="get" parameterType="int"  resultType="com.tuniu.gt.tac.entity.PrdProcurementIssusFeedbak">
+		select * from tac_product_procurement_issues_feedback
+		where id=#{id}
+	</select>
+
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  <if test="e.department != null">
+		    department,
+		  </if>
+		  
+		  <if test="e.area != null">
+		 	 area,
+		  </if>
+
+		  <if test="e.destType != null">
+		  	destType,
+		  </if>
+
+		  <if test="e.orderId != null">
+		  	orderId,
+		  </if>
+
+		  <if test="e.routeId != null">
+		  	routeId,
+		  </if>
+
+		  <if test="e.departDate != null">
+		  	departDate,
+		  </if>
+
+		  <if test="e.issueType != null">
+		  	issueType,
+		  </if>
+
+		  <if test="e.prdOfficer != null">
+		  	prdOfficer,
+		  </if>
+
+		  <if test="e.prdManager != null">
+		  	prdManager,
+		  </if>
+		  
+		  <if test="e.prdMajordomo != null">
+		  	prdMajordomo,
+		  </if>
+
+		  <if test="e.supplier != null">
+		  	supplier,
+		  </if>
+
+		  <if test="e.description != null">
+		  	description,
+		  </if>
+
+		  <if test="e.resolveState != null">
+		  	resolveState,
+		  </if>
+
+          addPerson
+
+		) values  (
+		
+		  <if test="e.department != null">
+		    #{e.department},
+		  </if>
+		  
+		  <if test="e.area != null">
+		 	 #{e.area},
+		  </if>
+
+		  <if test="e.destType != null">
+		  	#{e.destType},
+		  </if>
+
+		  <if test="e.orderId != null">
+		  	#{e.orderId},
+		  </if>
+
+		  <if test="e.routeId != null">
+		  	#{e.routeId},
+		  </if>
+
+		  <if test="e.departDate != null">
+		  	#{e.departDate},
+		  </if>
+
+		  <if test="e.issueType != null">
+		  	#{e.issueType},
+		  </if>
+
+		  <if test="e.prdOfficer != null">
+		  	#{e.prdOfficer},
+		  </if>
+
+		  <if test="e.prdManager != null">
+		  	#{e.prdManager},
+		  </if>
+		  
+		  <if test="e.prdMajordomo != null">
+		  	#{e.prdMajordomo},
+		  </if>
+
+		  <if test="e.supplier != null">
+		  	#{e.supplier},
+		  </if>
+
+		  <if test="e.description != null">
+		  	#{e.description},
+		  </if>
+
+		  <if test="e.resolveState != null">
+		  	#{e.resolveState},
+		  </if>
+
+		  #{e.addPerson}
+
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.tac.entity.PrdProcurementIssusFeedbak" flushCache="true" statementType="PREPARED"> 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+		  <if test="e.department != null">department=#{e.department},</if>
+		  <if test="e.area != null">area=#{e.area},</if>
+		  <if test="e.destType != null">destType=#{e.destType},</if>		  
+		  <if test="e.orderId != null">orderId=#{e.orderId},</if>
+		  <if test="e.routeId != null">routeId=#{e.routeId},</if>
+		  <if test="e.departDate != null">departDate=#{e.departDate},</if>
+		  <if test="e.issueType != null">issueType=#{e.issueType},</if>
+		  <if test="e.prdOfficer != null">prdOfficer=#{e.prdOfficer},</if>
+		  <if test="e.prdManager != null">prdManager=#{e.prdManager},</if>		  
+		  <if test="e.prdMajordomo != null">prdMajordomo=#{e.prdMajordomo},</if>
+		  <if test="e.supplier != null">supplier=#{e.supplier},</if>
+		  <if test="e.description != null">description=#{e.description},</if>
+		  <if test="e.resolveState != null">resolveState=#{e.resolveState},</if>
+		  <if test="e.delFlag != null">delFlag=#{e.delFlag},</if>
+		  <if test="e.addPerson != null">addPerson=#{e.addPerson},</if>
+		  updateTime=now()
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	<update id="update" parameterType="com.tuniu.gt.tac.entity.PrdProcurementIssusFeedbak" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/>
+	</sql>
+	
+	<delete id="delete">
+		<include refid="delete"/>
+		  where id=#{e.id}
+	</delete>
+
+</mapper>

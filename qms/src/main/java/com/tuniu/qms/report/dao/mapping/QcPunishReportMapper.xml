@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.report.dao.QcPunishReportMapper">
+	
+	<!-- 数据添加 -->
+	<insert id="add" parameterType="com.tuniu.qms.report.model.QcPunishReport">
+		INSERT INTO qc_punish_report (
+		    <if test="qcId != null">qcId,</if>
+		    <if test="innerPunishId != null">innerPunishId,</if>
+		    <if test="scorePunish != null">scorePunish,</if>
+			<if test="economicPunish != null">economicPunish,</if>
+			<if test="firstQcTypeId != null">firstQcTypeId,</if>
+			<if test="firstQcTypeName != null">firstQcTypeName,</if>
+			<if test="secondQcTypeId != null">secondQcTypeId,</if>
+			<if test="secondQcTypeName != null">secondQcTypeName,</if>
+			<if test="thirdQcTypeId != null">thirdQcTypeId,</if>
+			<if test="thirdQcTypeName != null">thirdQcTypeName,</if>
+			<if test="firstDepId != null">firstDepId,</if>
+			<if test="firstDepName != null">firstDepName,</if>
+			<if test="twoDepId != null">twoDepId,</if>
+			<if test="twoDepName != null">twoDepName,</if>
+			<if test="threeDepId != null">threeDepId,</if>
+			<if test="threeDepName != null">threeDepName,</if>
+			<if test="firstQcGroupId != null">firstQcGroupId,</if>
+			<if test="firstQcGroupName != null">firstQcGroupName,</if>
+			<if test="twoQcGroupId != null">twoQcGroupId,</if>
+			<if test="twoQcGroupName != null">twoQcGroupName,</if>
+			<if test="threeQcGroupId != null">threeQcGroupId,</if>
+			<if test="threeQcGroupName != null">threeQcGroupName,</if>
+			<if test="jobId != null">jobId,</if>
+			<if test="jobName != null">jobName,</if>
+			<if test="punPersonId != null">punPersonId,</if>
+			<if test="punishPersonName != null">punishPersonName,</if>
+			<if test="qcPersonId != null">qcPersonId,</if>
+			<if test="qcPersonName != null">qcPersonName,</if>
+			<if test="year != null">year,</if>
+			<if test="yearQuarter != null">yearQuarter,</if>
+			<if test="yearMonth != null">yearMonth,</if>
+			<if test="yearWeek != null">yearWeek,</if>
+			<if test="qcFinishTime != null">qcFinishTime,</if>
+			delFlag
+		) VALUES (
+		    <if test="qcId != null">#{qcId},</if>
+		    <if test="innerPunishId != null">#{innerPunishId},</if>
+		    <if test="scorePunish != null">#{scorePunish},</if>
+			<if test="economicPunish != null">#{economicPunish},</if>
+			<if test="firstQcTypeId != null">#{firstQcTypeId},</if>
+			<if test="firstQcTypeName != null">#{firstQcTypeName},</if>
+			<if test="secondQcTypeId != null">#{secondQcTypeId},</if>
+			<if test="secondQcTypeName != null">#{secondQcTypeName},</if>
+			<if test="thirdQcTypeId != null">#{thirdQcTypeId},</if>
+			<if test="thirdQcTypeName != null">#{thirdQcTypeName},</if>
+			<if test="firstDepId != null">#{firstDepId},</if>
+			<if test="firstDepName != null">#{firstDepName},</if>
+			<if test="twoDepId != null">#{twoDepId},</if>
+			<if test="twoDepName != null">#{twoDepName},</if>
+			<if test="threeDepId != null">#{threeDepId},</if>
+			<if test="threeDepName != null">#{threeDepName},</if>
+			<if test="firstQcGroupId != null">#{firstQcGroupId},</if>
+			<if test="firstQcGroupName != null">#{firstQcGroupName},</if>
+			<if test="twoQcGroupId != null">#{twoQcGroupId},</if>
+			<if test="twoQcGroupName != null">#{twoQcGroupName},</if>
+			<if test="threeQcGroupId != null">#{threeQcGroupId},</if>
+			<if test="threeQcGroupName != null">#{threeQcGroupName},</if>
+			<if test="jobId != null">#{jobId},</if>
+			<if test="jobName != null">#{jobName},</if>
+			<if test="punPersonId != null">#{punPersonId},</if>
+			<if test="punishPersonName != null">#{punishPersonName},</if>
+			<if test="qcPersonId != null">#{qcPersonId},</if>
+			<if test="qcPersonName != null">#{qcPersonName},</if>
+			<if test="year != null">#{year},</if>
+			<if test="yearQuarter != null">#{yearQuarter},</if>
+			<if test="yearMonth != null">#{yearMonth},</if>
+			<if test="yearWeek != null">#{yearWeek},</if>
+			<if test="qcFinishTime != null">#{qcFinishTime},</if>
+			0
+		)
+	</insert>
+	
+	<!-- 统计时间、质检人、质检组查询条件处理 -->
+	<sql id="timeSql">
+		 <if test="timeType == 1">
+	     	<if test="yearBgn != null and yearBgn !='' ">AND year &gt;=#{yearBgn}</if>
+			<if test="yearEnd != null and yearEnd !='' ">AND year &lt;=#{yearEnd}</if>	
+	     </if>
+	    <if test="timeType == 2">
+	     	AND yearQuarter &gt;=#{quarterStart} AND yearQuarter &lt;=#{quarterFinish}
+	     </if>
+	     <if test="timeType == 3">
+	          AND yearMonth &gt;=#{monthStart} AND yearMonth &lt;=#{monthFinish}
+	     </if>
+	     <if test="timeType ==4">
+	    	 AND yearWeek &gt;=#{weekStart} AND yearWeek &lt;=#{weekFinish}
+	     </if>
+	     <if test="timeType == 5">
+	     	<if test="addTimeBgn != null and addTimeBgn!='' ">AND qcFinishTime &gt;=#{addTimeBgn}</if>
+			<if test="addTimeEnd != null and addTimeEnd!='' ">AND qcFinishTime &lt;=concat(#{addTimeEnd},' 23:59:59')</if>	
+	     </if>
+	    <if test="qcPerson != null and qcPerson != ''">AND qcPersonName = #{qcPerson}</if>
+    	<if test="firstQcGroupId != null and firstQcGroupId !=''">AND firstQcGroupId=#{firstQcGroupId}</if>
+	 	<if test="twoQcGroupId != null and twoQcGroupId !=''">AND twoQcGroupId=#{twoQcGroupId}</if>
+	 	<if test="threeQcGroupId != null and threeQcGroupId !=''">AND threeQcGroupId=#{threeQcGroupId}</if>
+	</sql>
+	
+	<!-- 根据质检类型纬度统计处罚记分 -->
+	<select id="getGraphByQcType" parameterType="com.tuniu.qms.report.dto.QcPunishReportDto" resultType="Map">
+		<if test="(firstQcTypeId == null or firstQcTypeId =='') and (secondQcTypeId ==null or secondQcTypeId =='') and (thirdQcTypeId ==null or thirdQcTypeId =='')">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT firstQcTypeName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY firstQcTypeId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="firstQcTypeId != null and firstQcTypeId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT secondQcTypeName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and firstQcTypeId = #{firstQcTypeId}
+				 	and secondQcTypeId > 0
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY secondQcTypeId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="secondQcTypeId != null and secondQcTypeId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT thirdQcTypeName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and secondQcTypeId = #{secondQcTypeId}
+				 	and thirdQcTypeId > 0
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY thirdQcTypeId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="thirdQcTypeId != null and thirdQcTypeId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT thirdQcTypeName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and thirdQcTypeId = #{thirdQcTypeId}
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+	</select>
+	
+	<!-- 关联部门纬度统计数据  -->
+	<select id="getGraphByDep" parameterType="com.tuniu.qms.report.dto.QcPunishReportDto" resultType="Map">
+		<if test="(firstDepId == null or firstDepId =='') and (twoDepId ==null or twoDepId =='') and (threeDepId ==null or threeDepId =='')">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT firstDepName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY firstDepId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="firstDepId != null and firstDepId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT twoDepName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and firstDepId = #{firstDepId}
+				 	and twoDepId > 0
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY twoDepId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="twoDepId != null and twoDepId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT threeDepName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and twoDepId = #{twoDepId}
+				 	and threeDepId > 0
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY threeDepId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="threeDepId != null and threeDepId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT threeDepName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and threeDepId = #{threeDepId}
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+	</select>
+	
+	<!-- 关联岗位纬度统计处罚记分 -->
+	<select id="getGraphByJob" parameterType="com.tuniu.qms.report.dto.QcPunishReportDto" resultType="Map">
+		<if test="jobId == null or jobId ==''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT jobName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY jobId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="jobId != null and jobId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT jobName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1 
+				 	and jobId = #{jobId} 
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+	</select>
+	
+	<!-- 被处罚人纬度统计处罚记分 -->
+	<select id="getGraphByPunishPerson" parameterType="com.tuniu.qms.report.dto.QcPunishReportDto" resultType="Map">
+		<if test="punishPersonName == null or punishPersonName ==''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT punishPersonName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+					<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY punPersonId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="punishPersonName != null and punishPersonName !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT punishPersonName as qcTypeName ,sum(scorePunish) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1 
+				 	and punishPersonName = #{punishPersonName} 
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<include refid="timeSql"/>
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+	</select>
+	
+	<sql id="trendCondition">
+		<where>
+			1=1 
+			<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+			<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+			<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+			<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+			<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+			<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			<if test="qcPerson != null and qcPerson != ''">AND qcPersonName = #{qcPerson}</if>
+   			<if test="firstQcGroupId != null and firstQcGroupId !=''">AND firstQcGroupId=#{firstQcGroupId}</if>
+ 			<if test="twoQcGroupId != null and twoQcGroupId !=''">AND twoQcGroupId=#{twoQcGroupId}</if>
+ 			<if test="threeQcGroupId != null and threeQcGroupId !=''">AND threeQcGroupId=#{threeQcGroupId}</if>
+		</where>
+	</sql>
+	
+	<!-- 记分处罚分数趋势 -->
+	<select id="getscoreSumTrendGrah" parameterType="com.tuniu.qms.report.dto.QcPunishReportDto" resultType="Map">
+		<if test="timeType == 1 ">
+			 SELECT year as statisticDate , sum(scorePunish)  AS num 
+				FROM qc_punish_report  
+					<include refid="trendCondition"/> 
+			     	<if test="yearBgn != null and yearBgn !='' ">AND year &gt;=#{yearBgn}</if>
+				 	<if test="yearEnd != null and yearEnd !='' ">AND year &lt;=#{yearEnd}</if>
+				 GROUP BY year
+				 ORDER BY statisticDate
+	   </if>
+	   <if test="timeType == 2 ">
+			 SELECT yearQuarter  as statisticDate ,sum(scorePunish)  AS num 
+				FROM qc_punish_report  
+				 	<include refid="trendCondition"/> 
+			     	AND yearQuarter &gt;=#{quarterStart} AND yearQuarter &lt;=#{quarterFinish}	
+				 GROUP BY  yearQuarter
+				 ORDER BY statisticDate
+	   </if>
+	   <if test="timeType == 3 ">
+			 SELECT yearMonth  as statisticDate ,sum(scorePunish)  AS num 
+				FROM qc_punish_report  
+				 	<include refid="trendCondition"/> 
+			       AND yearMonth &gt;=#{monthStart} AND yearMonth &lt;=#{monthFinish}
+				   GROUP BY yearMonth
+				   ORDER BY statisticDate
+	   </if>
+	    <if test="timeType == 4 ">
+			 SELECT yearWeek  as statisticDate ,sum(scorePunish) AS num 
+				FROM qc_punish_report  
+				 	<include refid="trendCondition"/> 
+			     	AND yearWeek &gt;=#{weekStart} AND yearWeek &lt;=#{weekFinish}
+				 GROUP BY yearWeek
+				 ORDER BY statisticDate
+	   </if>
+	    <if test="timeType == 5 ">
+			 SELECT DATE_FORMAT(qcFinishTime,'%Y-%m-%d') as statisticDate ,sum(scorePunish)  AS num 
+				FROM qc_punish_report  
+				 	<include refid="trendCondition"/> 
+			    	<if test="addTimeBgn != null and addTimeBgn!='' ">AND qcFinishTime &gt;=#{addTimeBgn}</if>
+				 	<if test="addTimeEnd != null and addTimeEnd!='' ">AND qcFinishTime &lt;=concat(#{addTimeEnd},' 23:59:59')</if>	
+				 GROUP BY DATE_FORMAT(qcFinishTime,'%Y-%m-%d')
+				 ORDER BY statisticDate
+	   </if>
+	</select>
+	
+	<!-- 记分处罚次数趋势图 -->
+	<select id="getPunishTimeTrendGrah" parameterType="com.tuniu.qms.report.dto.QcPunishReportDto" resultType="Map">
+		<if test="timeType == 1 ">
+			 SELECT year as statisticDate ,COUNT(1)  AS num 
+				FROM qc_punish_report  
+				  	<include refid="trendCondition"/> 
+			     	<if test="yearBgn != null and yearBgn !='' ">AND year &gt;=#{yearBgn}</if>
+				 	<if test="yearEnd != null and yearEnd !='' ">AND year &lt;=#{yearEnd}</if>
+			  GROUP BY year
+			  ORDER BY statisticDate
+	   </if>
+	   <if test="timeType == 2 ">
+			 SELECT yearQuarter  as statisticDate ,COUNT(1)  AS num 
+				FROM qc_punish_report  
+				 	<include refid="trendCondition"/> 
+			     	AND yearQuarter &gt;=#{quarterStart} AND yearQuarter &lt;=#{quarterFinish}	
+			   GROUP BY  yearQuarter
+			   ORDER BY statisticDate
+	   </if>
+	   <if test="timeType == 3 ">
+			 SELECT yearMonth  as statisticDate ,COUNT(1)  AS num 
+				FROM qc_punish_report  
+				  	<include refid="trendCondition"/> 
+			       	AND yearMonth &gt;=#{monthStart} AND yearMonth &lt;=#{monthFinish}
+			   GROUP BY yearMonth
+			   ORDER BY statisticDate
+	   </if>
+	    <if test="timeType == 4 ">
+			 SELECT yearWeek  as statisticDate ,COUNT(1)  AS num 
+				FROM qc_punish_report  
+				 	<include refid="trendCondition"/> 
+			     	AND yearWeek &gt;=#{weekStart} AND yearWeek &lt;=#{weekFinish}
+			   GROUP BY yearWeek
+			   ORDER BY statisticDate
+	   </if>
+	    <if test="timeType == 5 ">
+			 SELECT DATE_FORMAT(qcFinishTime,'%Y-%m-%d') as statisticDate ,COUNT(1)  AS num 
+				FROM qc_punish_report  
+				 	<include refid="trendCondition"/> 
+			     	<if test="addTimeBgn != null and addTimeBgn!='' ">AND qcFinishTime &gt;=#{addTimeBgn}</if>
+				 	<if test="addTimeEnd != null and addTimeEnd!='' ">AND qcFinishTime &lt;=concat(#{addTimeEnd},' 23:59:59')</if>	
+				GROUP BY DATE_FORMAT(qcFinishTime,'%Y-%m-%d')
+			    ORDER BY statisticDate
+	   </if>
+	</select>
+	
+	<!-- 根据质检类型纬度统计记分处罚次数-->
+	<select id="getPunishTimeByQcType" parameterType="com.tuniu.qms.report.dto.QcPunishReportDto" resultType="Map">
+		<if test="(firstQcTypeId == null or firstQcTypeId =='') and (secondQcTypeId ==null or secondQcTypeId =='') and (thirdQcTypeId ==null or thirdQcTypeId =='')">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT firstQcTypeName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY firstQcTypeId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="firstQcTypeId != null and firstQcTypeId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT secondQcTypeName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and firstQcTypeId = #{firstQcTypeId}
+				 	and secondQcTypeId > 0
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY secondQcTypeId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="secondQcTypeId != null and secondQcTypeId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT thirdQcTypeName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and secondQcTypeId = #{secondQcTypeId}
+				 	and thirdQcTypeId > 0
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY thirdQcTypeId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="thirdQcTypeId != null and thirdQcTypeId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT thirdQcTypeName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and thirdQcTypeId = #{thirdQcTypeId}
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+	</select>
+	
+	<!-- 关联部门纬度统计记分处罚次数  -->
+	<select id="getPunishTimeByDep" parameterType="com.tuniu.qms.report.dto.QcPunishReportDto" resultType="Map">
+		<if test="(firstDepId == null or firstDepId =='') and (twoDepId ==null or twoDepId =='') and (threeDepId ==null or threeDepId =='')">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT firstDepName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY firstDepId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="firstDepId != null and firstDepId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT twoDepName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and firstDepId = #{firstDepId}
+				 	and twoDepId > 0
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY twoDepId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="twoDepId != null and twoDepId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT threeDepName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and twoDepId = #{twoDepId}
+				 	and threeDepId > 0
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY threeDepId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="threeDepId != null and threeDepId !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT threeDepName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	and threeDepId = #{threeDepId}
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<if test="punishPersonName != null and punishPersonName != ''">AND punishPersonName = #{punishPersonName} </if>
+			    	<include refid="timeSql"/>
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+	</select>
+	
+	<!-- 被处罚人纬度统计处罚记分次数 -->
+	<select id="getPunishTimeByPunPerson" parameterType="com.tuniu.qms.report.dto.QcPunishReportDto" resultType="Map">
+		<if test="punishPersonName == null or punishPersonName ==''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT punishPersonName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1  
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+					<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<include refid="timeSql"/>
+				 	GROUP BY punPersonId
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+		<if test="punishPersonName != null and punishPersonName !=''">
+			SELECT * FROM (
+				SELECT t.qcTypeName,
+					t.num,
+				CASE WHEN @prevRank = t.num THEN @curRank
+				WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+				FROM (SELECT punishPersonName as qcTypeName ,count(1) AS num 
+				 	FROM qc_punish_report  
+				 	where 1=1 
+				 	and punishPersonName = #{punishPersonName} 
+				 	<if test="firstQcTypeId != null and firstQcTypeId !=''">AND firstQcTypeId=#{firstQcTypeId}</if>
+				 	<if test="secondQcTypeId != null and secondQcTypeId !=''">AND secondQcTypeId=#{secondQcTypeId}</if>
+				 	<if test="thirdQcTypeId != null and thirdQcTypeId !=''">AND thirdQcTypeId=#{thirdQcTypeId}</if>
+				 	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 	<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 	<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			    	<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			    	<include refid="timeSql"/>
+				 	ORDER BY num desc)t,
+				(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r
+				where t.num > 0)t
+				ORDER BY t.num
+		</if>
+	</select>
+	
+	<!-- 根据质检单号，删除处罚单 -->
+	<delete id="deleteByQcId" parameterType="Integer">
+		 DELETE FROM qc_punish_report
+ 		 WHERE qcId = #{qcId}
+	</delete>
+</mapper>

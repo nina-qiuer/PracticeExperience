@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.DepartmentMapper">
+	<insert id="add" parameterType="com.tuniu.qms.common.model.Department">
+		INSERT INTO uc_department (
+			<if test="id != null">id,</if>
+			<if test="pid != null">pid,</if>
+			<if test="name != null">name,</if>
+			<if test="depth != null">depth,</if>
+			<if test="addTime != null">addTime,</if>
+			delFlag
+		) VALUES (
+			<if test="id != null">#{id},</if>
+			<if test="pid != null">#{pid},</if>
+			<if test="name != null">#{name},</if>
+			<if test="depth != null">#{depth},</if>
+			<if test="addTime != null">#{addTime},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM uc_department WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.Department" flushCache="true" statementType="PREPARED">
+		UPDATE uc_department 
+		<set>
+			<if test="pid != null">pid=#{pid},</if>
+			<if test="name != null">name=#{name},</if>
+			<if test="depth != null">depth=#{depth},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			<if test="cmpQcUseFlag != null">cmpQcUseFlag=#{cmpQcUseFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<update id="updateDep" parameterType="com.tuniu.qms.common.model.Department" >
+		UPDATE uc_department  set
+			cmpQcUseFlag = #{cmpQcUseFlag}
+		where delFlag = 0
+	</update>
+	
+	<update id="updateCmpQcUseFlag" parameterType="Map" flushCache="true" statementType="PREPARED">
+		UPDATE uc_department SET cmpQcUseFlag=#{cmpQcUseFlag},updateTime=CURRENT_TIMESTAMP 
+		WHERE id IN (${ids})
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.common.model.Department">
+		SELECT * FROM uc_department WHERE id=#{id}
+	</select>
+	
+	<select id="getDepByNameAndPid" parameterType="com.tuniu.qms.common.dto.DepartmentDto" resultType="com.tuniu.qms.common.model.Department">
+		SELECT * FROM uc_department WHERE name=#{depName} AND pid=#{pid}  
+		<if test="delFlag != null">AND delFlag=#{delFlag}</if>
+		limit 1
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.DepartmentDto" resultType="com.tuniu.qms.common.model.Department">
+		SELECT * FROM uc_department 
+		<where>delFlag=0 AND depth>1
+			<if test="cmpQcUseFlag != null">AND cmpQcUseFlag=#{cmpQcUseFlag}</if>
+			<if test="pid != null">AND pid=#{pid}</if>
+		</where>ORDER BY depth
+	</select>
+	
+	
+	<select id="listAll" parameterType="com.tuniu.qms.common.dto.DepartmentDto" resultType="com.tuniu.qms.common.model.Department">
+		SELECT * FROM uc_department 
+		<where>  depth>1
+			<if test="cmpQcUseFlag != null">AND cmpQcUseFlag=#{cmpQcUseFlag}</if>
+			<if test="delFlag != null and delFlag!=''">AND delFlag=#{delFlag}</if>
+		</where>ORDER BY depth
+	</select>
+	
+	<insert id="addDepUser" parameterType="com.tuniu.qms.common.dto.DepartmentUserDto">
+		INSERT INTO uc_department_user (
+			<if test="id != null">id,</if>
+			<if test="depId != null">depId,</if>
+			<if test="userId != null">userId,</if>
+			<if test="addTime != null">addTime,</if>
+			delFlag
+		) VALUES (
+			<if test="id != null">#{id},</if>
+			<if test="depId != null">#{depId},</if>
+			<if test="userId != null">#{userId},</if>
+			<if test="addTime != null">#{addTime},</if>
+			0
+		)
+	</insert>
+	
+	<update id="updateDepUser" parameterType="com.tuniu.qms.common.dto.DepartmentUserDto" flushCache="true" statementType="PREPARED">
+		UPDATE uc_department_user 
+		<set>
+			<if test="depId != null">depId=#{depId},</if>
+			<if test="userId != null">userId=#{userId},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<delete id="deleteDepUser" parameterType="Integer">
+		DELETE FROM uc_department_user WHERE id=#{id}
+	</delete>
+	
+	<insert id="addDepJob" parameterType="com.tuniu.qms.common.dto.DepartmentJobDto">
+		INSERT INTO uc_department_job (
+			<if test="id != null">id,</if>
+			<if test="depId != null">depId,</if>
+			<if test="jobId != null">jobId,</if>
+			<if test="addTime != null">addTime,</if>
+			delFlag
+		) VALUES (
+			<if test="id != null">#{id},</if>
+			<if test="depId != null">#{depId},</if>
+			<if test="jobId != null">#{jobId},</if>
+			<if test="addTime != null">#{addTime},</if>
+			0
+		)
+	</insert>
+	
+	<update id="updateDepJob" parameterType="com.tuniu.qms.common.dto.DepartmentJobDto" flushCache="true" statementType="PREPARED">
+		UPDATE uc_department_job 
+		<set>
+			<if test="depId != null">depId=#{depId},</if>
+			<if test="jobId != null">jobId=#{jobId},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+
+    <select id="getDepById" parameterType="int" resultType="com.tuniu.qms.common.model.Department">
+      
+       select *  from uc_department where id =#{depId} and delFlag = 0 
+    
+    </select>
+    
+    <select id="getUseDepData" parameterType="com.tuniu.qms.common.dto.DepartmentJobDto" resultType="com.tuniu.qms.common.model.Department">
+      
+      SELECT b.* FROM   uc_department b  INNER JOIN 
+        ( SELECT DISTINCT  prdTeamId FROM cm_product WHERE id>0 AND prdTeamId>0 AND delFlag = 0
+			UNION  
+			SELECT DISTINCT u.depId as prdTeamId FROM uc_user u  INNER JOIN 
+			 cm_product prd ON  prd.prdManagerId=u.id AND prd.id>0 AND prd.prdTeamId=0 AND prd.delFlag = 0 AND prd.prdManagerId>0
+			 WHERE u.delFlag =0
+		 )t 
+		 ON b.id=t.prdTeamId
+		 WHERE   b.cmpQcUseFlag =#{cmpQcUseFlag}  AND b.delFlag = 0 ORDER BY b.id
+      
+    </select>
+    
+    <update id="updateDepCmpQcUseFlag" parameterType="Map" >
+    
+		UPDATE uc_department SET cmpQcUseFlag=#{cmpQcUseFlag},updateTime=CURRENT_TIMESTAMP 
+		WHERE id IN (
+		  <foreach collection="depIds" item="depId" separator=",">
+		   #{depId}
+		  </foreach>
+		)
+	</update>
+    
+    <select id="getDepDetailList" parameterType="Map" resultType="com.tuniu.qms.common.model.Department">
+    
+       select * from uc_department where  id IN (
+          <foreach collection="depIds" item="depId" separator=",">
+		   #{depId}
+		  </foreach>
+       )
+      and  delFlag = 0 
+    </select>
+    
+    <select id="getDepByName" parameterType="java.util.Map" resultType="com.tuniu.qms.common.model.Department">
+    
+      select * from  uc_department where name= #{depName} and delFlag =0 limit 1
+    
+    </select>
+    
+    
+</mapper>

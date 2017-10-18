@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.SubstdOrderAmtMapper">
+	<insert id="addBatch" parameterType="java.util.List">
+		insert into qs_substd_order_amt (
+			ordId, 
+			statisticDate, 
+			signDate, 
+			backDate, 
+			collectionAmount, 
+			validAmount, 
+			nonCollectionAmount, 
+			contractAmount, 
+			businessUnit, 
+			prdDep, 
+			prdTeam, 
+			prdManagerId, 
+			prdManager, 
+			producterId, 
+			producter, 
+			customerManagerId, 
+			customerManager, 
+			customerId, 
+			customer,
+			productType,
+			destName,
+			prdId,
+			routeId
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.ordId},
+            #{e.statisticDate},
+			#{e.signDate},
+			#{e.backDate},
+			#{e.collectionAmount},
+			#{e.validAmount},
+			#{e.nonCollectionAmount},
+			#{e.contractAmount},
+			#{e.businessUnit},
+			#{e.prdDep},
+			#{e.prdTeam},
+			#{e.prdManagerId},
+			#{e.prdManager},
+			#{e.producterId},
+			#{e.producter},
+			#{e.customerManagerId},
+			#{e.customerManager},
+			#{e.customerId},
+			#{e.customer},
+			#{e.productType},
+			#{e.destName},
+			#{e.prdId},
+			#{e.routeId}
+        )
+        </foreach>
+    </insert>
+    
+    <delete id="deleteByStatisticDate" parameterType="java.sql.Date">
+		DELETE FROM qs_substd_order_amt WHERE statisticDate=#{statisticDate}
+	</delete>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.SubstdOrderAmt">
+		SELECT * FROM qs_substd_order_amt WHERE id=#{id}
+	</select>
+	
+	<select id="getBusinessUnits" parameterType="com.tuniu.qms.qs.dto.SubstdOrderAmtDto" resultType="String">
+		SELECT DISTINCT businessUnit FROM qs_substd_order_amt 
+		<if test="statisticDate!=null and statisticDate!=''">WHERE statisticDate=#{statisticDate}</if>
+	</select>
+	
+	<select id="getPrdDeps" parameterType="com.tuniu.qms.qs.dto.SubstdOrderAmtDto" resultType="String">
+		SELECT DISTINCT prdDep FROM qs_substd_order_amt WHERE businessUnit=#{businessUnit}
+		<if test="statisticDate!=null and statisticDate!=''">AND statisticDate=#{statisticDate}</if>
+	</select>
+	
+	<sql id="whereSql">
+		<where>1=1
+			<if test="statisticDate != null and statisticDate != ''">AND statisticDate=#{statisticDate}</if>
+			<if test="ordId != null and ordId != ''">AND ordId=#{ordId}</if>
+			<if test="businessUnit != null and businessUnit != ''">AND businessUnit LIKE #{businessUnit}</if>
+			<if test="prdDep != null and prdDep != ''">AND prdDep LIKE #{prdDep}</if>
+			<if test="prdTeam != null and prdTeam != ''">AND prdTeam LIKE #{prdTeam}</if>
+			<if test="prdManager != null and prdManager != ''">AND prdManager LIKE #{prdManager}</if>
+			<if test="producter != null and producter != ''">AND producter LIKE #{producter}</if>
+			<if test="customerManager != null and customerManager != ''">AND customerManager LIKE #{customerManager}</if>
+			<if test="customer != null and customer != ''">AND customer LIKE #{customer}</if>
+			<if test="routeId != null and routeId!='' ">AND routeId  = #{routeId}</if>
+			<include refid="statItemSql"/>
+		</where>
+	</sql>
+	
+	<select id="count" parameterType="com.tuniu.qms.qs.dto.SubstdOrderAmtDto" resultType="Integer">
+		SELECT COUNT(1) FROM qs_substd_order_amt
+		<include refid="whereSql"/>
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.SubstdOrderAmtDto" resultType="com.tuniu.qms.qs.model.SubstdOrderAmt">
+		SELECT * FROM qs_substd_order_amt 
+		<include refid="whereSql"/>
+		ORDER BY ordId
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="listAll" parameterType="com.tuniu.qms.qs.dto.SubstdOrderAmtDto" resultType="com.tuniu.qms.qs.model.SubstdOrderAmt">
+	
+       	SELECT * FROM (
+			 SELECT *  FROM qs_substd_order_amt 
+			 WHERE nonCollectionAmount>0 AND destName LIKE '出境%' AND
+			 DATE_ADD(statisticDate, INTERVAL 7 DAY) = backDate 
+			 UNION 
+			 SELECT  * FROM qs_substd_order_amt 
+			 WHERE nonCollectionAmount>0 AND productType='团队游'AND  destName LIKE '国内%' AND  
+			 DATE_ADD(statisticDate, INTERVAL 3 DAY) = backDate
+	) t WHERE  DATE_FORMAT(t.addTime,'%Y-%m-%d') = #{addTime} ORDER BY t.nonCollectionAmount desc
+	
+	</select>
+	
+	<sql id="statItemSql">
+		<if test="statItem == 'contractAmountAbnormal'">AND contractAmount &lt;= 0 AND signDate = statisticDate</if>
+		<if test="statItem == 'collectTimeout'">
+			AND backDate &gt; statisticDate AND nonCollectionAmount &gt; 0
+		</if>
+	</sql>
+	
+	<sql id="statAmountSql">
+		<if test="statItem == 'contractAmountAbnormal'">SUM(contractAmount) AS totAmount</if>
+		<if test="statItem == 'collectTimeout'">SUM(nonCollectionAmount) AS totAmount</if>
+	</sql>
+	
+	<select id="statGraphDepByNum" parameterType="com.tuniu.qms.qs.dto.SubstdOrderAmtDto" resultType="Map">
+		<if test="businessUnit == null or businessUnit == ''">
+			SELECT businessUnit AS depName,COUNT(1) AS num FROM qs_substd_order_amt
+			WHERE statisticDate=#{statisticDate} 
+			<include refid="statItemSql"/>
+			GROUP BY businessUnit ORDER BY num
+		</if>
+		<if test="businessUnit != null and businessUnit != ''">
+			<if test="prdDep == null or prdDep == ''">
+				SELECT prdDep AS depName,COUNT(1) AS num FROM qs_substd_order_amt
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} 
+				<include refid="statItemSql"/>
+				GROUP BY prdDep ORDER BY num
+			</if>
+			<if test="prdDep != null and prdDep != ''">
+				SELECT prdTeam AS depName,COUNT(1) AS num FROM qs_substd_order_amt
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND prdDep=#{prdDep} 
+				<include refid="statItemSql"/>
+				GROUP BY prdTeam ORDER BY num
+			</if>
+		</if>
+	</select>
+	
+	<select id="statGraphDepByTotAmount" parameterType="com.tuniu.qms.qs.dto.SubstdOrderAmtDto" resultType="Map">
+		<if test="businessUnit == null or businessUnit == ''">
+			SELECT businessUnit AS depName,<include refid="statAmountSql"/> FROM qs_substd_order_amt
+			WHERE statisticDate=#{statisticDate} 
+			<include refid="statItemSql"/>
+			GROUP BY businessUnit ORDER BY totAmount
+		</if>
+		<if test="businessUnit != null and businessUnit != ''">
+			<if test="prdDep == null or prdDep == ''">
+				SELECT prdDep AS depName,<include refid="statAmountSql"/> FROM qs_substd_order_amt
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} 
+				<include refid="statItemSql"/>
+				GROUP BY prdDep ORDER BY totAmount
+			</if>
+			<if test="prdDep != null and prdDep != ''">
+				SELECT prdTeam AS depName,<include refid="statAmountSql"/> FROM qs_substd_order_amt
+				WHERE statisticDate=#{statisticDate} AND businessUnit=#{businessUnit} AND prdDep=#{prdDep} 
+				<include refid="statItemSql"/>
+				GROUP BY prdTeam ORDER BY totAmount
+			</if>
+		</if>
+	</select>
+	
+	<select id="statGraphDateByNum" parameterType="com.tuniu.qms.qs.dto.SubstdOrderAmtDto" resultType="Map">
+		SELECT statisticDate,COUNT(1) AS num FROM qs_substd_order_amt
+		WHERE #{statisticDateBgn} &lt;= statisticDate AND statisticDate &lt;= #{statisticDateEnd} 
+		<if test="businessUnit != null and businessUnit != ''">
+			AND businessUnit=#{businessUnit} 
+			<if test="prdDep != null and prdDep != ''">
+				AND prdDep=#{prdDep} 
+			</if>
+		</if>
+		<include refid="statItemSql"/>
+		GROUP BY statisticDate
+	</select>
+	
+	<select id="statGraphDateByTotAmount" parameterType="com.tuniu.qms.qs.dto.SubstdOrderAmtDto" resultType="Map">
+		SELECT statisticDate,<include refid="statAmountSql"/> FROM qs_substd_order_amt
+		WHERE #{statisticDateBgn} &lt;= statisticDate AND statisticDate &lt;= #{statisticDateEnd} 
+		<if test="businessUnit != null and businessUnit != ''">
+			AND businessUnit=#{businessUnit} 
+			<if test="prdDep != null and prdDep != ''">
+				AND prdDep=#{prdDep} 
+			</if>
+		</if>
+		<include refid="statItemSql"/>
+		GROUP BY statisticDate
+	</select>
+	
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <!-- 定时提醒任务 --> 
+        <bean id="complaintScheduleSendTask" class="com.tuniu.gt.complaint.schedule.task.ComplaintScheduleSendTask">
+        
+        </bean> 
+        <!-- 定义调用对象和调用对象的方法 --> 
+        <bean id="complaintSendTaskMethodInvokingJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
+            <!-- 调用的类 --> 
+            <property name="targetObject" ref="complaintScheduleSendTask"> 
+            </property> 
+            <!-- 调用类中的方法 --> 
+            <property name="targetMethod"> 
+                <value>scanTask</value> 
+            </property> 
+            <!-- <property name="concurrent">
+            	<value>false</value>
+      	   </property> -->
+        </bean> 
+        
+        <!-- 定义触发时间 9:10-18:00 --> 
+        <bean id="complaintSendTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"> 
+            <property name="jobDetail"> 
+                <ref bean="complaintSendTaskMethodInvokingJobDetail"/> 
+            </property> 
+            <!-- cron表达式 -->
+            <property name="cronExpression">
+                 <value>0 55 8 * * ?</value>
+            </property>
+        </bean> 
+        
+         <!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  --> 
+        <bean id="complaintSendTaskStartQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" > 
+            <property name="triggers"> 
+                <list> 
+                    <ref bean="complaintSendTaskCronTrigger"/>
+                </list> 
+            </property> 
+        </bean> 
+        
+        
+        <!-- 同步呼损记录到投诉质检 -->
+        <!-- 定时提醒任务 --> 
+        <bean id="infoBirdScheduleSendTask" class="com.tuniu.infobird.vdnlog.action.VDNLogScheduleTaskAction">
+        
+        </bean> 
+        <!-- 定义调用对象和调用对象的方法 --> 
+        <bean id="infoBirdScheduleSendTaskMethodInvokingJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
+            <!-- 调用的类 --> 
+            <property name="targetObject" ref="infoBirdScheduleSendTask"> 
+            </property> 
+            <!-- 调用类中的方法 --> 
+            <property name="targetMethod"> 
+                <value>synchronizedRecord</value> 
+            </property> 
+            <property name="concurrent">
+            	<value>false</value>
+      	   </property>
+        </bean> 
+        
+        <!-- 定义触发时间 9:10-18:00 --> 
+        <bean id="infoBirdScheduleSendTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"> 
+            <property name="jobDetail"> 
+                <ref bean="infoBirdScheduleSendTaskMethodInvokingJobDetail"/> 
+            </property> 
+            <!-- cron表达式 -->
+            <property name="cronExpression">
+                 <value>0 0/2 * * * ?</value>
+            </property>
+        </bean> 
+        
+         <!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  --> 
+        <bean id="infoBirdScheduleSendTaskStartQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" > 
+            <property name="triggers"> 
+                <list> 
+                    <ref bean="infoBirdScheduleSendTaskCronTrigger"/>
+                </list> 
+            </property> 
+        </bean> 
+        
+         <!-- 门市/上门签约满意度修补城市信息定时任务 --> 
+        <bean id="signSatisfactionDFScheduleSendTask" class="com.tuniu.gt.complaint.schedule.task.SignSatisfactionDFScheduleSendTask">
+        
+        </bean> 
+        <!-- 定义调用对象和调用对象的方法 --> 
+        <bean id="signSatisfactionDFScheduleSendTaskMethodInvokingJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"> 
+            <!-- 调用的类 --> 
+            <property name="targetObject" ref="signSatisfactionDFScheduleSendTask"> 
+            </property> 
+            <!-- 调用类中的方法 --> 
+            <property name="targetMethod"> 
+                <value>startTask</value> 
+            </property> 
+            <property name="concurrent">
+            	<value>false</value>
+      	   </property>
+        </bean> 
+        
+        <!-- 定义触发时间 9:10-18:00 --> 
+        <bean id="signSatisfactionDFScheduleSendTaskCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean"> 
+            <property name="jobDetail"> 
+                <ref bean="signSatisfactionDFScheduleSendTaskMethodInvokingJobDetail"/> 
+            </property> 
+            <!-- cron表达式 -->
+            <property name="cronExpression">
+                 <!-- <value>0/30 0 23,0-5 * * ?</value> -->
+                 <value>0 0/1 * * * ?</value>
+            </property>
+        </bean> 
+        
+         <!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  --> 
+        <bean id="signSatisfactionDFScheduleSendTaskStartQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" > 
+            <property name="triggers"> 
+                <list> 
+                    <ref bean="signSatisfactionDFScheduleSendTaskCronTrigger"/>
+                </list> 
+            </property> 
+        </bean>
+        
+       
+</beans>
+

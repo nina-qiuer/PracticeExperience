@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintSolutionEmailMap">
+
+<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.ComplaintSolutionEmailEntity">
+		<result property="id" column="id" />
+		<result property="emailType" column="email_type" />
+		<result property="solutionId" column="solution_id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="emailName" column="email_name" />
+		<result property="route" column="route" />
+		<result property="orderId" column="order_id" />
+		<result property="agencyName" column="agency_name" />
+		<result property="startDate" column="start_date" />
+		<result property="receiveName" column="receive_name" />
+		<result property="ccName" column="cc_name" />
+		<result property="remark" column="remark" />
+		<result property="checkProgress" column="check_progress" />
+		<result property="makeBetter" column="make_better" />
+		<result property="guestNum" column="guest_num" />
+		<result property="passengerInfo" column="passenger_info" />
+		<result property="groupOrders" column="group_orders" />
+		<result property="emailSender" column="email_sender" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+	<select id="getBySolutionId" parameterType="Integer" resultMap="listResultEntity">
+		SELECT a.* FROM ct_complaint_solution_email a join ct_complaint_solution b on b.id = a.solution_id and b.del_flag=1 WHERE solution_id=#{solutionId} limit 1
+	</select>
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  email_type,
+		  solution_id,
+		  complaint_id,
+		  email_name,
+		  route,
+		  order_id,
+		  agency_name,
+		  start_date,
+		  receive_name,
+		  cc_name,
+		  remark,
+		  check_progress,
+		  make_better,
+		  guest_num,
+		  passenger_info,
+		  group_orders,
+		  email_sender,
+		  add_time,
+		  update_time
+		) values  (
+		  #{e.emailType},
+		  #{e.solutionId},
+		  #{e.complaintId},
+		  #{e.emailName},
+		  #{e.route},
+		  #{e.orderId},
+		  #{e.agencyName},
+		  #{e.startDate},
+		  #{e.receiveName},
+		  #{e.ccName},
+		  #{e.remark},
+		  #{e.checkProgress},
+		  #{e.makeBetter},
+		  #{e.guestNum},
+		  #{e.passengerInfo},
+		  #{e.groupOrders},
+		  #{e.emailSender},
+		  #{e.addTime},
+		  #{e.updateTime}
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		update ct_complaint_solution_email
+		<set>
+			<if test="e.emailType != null">email_type=#{e.emailType},</if>
+			<if test="e.solutionId != null">solution_id=#{e.solutionId},</if>
+			<if test="e.complaintId != null">complaint_id=#{e.complaintId},</if>
+			<if test="e.emailName != null">email_name=#{e.emailName},</if>
+			<if test="e.route != null">route=#{e.route},</if>
+			<if test="e.orderId != null">order_id=#{e.orderId},</if>
+			<if test="e.agencyName != null">agency_name=#{e.agencyName},</if>
+			<if test="e.startDate != null">start_date=#{e.startDate},</if>
+			<if test="e.receiveName != null">receive_name=#{e.receiveName},</if>
+			<if test="e.ccName != null">cc_name=#{e.ccName},</if>
+			<if test="e.remark != null">remark=#{e.remark},</if>
+			<if test="e.checkProgress != null">check_progress=#{e.checkProgress},</if>
+			<if test="e.makeBetter != null">make_better=#{e.makeBetter},</if>
+			<if test="e.guestNum != null">guest_num=#{e.guestNum},</if>
+			<if test="e.passengerInfo != null">passenger_info=#{e.passengerInfo},</if>
+			<if test="e.groupOrders != null">group_orders=#{e.groupOrders},</if>
+			<if test="e.emailSender != null">email_sender=#{e.emailSender},</if>
+			<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="updateById" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+</mapper>

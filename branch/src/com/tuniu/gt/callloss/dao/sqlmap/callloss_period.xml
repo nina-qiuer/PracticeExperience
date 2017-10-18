@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.callloss.dao.sqlmap.imap.CallLossPeriodMap">
+	
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="startTime" column="start_time" />
+		
+		<result property="endTime" column="end_time" />
+
+		<result property="createTime" column="create_time" />
+		
+		<result property="creatorId" column="creator_id" />
+		
+		<result property="creatorName" column="creator_name" />
+		
+		<result property="cancelTime" column="cancel_time" />
+		
+		<result property="cancelorId" column="cancelor_id" />
+		
+		<result property="cancelorName" column="cancelor_name" />
+		
+		<result property="delFlag" column="del_flag" />
+		
+	</resultMap>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.callloss.entity.CallLossPeriodEntity">
+
+		<result property="startTime" column="start_time" />
+		
+		<result property="endTime" column="end_time" />
+
+		<result property="createTime" column="create_time" />
+		
+		<result property="creatorId" column="creator_id" />
+		
+		<result property="creatorName" column="creator_name" />
+		
+		<result property="cancelTime" column="cancel_time" />
+		
+		<result property="cancelorId" column="cancelor_id" />
+		
+		<result property="cancelorName" column="cancelor_name" />
+		
+		<result property="delFlag" column="del_flag" />
+		
+	</resultMap>
+
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			id>1 and del_flag=0 
+		</where>
+		order by start_time asc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+	
+	<select id="fetchListMap" parameterType="Map" resultMap="listResultMap">
+		<include refid="list" />
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		start_time,
+		
+		end_time,
+		
+		create_time,
+
+		creator_id,
+		
+		creator_name,
+
+		del_flag
+
+		) values (
+		
+		#{e.startTime},
+
+		#{e.endTime},
+
+		#{e.createTime},
+		
+		#{e.creatorId},
+
+		#{e.creatorName},
+
+		#{e.delFlag}
+
+		)
+	</sql>
+
+
+	<!-- 表中id=1的记录，记录的是整个同步的开始时间，如2014-04-17 19:30:00表示同步这个时间之后的数据 -->
+	<select id="getRecordBeginTime"  resultType="String">
+		SELECT start_time FROM call_loss_period WHERE id=1;
+	</select>
+	
+	<update id="deletePeriodById">
+		UPDATE call_loss_period SET del_flag=1,cancelor_id=#{cancelorId},cancelor_name=#{cancelorName},cancel_time=#{cancelTime}  WHERE id=#{id}
+	</update>
+	
+	
+</mapper>

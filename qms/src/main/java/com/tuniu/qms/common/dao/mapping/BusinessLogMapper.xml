@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.BusinessLogMapper">
+	<insert id="add" parameterType="com.tuniu.qms.common.model.BusinessLog">
+		INSERT INTO cm_business_log (
+			<if test="clientIP != null">clientIP,</if>
+			<if test="operatorId != null">operatorId,</if>
+			<if test="operatorName != null">operatorName,</if>
+			<if test="resName != null">resName,</if>
+			<if test="requestUri != null">requestUri,</if>
+			<if test="requestArgs != null">requestArgs,</if>
+			delFlag
+		) VALUES (
+			<if test="clientIP != null">#{clientIP},</if>
+			<if test="operatorId != null">#{operatorId},</if>
+			<if test="operatorName != null">#{operatorName},</if>
+			<if test="resName != null">#{resName},</if>
+			<if test="requestUri != null">#{requestUri},</if>
+			<if test="requestArgs != null">#{requestArgs},</if>
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM cm_business_log WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.common.model.BusinessLog" flushCache="true" statementType="PREPARED">
+		UPDATE cm_business_log 
+		<set>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultMap="resourceMap">
+		SELECT * FROM cm_business_log WHERE id=#{id}
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.common.dto.BusinessLogDto" resultType="Integer">
+		SELECT count(1) FROM cm_business_log 
+		<where>
+			delFlag=0
+			<if test="operatorName != null">AND operatorName=#{operatorName}</if>
+			<if test="resName != null">AND resName=#{resName}</if>
+		</where>
+	</select>
+	
+	<select id="list" parameterType="com.tuniu.qms.common.dto.BusinessLogDto" resultMap="resourceMap">
+		SELECT * FROM cm_business_log 
+		<where>
+			delFlag=0
+			<if test="operatorName != null">AND operatorName=#{operatorName}</if>
+			<if test="resName != null">AND resName=#{resName}</if>
+		</where>
+	</select>
+	
+	<resultMap type="com.tuniu.qms.common.model.BusinessLog" id="resourceMap">
+		<id column="id" property="id" />
+		<result column="clientIP" property="clientIP" />
+		<result column="operatorId" property="operatorId" />
+		<result column="operatorName" property="operatorName" />
+		<result column="resName" property="resName" />
+		<result column="requestUri" property="requestUri" />
+		<result column="requestArgs" property="requestArgs" />
+		<result column="addTime" property="addTime" />
+		<result column="delFlag" property="delFlag" />
+	</resultMap>
+	
+</mapper>

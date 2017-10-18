@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.OperateQcBillMapper">
+   	<resultMap type="com.tuniu.qms.qc.model.QcBill" id="qcMap">
+		<id column="id" property="id" />
+		<result column="prdId" property="prdId" />
+		<result column="groupDate" property="groupDate" />
+		<result column="ordId" property="ordId" />
+		<result column="cmpId" property="cmpId" />
+		<result column="groupFlag" property="groupFlag" />
+		<result column="qcTypeId" property="qcTypeId" />
+		<result column="qcAffairSummary" property="qcAffairSummary" />
+		<result column="qcAffairDesc" property="qcAffairDesc" />
+		<result column="remark" property="remark" />
+		<result column="lossAmount" property="lossAmount" />
+		<result column="state" property="state" />
+		<result column="qcPersonId" property="qcPersonId" />
+		<result column="qcPerson" property="qcPerson" />
+		<result column="distribTime" property="distribTime" />
+		<result column="finishTime" property="finishTime" />
+		<result column="addPersonId" property="addPersonId" />
+		<result column="addPerson" property="addPerson" />
+		<result column="addTime" property="addTime" />
+		<result column="updatePerson" property="updatePerson" />
+		<result column="updateTime" property="updateTime" />
+		<result column="importantFlag" property="importantFlag" />
+		<result column="verification" property="verification" />
+		<result column="evidence" property="evidence" />
+		<result column="userFlag" property="userFlag" />
+		<result column="delFlag" property="delFlag" />
+		<result column="qcPeriodEndTime" property="qcPeriodEndTime" />
+		<result column="qcPeriodBgnTime" property="qcPeriodBgnTime" />
+		<association property="product" javaType="com.tuniu.qms.common.model.Product">
+			<id property="id" column="prdId"/>
+			<result column="prdName" property="prdName" />
+			<result column="cateName" property="cateName" />
+			<result column="subCateName" property="subCateName" />
+			<result column="brandName" property="brandName" />
+			<result column="prdLineDestName" property="prdLineDestName" />
+			<result column="prdTeamId" property="prdTeamId" />
+			<result column="prdManagerId" property="prdManagerId" />
+			<result column="businessUnitName" property="businessUnitName" />
+			<result column="destCateName" property="destCateName" />
+			
+		</association>
+		<association property="orderBill" javaType="com.tuniu.qms.common.model.OrderBill">
+			<id property="id" column="ordId"/>
+			<result column="departCity" property="departCity" />
+			<result column="prdAdultPrice" property="prdAdultPrice" />
+			<result column="adultNum" property="adultNum" />
+			<result column="childNum" property="childNum" />
+			<result column="departDate" property="departDate" />
+			<result column="returnDate" property="returnDate" />
+			<result column="flightPrice" property="flightPrice" />
+			<result column="personName" property="personName" />	
+			<result column="prdManager" property="prdManager" />
+			<result column="producter" property="producter" />
+			<result column="salerManagerName" property="salerManagerName" />	
+			<result column="salerName" property="salerName" />	
+			<result column="salerBusinessUnit" property="salerBusinessUnit" />
+			<result column="salerDep" property="salerDep" />	
+			<result column="salerTeam" property="salerTeam" />	
+			
+		</association>
+		<association property="complaintBill"  javaType="com.tuniu.qms.common.model.ComplaintBill">
+			<id property="id" column="cmpId"/>
+			<result column="cmpLevel" property="cmpLevel" />
+			<result column="stateName" property="stateName" />
+			<result column="cmpAddTime" property="addTime" />
+			<result column="cmpFinishTime" property="finishTime" />
+			<result column="dealPerson" property="dealPerson" />
+			<result column="indemnifyAmount" property="indemnifyAmount" />
+			<result column="claimAmount" property="claimAmount" />
+			<result column="qualityToolAmount" property="qualityToolAmount" />
+			<result column="repVoucherAmount" property="repVoucherAmount" />
+			<result column="giftAmount" property="giftAmount" />
+			<result column="comeFrom" property="comeFrom" />
+		</association>
+	</resultMap>
+	
+    
+
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcBill" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO qc_qc_bill (
+		
+			<if test="influenceTime != null">influenceTime,</if>
+			<if test="qualityEventClass != null">qualityEventClass,</if>
+			<if test="influenceRange != null">influenceRange,</if>
+			<if test="influenceResult != null">influenceResult,</if>
+			<if test="groupFlag != null">groupFlag,</if>
+			<if test="qcTypeId != null">qcTypeId,</if>
+			<if test="qcAffairSummary != null">qcAffairSummary,</if>
+			<if test="qcAffairDesc != null">qcAffairDesc,</if>
+			<if test="remark != null">remark,</if>
+			<if test="lossAmount != null">lossAmount,</if>
+			<if test="state != null">state,</if>
+			<if test="addPersonId != null">addPersonId,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="qcPersonId != null">qcPersonId,</if>
+			<if test="qcPerson != null">qcPerson,</if>
+			<if test="verification != null">verification,</if>
+			distribTime,
+			delFlag
+		) VALUES (
+		
+		    <if test="influenceTime != null">#{influenceTime},</if>
+			<if test="qualityEventClass != null">#{qualityEventClass},</if>
+			<if test="influenceRange != null">#{influenceRange},</if>
+			<if test="influenceResult != null">#{influenceResult},</if>
+			<if test="groupFlag != null">#{groupFlag},</if>
+			<if test="qcTypeId != null">#{qcTypeId},</if>
+			<if test="qcAffairSummary != null">#{qcAffairSummary},</if>
+			<if test="qcAffairDesc != null">#{qcAffairDesc},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="lossAmount != null">#{lossAmount},</if>
+			<if test="state != null">#{state},</if>
+			<if test="addPersonId != null">#{addPersonId},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="qcPersonId != null">#{qcPersonId},</if>
+			<if test="qcPerson != null">#{qcPerson},</if>
+			<if test="verification != null">#{verification},</if>
+			CURRENT_TIMESTAMP,
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_qc_bill WHERE id=#{id}
+	</delete>
+	
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcBill" flushCache="true" statementType="PREPARED">
+		UPDATE qc_qc_bill 
+		<set>
+			<if test="prdId != null">prdId=#{prdId},</if>
+			<if test="groupDate != null">groupDate=#{groupDate},</if>
+			<if test="ordId != null">ordId=#{ordId},</if>
+			<if test="cmpId != null">cmpId=#{cmpId},</if>
+			<if test="groupFlag != null">groupFlag=#{groupFlag},</if>
+			<if test="qcTypeId != null">qcTypeId=#{qcTypeId},</if>
+			<if test="qcAffairSummary != null">qcAffairSummary=#{qcAffairSummary},</if>
+			<if test="qcAffairDesc != null">qcAffairDesc=#{qcAffairDesc},</if>
+			<if test="remark != null">remark=#{remark},</if>
+			<if test="lossAmount != null">lossAmount=#{lossAmount},</if>
+			<if test="state != null">state=#{state},</if>
+			<if test="qcPersonId != null">qcPersonId=#{qcPersonId},</if>
+			<if test="qcPerson != null">qcPerson=#{qcPerson},</if>
+			<if test="distribTime != null">distribTime=#{distribTime},</if>
+			<if test="finishTime != null">finishTime=#{finishTime},</if>
+			<if test="updatePerson != null">updatePerson=#{updatePerson},</if>
+			<if test="qualityEventClass != null">qualityEventClass=#{qualityEventClass},</if>
+			<if test="influenceTime != null">influenceTime=#{influenceTime},</if>
+			<if test="influenceRange != null">influenceRange=#{influenceRange},</if>
+			<if test="influenceResult != null">influenceResult=#{influenceResult},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			<if test="cancelTime != null">cancel_time=#{cancelTime},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcBill">
+		SELECT * FROM qc_qc_bill WHERE id=#{id} and delFlag = 0
+	</select>
+	
+	<select id="getQcBillIsExist" parameterType="Integer" resultType="Integer">
+		SELECT count(1) FROM qc_qc_bill WHERE id=#{id} and delFlag = 0 and groupFlag = 2
+	</select>
+
+	<sql id="listSql">
+		SELECT qc.*,p.destCateName,o.departDate,o.salerManagerName,o.salerName,o.salerBusinessUnit,o.salerDep,o.salerTeam
+		FROM qc_qc_bill qc
+		LEFT JOIN cm_product p ON qc.prdId=p.id 
+		LEFT JOIN cm_order_bill o ON qc.ordId=o.id
+		<where>
+			qc.delFlag = 0 
+			<!-- qcbill condition -->
+			<if test="qcId != null ">AND qc.id=#{qcId}</if>
+			<if test="state != null and state != -1">AND qc.state=#{state}</if>
+			<if test="prdId != null">AND qc.prdId=#{prdId}</if>
+			<if test="orderId != null">AND qc.ordId=#{orderId}</if>
+			<if test="qcPerson != null and qcPerson !='' ">AND qc.qcPerson=#{qcPerson}</if>
+			<if test="addTimeFrom != null and addTimeFrom !=''" >AND qc.addTime &gt;=#{addTimeFrom}</if>
+			<if test="addTimeTo != null and addTimeTo !='' ">AND qc.addTime &lt;= concat(#{addTimeTo},' 23:59:59')</if>
+			AND qc.groupFlag = 2
+			<!-- product condition -->
+			<if test="destCateName != null and destCateName !='' ">AND p.destCateName=#{destCateName}</if>
+		    <!-- order condition -->
+			<if test="departDateBgn != null  and departDateBgn !='' ">AND o.departDate &gt;=#{departDateBgn}</if>
+			<if test="departDateEnd != null  and departDateEnd !=''">AND o.departDate &lt;=#{departDateEnd}</if>
+			<if test="salerManagerName != null and salerManagerName !='' ">AND o.salerManagerName=#{salerManagerName}</if>
+			<if test="salerName != null and salerName !='' ">AND o.salerName=#{salerName}</if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultMap="qcMap">
+		<include refid="listSql"/>
+		ORDER BY qc.addTime desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.QcBillDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+	</select>
+	
+	
+</mapper>

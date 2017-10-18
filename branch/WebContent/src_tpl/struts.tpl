@@ -1,0 +1,1 @@
+	<include file="../config/struts-{?app_id}.xml"></include>

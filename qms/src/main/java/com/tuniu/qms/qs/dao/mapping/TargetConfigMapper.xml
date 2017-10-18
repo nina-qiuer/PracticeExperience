@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qs.dao.TargetConfigMapper">
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qs_target_config WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qs.model.TargetConfig" flushCache="true" statementType="PREPARED">
+		UPDATE qs_target_config 
+		<set>
+			<if test="businessUnit != null">businessUnit=#{businessUnit},</if>
+			<if test="prdDep != null">prdDep=#{prdDep},</if>
+			<if test="prdTeam != null">prdTeam=#{prdTeam},</if>
+			<if test="oneTargetValue != null">oneTargetValue=#{oneTargetValue},</if>
+		    <if test="twoTargetValue != null">twoTargetValue=#{twoTargetValue},</if>
+		    <if test="threeTargetValue != null">threeTargetValue=#{threeTargetValue},</if>
+			<if test="fourTargetValue != null">fourTargetValue=#{fourTargetValue},</if>
+			<if test="year != null">year=#{year},</if>
+			<if test="updatePerson != null">updatePerson=#{updatePerson},</if>
+			<if test="delFlag != null">delFlag=#{delFlag},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qs.model.TargetConfig">
+		SELECT * FROM qs_target_config WHERE id=#{id}
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qs.dto.TargetConfigDto" resultType="Integer">
+		SELECT COUNT(1) FROM (
+		  <include refid="listSql"/>
+		) t
+	</select>
+	
+	<sql id="listSql">
+	<if test="(businessUnit == null or businessUnit =='') and (prdDep ==null or prdDep =='') and (prdTeam ==null or prdTeam =='')">
+		SELECT * FROM (
+				SELECT id,businessUnit AS depName ,businessUnit,prdDep,oneTargetValue,twoTargetValue,threeTargetValue,fourTargetValue,year 
+				FROM qs_target_config WHERE prdDep='' AND prdTeam=''   AND year =#{year}
+				UNION
+				SELECT id,CONCAT(businessUnit,'-',prdDep) AS depName,businessUnit,prdDep ,oneTargetValue,twoTargetValue,threeTargetValue,fourTargetValue,year
+				 FROM qs_target_config WHERE prdDep!='' AND prdTeam=''   AND year =#{year}
+				UNION 
+				SELECT id,CONCAT(businessUnit,'-',prdDep,'-',prdTeam) AS depName,businessUnit,prdDep,oneTargetValue,twoTargetValue,threeTargetValue,fourTargetValue,year
+				 FROM qs_target_config WHERE prdTeam!=''   AND year =#{year}
+			) t
+	  </if>
+	  <if test="businessUnit!=null and businessUnit!='' and (prdDep ==null or prdDep =='') and (prdTeam ==null or prdTeam =='')">
+		SELECT * FROM (
+				SELECT id,businessUnit AS depName ,businessUnit,prdDep,oneTargetValue,twoTargetValue,threeTargetValue,fourTargetValue,year FROM qs_target_config WHERE prdDep='' AND prdTeam=''  
+			    AND businessUnit=#{businessUnit}  AND year =#{year}
+				UNION
+				SELECT id,CONCAT(businessUnit,'-',prdDep) AS depName,businessUnit,prdDep,oneTargetValue,twoTargetValue,threeTargetValue,fourTargetValue,year  FROM qs_target_config WHERE prdDep!='' AND prdTeam=''
+				AND businessUnit=#{businessUnit}  AND year =#{year}
+				UNION 
+				SELECT id,CONCAT(businessUnit,'-',prdDep,'-',prdTeam) AS depName ,businessUnit,prdDep,oneTargetValue,twoTargetValue,threeTargetValue,fourTargetValue,year FROM qs_target_config WHERE prdTeam!=''
+		    	AND businessUnit=#{businessUnit}  AND year =#{year}
+			) t
+	  </if>
+	  	<if test="businessUnit!='' and prdDep!='' and (prdTeam ==null or prdTeam =='')">
+		SELECT * FROM (
+				SELECT id,CONCAT(businessUnit,'-',prdDep) AS depName,businessUnit,prdDep,oneTargetValue,twoTargetValue,threeTargetValue,fourTargetValue,year
+				 FROM qs_target_config WHERE businessUnit=#{businessUnit}  AND prdDep=#{prdDep}  AND prdTeam='' AND year =#{year}
+				UNION 
+				SELECT id,CONCAT(businessUnit,'-',prdDep,'-',prdTeam) AS depName,businessUnit,prdDep,oneTargetValue,twoTargetValue,threeTargetValue,fourTargetValue,year  
+				FROM qs_target_config WHERE prdTeam!=''
+				AND businessUnit=#{businessUnit}  AND prdDep=#{prdDep}   AND year =#{year}
+			) t
+	  </if>
+	   <if test=" businessUnit!='' and prdDep != '' and prdTeam!= ''">
+		SELECT * FROM (
+				SELECT id,CONCAT(businessUnit,'-',prdDep,'-',prdTeam) AS depName ,businessUnit,prdDep,oneTargetValue,twoTargetValue,threeTargetValue,fourTargetValue,year FROM qs_target_config WHERE prdTeam!=''
+				AND businessUnit=#{businessUnit}  AND prdDep=#{prdDep} AND  prdTeam=#{prdTeam}  AND year =#{year}
+			) t
+	  </if>
+	</sql>
+
+	<select id="list" parameterType="com.tuniu.qms.qs.dto.TargetConfigDto" resultType="com.tuniu.qms.qs.model.TargetConfig">
+		<include refid="listSql"/>
+		 ORDER BY t.depName
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">,#{pageSize}</if>
+		</if>
+	</select>
+	
+	<update id="updateBatchTarget" parameterType="com.tuniu.qms.qs.model.TargetConfig">
+	
+	   update qs_target_config set
+					    oneTargetValue =#{oneTargetValue},
+					    twoTargetValue =#{twoTargetValue},
+					    threeTargetValue =#{threeTargetValue},
+					    fourTargetValue =#{fourTargetValue}
+					    where businessUnit =#{businessUnit}
+	   
+	</update>
+	
+	<select id="getAllOldDep" resultType="java.lang.String">
+	
+	   	SELECT * FROM (
+		
+			SELECT  businessUnit AS businessUnit FROM qs_target_config WHERE prdDep='' AND prdTeam =''  AND  year = YEAR(CURDATE()) 
+			UNION 
+			SELECT CONCAT (a.businessUnit,'-',a.prdDep) AS businessUnit FROM (
+			SELECT  businessUnit,prdDep FROM qs_target_config  WHERE prdDep!='' AND prdTeam ='' AND  year = YEAR(CURDATE()) 
+			) a 
+			UNION
+			
+			SELECT CONCAT (b.businessUnit,'-',b.prdDep,'-',b.prdTeam) AS businessUnit FROM (
+			
+			SELECT  businessUnit,prdDep,prdTeam FROM qs_target_config WHERE prdTeam!=''  AND  year = YEAR(CURDATE()) 
+			) b
+		) c ORDER BY c.businessUnit
+	
+	</select>
+	
+	<select id="getAllDep" resultType="java.lang.String">
+	
+		SELECT * FROM (
+		
+			SELECT  businessUnit AS businessUnit FROM qs_target_config WHERE prdDep='' AND prdTeam ='' 
+			UNION 
+			SELECT CONCAT (a.businessUnit,'-',a.prdDep) AS businessUnit FROM (
+			SELECT  businessUnit,prdDep FROM qs_target_config  WHERE prdDep!='' AND prdTeam ='' 
+			) a 
+			UNION
+			
+			SELECT CONCAT (b.businessUnit,'-',b.prdDep,'-',b.prdTeam) AS businessUnit FROM (
+			
+			SELECT  businessUnit,prdDep,prdTeam FROM qs_target_config WHERE prdTeam!='' 
+			) b
+		) c ORDER BY c.businessUnit
+	
+	</select>
+	
+	<insert id="addBatch"  parameterType="java.util.List" >
+		insert into qs_target_config (
+		
+			businessUnit, 
+			prdDep,
+			prdTeam,
+			year
+			
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+			#{e.businessUnit},
+			#{e.prdDep},
+			#{e.prdTeam},
+			#{e.year}
+        )
+        </foreach>
+        </insert>
+        
+        <select id="getNationalTarget" resultType="com.tuniu.qms.qs.model.TargetConfig">
+        
+           SELECT YEAR, AVG(oneTargetValue) AS oneTargetValue,AVG(twoTargetValue) AS twoTargetValue ,
+          		 AVG(threeTargetValue) AS threeTargetValue,AVG(fourTargetValue) fourTargetValue
+ 			  FROM qs_target_config WHERE businessUnit!=''
+ 			  AND prdDep='' AND prdTeam='' GROUP BY YEAR 
+        
+        </select>
+</mapper>

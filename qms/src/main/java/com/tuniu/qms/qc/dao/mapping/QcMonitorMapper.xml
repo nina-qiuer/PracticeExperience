@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.QcMonitorMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcMonitor"  useGeneratedKeys="true" keyProperty="id"  keyColumn="id">
+		INSERT INTO qc_monitor (
+			<if test="circle != null">circle,</if>
+			<if test="qcType != null">qcType,</if>
+			<if test="type != null">type,</if>
+			<if test="orderId != null">orderId,</if>
+			<if test="routeId != null">routeId,</if>
+			<if test="isQualified != null">isQualified,</if>
+			<if test="questionType != null">questionType,</if>
+			<if test="poorMoney != null">poorMoney,</if>
+			<if test="receivableMoney != null">receivableMoney,</if>
+			<if test="qcConclusion != null">qcConclusion,</if>
+			<if test="qcPerson != null">qcPerson,</if>
+			<if test="qcDate != null">qcDate</if>
+			
+		) VALUES (
+			<if test="circle != null">#{circle},</if>
+			<if test="qcType != null">#{qcType},</if>
+			<if test="type != null">#{type},</if>
+			<if test="orderId != null">#{orderId},</if>
+			<if test="routeId != null">#{routeId},</if>
+			<if test="isQualified != null">#{isQualified},</if>
+			<if test="questionType != null">#{questionType},</if>
+			<if test="poorMoney != null">#{poorMoney},</if>
+			<if test="receivableMoney != null">#{receivableMoney},</if>
+			<if test="qcConclusion != null">#{qcConclusion},</if>
+			<if test="qcPerson != null">#{qcPerson},</if>
+			<if test="qcDate != null">#{qcDate}</if>
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_monitor WHERE id=#{id}
+	</delete>
+
+	<sql id="listSql">
+		<where>
+			<if test="circle != null and circle != ''">AND qm.circle=#{circle}</if>
+			<if test="qcType != null and qcType != ''">AND qm.qcType=#{qcType}</if>
+			<if test="type != null and type != ''">AND qm.type=#{type}</if>
+			<if test="orderId != null and orderId != ''">AND qm.orderId=#{orderId}</if>
+			<if test="routeId != null and routeId != ''">AND qm.routeId=#{routeId}</if>
+			<if test="isQualified != null and isQualified != ''">AND qm.isQualified=#{isQualified}</if>
+			<if test="questionType != null and questionType != ''">AND qm.questionType=#{questionType}</if>
+			<if test="poorMoney != null and poorMoney != ''">AND qm.poorMoney=#{poorMoney}</if>
+			<if test="receivableMoney != null and receivableMoney != ''">AND qm.receivableMoney=#{receivableMoney}</if>
+			<if test="qcConclusion != null and qcConclusion != ''">AND qm.qcConclusion=#{qcConclusion}</if>
+			<if test="qcPerson != null and qcPerson != ''">AND qm.qcPerson=#{qcPerson}</if>
+			<if test="addTimeFrom != null and addTimeFrom !=''" >AND qm.qcDate &gt;=#{addTimeFrom}</if>
+			<if test="addTimeTo != null and addTimeTo !='' ">AND qm.qcDate &lt;= concat(#{addTimeTo},' 23:59:59')</if>
+			<if test="relevantPerson != null and relevantPerson != ''">AND qmr.relevantPerson = #{relevantPerson}</if>
+			<if test="relevantPost != null and relevantPost != ''">AND qmr.relevantPost = #{relevantPost}</if>
+			<if test="relevantDepartment != null and relevantDepartment != ''">AND qmr.relevantDepartment = #{relevantDepartment}</if>
+			<if test="relatedFlag != null and relatedFlag != ''">AND qmr.relatedFlag = #{relatedFlag}</if>
+		</where>
+	</sql>
+	
+	<select id="listAll" parameterType="com.tuniu.qms.qc.dto.QcMonitorDto" resultType="com.tuniu.qms.qc.dto.QcMonitorDto">
+		select 
+		qm.id,
+		qm.circle,
+		qm.qcType,
+		qm.type,
+		qm.orderId,
+		qm.routeId,
+		qm.isQualified,
+		qm.questionType,
+		qm.poorMoney,
+		qm.receivableMoney,
+		qm.qcConclusion,
+		qm.qcPerson,
+		qm.qcDate,
+		qmr.relevantPerson,
+		qmr.relevantPost,
+		qmr.relevantDepartment,
+		qmr.relatedFlag 
+		from qc_monitor qm LEFT JOIN qc_monitor_relation qmr ON qm.id = qmr.monitorId
+		<include refid="listSql" />
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.QcMonitorDto" resultType="Integer">
+		SELECT COUNT(1)
+		FROM qc_monitor qm LEFT JOIN qc_monitor_relation qmr ON qm.id = qmr.monitorId
+		<include refid="listSql" />
+	</select>
+	
+	<select id="listByCondition" parameterType="com.tuniu.qms.qc.dto.QcMonitorDto" resultType="com.tuniu.qms.qc.dto.QcMonitorDto">
+		SELECT 
+			qm.id,qm.circle,qm.qcType,qm.type,qm.orderId,qm.routeId,qm.isQualified,qm.questionType,qm.poorMoney,qm.receivableMoney,qm.qcConclusion,qm.qcPerson,qm.qcDate,
+			qmr1.relevantPost relevantPost1,qmr1.relevantDepartment relevantDepartment1,qmr1.relevantPerson relevantPerson1,
+			qmr2.relevantPost relevantPost2,qmr2.relevantDepartment relevantDepartment2,qmr2.relevantPerson relevantPerson2
+		FROM 
+			qc_monitor qm,
+			(SELECT * FROM qc_monitor_relation WHERE relatedFlag = 1) qmr1,
+			(SELECT * FROM qc_monitor_relation WHERE relatedFlag = 0) qmr2
+		WHERE 
+			qm.id = qmr1.monitorId AND qm.id = qmr2.monitorId
+			<if test="circle != null and circle != ''">AND qm.circle=#{circle}</if>
+			<if test="qcType != null and qcType != ''">AND qm.qcType like CONCAT('%',#{qcType},'%')</if>
+			<if test="type != null and type != ''">AND qm.type=#{type}</if>
+			<if test="orderId != null and orderId != ''">AND qm.orderId=#{orderId}</if>
+			<if test="routeId != null and routeId != ''">AND qm.routeId=#{routeId}</if>
+			<if test="isQualified != null">AND qm.isQualified=#{isQualified}</if>
+			<if test="questionType != null and questionType != ''">AND qm.questionType=#{questionType}</if>
+			<if test="poorMoney != null and poorMoney != ''">AND qm.poorMoney=#{poorMoney}</if>
+			<if test="receivableMoney != null and receivableMoney != ''">AND qm.receivableMoney=#{receivableMoney}</if>
+			<if test="qcConclusion != null and qcConclusion != ''">AND qm.qcConclusion=#{qcConclusion}</if>
+			<if test="qcPerson != null and qcPerson != ''">AND qm.qcPerson=#{qcPerson}</if>
+			<if test="addTimeFrom != null and addTimeFrom !=''" >AND qm.qcDate &gt;=#{addTimeFrom}</if>
+			<if test="addTimeTo != null and addTimeTo !='' ">AND qm.qcDate &lt;= concat(#{addTimeTo},'23:59:59')</if>
+			<if test="relevantPerson != null and relevantPerson != ''">AND (qmr1.relevantPerson like CONCAT('%',#{relevantPerson},'%') OR qmr2.relevantPerson like CONCAT('%',#{relevantPerson},'%'))</if>
+			<if test="relevantPost != null and relevantPost != ''">AND (qmr1.relevantPost like CONCAT('%',#{relevantPost},'%') OR qmr2.relevantPost like CONCAT('%',#{relevantPost},'%'))</if>
+			<if test="relevantDepartment != null and relevantDepartment != ''">AND (qmr1.relevantDepartment like CONCAT('%',#{relevantDepartment},'%') OR qmr2.relevantDepartment like CONCAT('%',#{relevantDepartment},'%'))</if>
+			<if test="dataLimitStart != null">
+				limit #{dataLimitStart}
+				<if test="pageSize != null">
+					,#{pageSize}
+				</if>
+			</if>
+	</select>
+	
+	<select id="countByCondition" parameterType="com.tuniu.qms.qc.dto.QcMonitorDto" resultType="Integer">
+		SELECT COUNT(1)
+		FROM 
+			qc_monitor qm,
+			(SELECT * FROM qc_monitor_relation WHERE relatedFlag = 1) qmr1,
+			(SELECT * FROM qc_monitor_relation WHERE relatedFlag = 0) qmr2
+		WHERE 
+			qm.id = qmr1.monitorId AND qm.id = qmr2.monitorId
+			<if test="circle != null and circle != ''">AND qm.circle=#{circle}</if>
+			<if test="qcType != null and qcType != ''">AND qm.qcType like CONCAT('%',#{qcType},'%')</if>
+			<if test="type != null and type != ''">AND qm.type=#{type}</if>
+			<if test="orderId != null and orderId != ''">AND qm.orderId=#{orderId}</if>
+			<if test="routeId != null and routeId != ''">AND qm.routeId=#{routeId}</if>
+			<if test="isQualified != null">AND qm.isQualified=#{isQualified}</if>
+			<if test="questionType != null and questionType != ''">AND qm.questionType=#{questionType}</if>
+			<if test="poorMoney != null and poorMoney != ''">AND qm.poorMoney=#{poorMoney}</if>
+			<if test="receivableMoney != null and receivableMoney != ''">AND qm.receivableMoney=#{receivableMoney}</if>
+			<if test="qcConclusion != null and qcConclusion != ''">AND qm.qcConclusion=#{qcConclusion}</if>
+			<if test="qcPerson != null and qcPerson != ''">AND qm.qcPerson=#{qcPerson}</if>
+			<if test="addTimeFrom != null and addTimeFrom !=''" >AND qm.qcDate &gt;=#{addTimeFrom}</if>
+			<if test="addTimeTo != null and addTimeTo !='' ">AND qm.qcDate &lt;= concat(#{addTimeTo},'23:59:59')</if>
+			<if test="relevantPerson != null and relevantPerson != ''">AND (qmr1.relevantPerson like CONCAT('%',#{relevantPerson},'%') OR qmr2.relevantPerson like CONCAT('%',#{relevantPerson},'%'))</if>
+			<if test="relevantPost != null and relevantPost != ''">AND (qmr1.relevantPost like CONCAT('%',#{relevantPost},'%') OR qmr2.relevantPost like CONCAT('%',#{relevantPost},'%'))</if>
+			<if test="relevantDepartment != null and relevantDepartment != ''">AND (qmr1.relevantDepartment like CONCAT('%',#{relevantDepartment},'%') OR qmr2.relevantDepartment like CONCAT('%',#{relevantDepartment},'%'))</if>
+	</select>	
+	
+	<!--  -->
+	<insert id="batchAddInQcMonitor" parameterType="java.util.List" >
+		INSERT INTO qc_monitor (
+			circle,
+			qcType,
+			type,
+			orderId,
+			routeId,
+			isQualified,
+			questionType,
+			poorMoney,
+			receivableMoney,
+			qcConclusion,
+			qcPerson,
+			qcDate
+		) VALUES 
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+				#{item.circle},
+				#{item.qcType},
+				#{item.type},
+				#{item.orderId},
+				#{item.routeId},
+				#{item.isQualified},
+				#{item.questionType},
+				#{item.poorMoney},
+				#{item.receivableMoney},
+				#{item.qcConclusion},
+				#{item.qcPerson},
+				#{item.qcDate}
+				
+			)
+	   </foreach>	
+	</insert>
+	
+	<select id="getQcPersonByOrderId" parameterType="Integer" resultType="String">
+		SELECT qcPerson 
+		FROM qc_qc_bill 
+		WHERE ordId = #{ordId} 
+			AND groupFlag = 4 
+			AND cancelFlag = 0 
+			AND returnFlag = 0
+		limit 1
+	</select>
+</mapper>

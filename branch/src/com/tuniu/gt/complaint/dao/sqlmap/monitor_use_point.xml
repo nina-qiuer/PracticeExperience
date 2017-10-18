@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IMonitorUsePointMap" > 
+	<insert id="insertMonitorInfo" parameterType="com.tuniu.gt.complaint.entity.MonitorUsePointEntity">
+		insert into ct_sys_use_monitor (
+		<if test="url !=null">
+			url,
+		</if>
+			view_user_id,
+		<if test="viewUserName !=null">
+			view_user_name,
+		</if>
+			view_time,
+		<if test="userOrg !=null">
+			user_Org,
+		</if>
+		<if test="sysCode !=null">
+			sys_code,
+		</if>
+		<if test="modeCode !=null">
+			mode_code,
+		</if>
+		<if test="remark !=null">
+			remark,
+		</if>
+		mark)
+    values (
+    <if test="url !=null">
+			#{url},
+		</if>
+			#{viewUserId},
+		<if test="viewUserName !=null">
+			#{viewUserName},
+		</if>
+			NOW(),
+		<if test="userOrg !=null">
+			#{userOrg},
+		</if>
+		<if test="sysCode !=null">
+			#{sysCode},
+		</if>
+		<if test="modeCode !=null">
+			#{modeCode},
+		</if>
+		<if test="remark !=null">
+			#{remark},
+		</if>
+		#{mark}) 
+	</insert>
+	
+	<select id="getUseDeptInfo" parameterType="hashmap" resultType="hashmap">
+		SELECT 
+	f.id,
+	f.real_name as realName,
+	a.dep_name AS fourdept,
+	b.dep_name AS threeDept,
+	c.dep_name AS twoDept,
+	d.dep_name AS oneDept
+ FROM 
+frm_user f,
+uc_department a,
+uc_department b,
+uc_department c,
+uc_department d 
+WHERE f.dep_id=a.id
+AND a.father_id=b.id
+AND b.father_id=c.id
+AND c.father_id=d.id
+and f.id=#{userId}
+	
+	</select>
+	
+</mapper>

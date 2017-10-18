@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.SendMailConfigMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.SendMailConfig"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into qc_send_mail_config (
+			mailType,
+			<if test="sendAddrs != null and sendAddrs !=''">sendAddrs,</if>
+			delFlag
+		) VALUES (
+			#{mailType},
+			<if test="sendAddrs != null and sendAddrs !=''">#{sendAddrs},</if>
+			0
+		)
+	</insert>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_send_mail_config WHERE id=#{id}
+	</delete>
+
+	<update id="update" parameterType="com.tuniu.qms.qc.model.MailConfig">
+		UPDATE qc_send_mail_config
+		<set>
+			<if test="mailType != null and mailType !=''"> mailType=#{mailType},</if>
+			<if test="sendAddrs != null and sendAddrs !=''">sendAddrs=#{sendAddrs},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.SendMailConfig">
+		SELECT * FROM qc_send_mail_config WHERE id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.SendMailConfigDto" resultType="com.tuniu.qms.qc.model.SendMailConfig">
+		SELECT * from qc_send_mail_config qmc 
+		where 1=1 
+		<if test="mailType != null and mailType !=''">AND  mailType=#{mailType}</if>
+		ORDER BY qmc.id
+	</select>
+
+    <select id="getExistConfig" parameterType="Map" resultType="int">
+    
+       select count(1) from qc_send_mail_config where mailType =#{mailType}
+    
+    </select>
+    
+    <select id="getByType" parameterType="String" resultType="com.tuniu.qms.qc.model.SendMailConfig">
+    
+       select * from qc_send_mail_config where mailType = #{mailType} limit 1
+      
+    </select>
+</mapper>

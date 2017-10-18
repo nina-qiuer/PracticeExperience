@@ -1,0 +1,21 @@
+#Thu Mar 15 17:27:06 CST 2012
+eclipse.preferences.version=1
+encoding//WebContent/WEB-INF/config/config.properties=UTF-8
+encoding//WebContent/WEB-INF/html/complaint/share_solution/refund_notice_template.jsp=UTF-8
+encoding//WebContent/download/jsp/refund_notice_template.jsp=UTF-8
+encoding//src/com/tuniu/gt/complaint/action/ComplaintAction.java=UTF-8
+encoding//src/com/tuniu/gt/complaint/action/ComplaintSolutionAction.java=UTF-8
+encoding//src/com/tuniu/gt/complaint/action/GiftNoteAction.java=UTF-8
+encoding//src/com/tuniu/gt/complaint/action/config/GiftTypeAction.java=UTF-8
+encoding//src/com/tuniu/gt/complaint/service/IComplaintService.java=UTF-8
+encoding//src/com/tuniu/gt/complaint/service/IQCService.java=UTF-8
+encoding//src/com/tuniu/gt/complaint/service/impl/ComplaintServiceImpl.java=UTF-8
+encoding//src/com/tuniu/gt/frm/action/Test.java=UTF-8
+encoding//src/com/tuniu/gt/frm/action/log=UTF-8
+encoding//src/com/tuniu/gt/frm/action/privilege=UTF-8
+encoding//src/com/tuniu/gt/frm/action/system=UTF-8
+encoding//src/com/tuniu/gt/frm/service/privilege/impl=UTF-8
+encoding/<project>=UTF-8
+encoding/WebContent=UTF-8
+encoding/build.default.properties=UTF-8
+encoding/build.properties=UTF-8

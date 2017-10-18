@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.innerqc.dao.sqlmap.imap.InnerQcAttachMap">
+	<sql id="whereSql">
+		<where>1=1
+			<if test="iqcId != 0">and iqc_id=#{iqcId}</if>
+			and del_flag = 0 order by id asc
+		</where>
+	</sql>
+	
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<include refid="whereSql" />
+	</select>
+
+	<resultMap id="listResultEntity" type="com.tuniu.gt.innerqc.entity.InnerQcAttachEntity">
+		<result property="id" column="id" />
+		<result property="iqcId" column="iqc_id" />
+		<result property="path" column="path" />
+		<result property="name" column="name" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+			iqc_id, 
+			path, 
+			name
+		) values (
+			#{e.iqcId},
+			#{e.path},
+			#{e.name}
+		)
+	</sql>
+	
+	<delete id="delete">
+		<include refid="tuniu.frm.core.IMapBase.deleteBasic"/> where id =#{id}
+	</delete>
+	
+	<delete id="deleteByIqcId" parameterType="Integer">
+		DELETE FROM qc_inner_qc_question WHERE iqc_id = #{iqcId}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.qc.dao.RespBillMapper">
+
+	<resultMap type="com.tuniu.qms.qc.model.RespBill" id="respBill">
+		<result  property="id" column="id"  />
+		<result  property="qpId" column="qpId"  />
+		<result  property="respPersonId" column="respPersonId" />
+		<result  property="depId" column="depId"  />
+		<result  property="jobId"  column="jobId" />
+		<result  property="addPerson" column="addPerson" />
+		<result  property="addTime"  column="addTime"/>
+		<result  property="updatePerson" column="updatePerson"  />
+		<result  property="updateTime" column="updateTime"/>
+	</resultMap>
+
+
+    <select id="queryRespBillList" parameterType="java.util.Map" resultMap="respBill">
+       
+       select   id,
+       			qpId,
+				respPersonId,
+				depId,
+				jobId,
+				addPerson,
+				DATE_FORMAT(addTime,'%Y-%m-%d %H:%i:%s') as addTime	,
+				updatePerson,
+				DATE_FORMAT(updateTime,'%Y-%m-%d %H:%i:%s') as updateTime
+      	  		from qc_inner_resp_bill 
+      	  		where delFlag = 0
+      	  	    <if test="qpId != null and qpId !=''">
+      	  		and qpId =#{qpId}
+      	  		</if>
+                limit #{start},#{end}
+    </select>
+    
+    
+     <select id="queryRespBillCount" parameterType="java.util.Map" resultType="int">
+       
+       select  count(1)
+      	  		from qc_inner_resp_bill 
+      	  			where  delFlag = 0
+      	  			 <if test="complaintId != null and complaintId !=''">
+		      	  		and qpId =#{complaintId}
+		      	   </if>
+    </select>
+    
+    
+    <delete id="deleteResp" parameterType="java.util.Map">
+    
+    
+       delete  from qc_inner_resp_bill where id =#{id}
+    
+    
+    </delete>
+    
+    
+</mapper>

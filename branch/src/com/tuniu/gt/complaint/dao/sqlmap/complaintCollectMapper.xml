@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.ComplaintCollectMapper">
+   
+   
+     	<!-- 汇总数据字段-->
+	<resultMap type="com.tuniu.gt.complaint.vo.ComplaintCollectListVo" id="complaintCollect">
+		<result property="finishDate" column="finish_date" />
+		<result property="buildDate" column="build_date" />
+		<result property="cfinishDate" column="c_finish_date" />
+		<result property="orderId" column="order_id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="niuLineFlag" column="niu_line_flag" />
+		<result property="level" column="level" />
+		<result property="backTime" column="back_time" />
+		<result property="startCity" column="start_city" />
+		<result property="route" column="route" />
+		<result property="productLeader" column="product_leader" />
+		<result property="producter" column="producter" />
+		<result property="customerLeader" column="customer_leader" />
+		<result property="descript" column="descript" />
+		<result property="cdescript" column="cdescript" />
+		<result property="conclusion" column="conclusion" />
+		<result property="responsibilityName" column="responsibilityName" />
+		<result property="respSecondName" column="resp_secondName" />
+		<result property="respThirdName" column="resp_thirdName" />
+		<result property="position" column="position" />
+		<result property="responsibility" column="responsibility" />
+	    <result property="improverName" column="improver" />
+		<result property="bigClassId" column="big_class_id" />
+	    <result property="smallClassId" column="small_class_id" />
+	    <result property="bigClassName" column="big_class_name" />
+	    <result property="smallClassName" column="small_class_name" />
+		<result property="scoreLevel" column="score_level" />
+		<result property="scoreTarget1" column="score_target1" />	
+		<result property="scoreValue1" column="score_value1" />
+		<result property="scoreTarget2" column="score_target2" />
+		<result property="scoreValue2" column="score_value2" />
+		<result property="scoreValue" column="score_value" />
+		<result property="special" column="special" />
+		<result property="qcPersonName" column="qc_person_name" />
+		<result property="dealDepart" column="deal_depart" />
+		<result property="dealName" column="deal_name" />
+		<result property="typeDescript" column="type_descript" />
+		<result property="responsiblePerson" column="responsible_person" />
+		<result property="questionId" column="question_id" />
+		<result property="verify" column="verify" />
+	</resultMap>
+	
+	
+	<resultMap type="java.util.Map" id="detailMap">
+		<result property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="start" column="starttime" />
+		<result property="end" column="endtime" />
+		<result property="allday" column="allday" />
+		<result property="color" column="color" />
+		<result property="personnum" column="personnum" />
+		<result property="personname" column="personname" />
+	</resultMap>
+	
+	<resultMap type="java.util.Map" id="historyMap">
+		<result property="compDay" column="compDay" />
+		<result property="compHour" column="compHour" />
+		<result property="order_state" column="order_state" />
+		<result property="compNum" column="compNum" />
+	</resultMap>
+	
+	<resultMap type="java.util.Map" id="deployMap">
+		<result property="id" column="id" />
+		<result property="titNum" column="titnum" />
+		<result property="perNum" column="pernum" />
+	</resultMap>
+	
+	
+	<resultMap type="java.util.Map" id="managerMap">
+		<result property="id" column="id" />
+		<result property="userName" column="user_name" />
+		<result property="userId" column="user_id" />
+	</resultMap>
+	
+	<select id="getCollectList" parameterType="Map"  resultMap="complaintCollect">
+		
+		SELECT   DATE(question.finish_date) AS  finish_date,
+				 DATE(cp.build_date) AS  build_date,
+				 DATE(cp.finish_date) AS  c_finish_date,
+				 DATE(cp.back_time) AS  back_time,
+				 question.* ,
+				 (CASE cp.niu_line_flag WHEN 1 THEN '牛人专线' ELSE '非牛人专线'END) niu_line_flag,
+				 cp.level,
+				 cp.start_city,
+				 cp.route,
+				 cp.product_leader,
+				 cp.producter,
+				 cp.customer_leader,
+				 cp.deal_depart,
+				 cp.deal_name ,
+				 cp.descript,
+				 cl.descript as cdescript,
+				 IFNULL(ch.special,0) AS special
+		  		 FROM  ct_complaint cp 
+		  		 INNER JOIN 
+				(SELECT qt.order_id,
+						qt.complaint_id,
+						qt.finish_date,
+						qt.qc_person_name,
+						qt.verify,
+						qu.big_class_id,
+						qu.conclusion,
+						qu.small_class_id,
+						qu.small_class_name,
+						qu.big_class_name,
+						qu.score_level,
+						qu.score_value AS score_value1 ,
+					    qu.score_target1 ,
+					    qu.score_value AS score_value2 ,
+					    qu.score_target2 ,
+						(qu.score_value+qu.score_value)AS score_value ,
+						qu.id AS question_id
+					    FROM 
+					     ct_qc_question qu,
+					    (SELECT MAX(id)AS qr_id ,qc_id,MAX(update_time) AS update_time FROM ct_qc_report WHERE del_flag =0 GROUP BY qc_id) qr,
+			    		ct_qc qt
+			    WHERE
+		  			qu.report_id =qr.qr_id AND qt.id =qr.qc_id 
+		 			AND qu.del_flag=0  
+		 		    AND qt.status =2 AND qt.del_flag =0
+		 			 <if test="qcPersonName!=null and qcPersonName!=''">
+			     	AND qt.qc_person_name =#{qcPersonName}
+			   		 </if>
+			    <if test="bigClassIds!=null ">
+			     AND qu.big_class_id in
+			     <foreach collection="bigClassIds" item="bigClassId"
+				      open="(" close=")" separator=",">
+				   #{bigClassId}
+				   </foreach>
+			    </if>
+			     <if test="scoreLevels!=null">
+			     AND qu.score_level in
+			     <foreach collection="scoreLevels" item="scoreLevel"
+				      open="(" close=")" separator=",">
+				   #{scoreLevel}
+				   </foreach>
+			    </if>
+			    <if test="improverName!=null and improverName!=''">
+			     AND qk.improver =#{improverName}
+			    </if>
+		  			ORDER BY qt.order_id, qu.big_class_id,qu.small_class_id) question 
+		 		 ON  
+		 		 cp.id=question.complaint_id AND cp.order_id =question.order_id
+		  		 LEFT JOIN  ct_share_solution ch 
+		  		 ON 
+		  		 ch.order_id =cp.order_id AND ch.complaint_id =cp.id  AND ch.del_flag =1
+		  		 left join ct_complaint_solution cl 
+		  		 on cl.complaint_id = cp.id and cl.order_id = cp.order_id and cl.del_flag =1
+			    WHERE  cp.del_flag = 0   
+			    <if test="finishBeginDate!=null and finishBeginDate!=''">
+			     AND question.finish_date &gt;= #{finishBeginDate}
+			    </if>
+			     <if test="finishEndDate!=null and finishEndDate!=''">
+			     AND question.finish_date &lt;= #{finishEndDate}
+			    </if>
+			    <if test="buildBeginDate!=null and buildBeginDate!=''">
+			     AND cp.build_date  &gt;= #{buildBeginDate}
+			    </if>
+			     <if test="buildEndDate!=null and buildEndDate!=''">
+			     AND cp.build_date &lt;= #{buildEndDate}
+			    </if>
+			    ORDER BY question.finish_date,cp.order_id 
+				<if test="dataLimitStart != null">
+					limit #{dataLimitStart}
+					<if test="dataLimitEnd != null">
+						,#{dataLimitEnd}
+					</if>
+				</if>
+	</select>
+	
+	<select id="getCollectListCount" parameterType="java.util.Map"  resultType="int">
+		SELECT COUNT(1)
+		  		 FROM  ct_complaint cp 
+		  		 INNER JOIN 
+				(SELECT qt.order_id,
+						qt.complaint_id,
+						qt.finish_date,
+						qt.verify,
+						qt.qc_person_name,
+						qu.big_class_id,
+						qu.conclusion,
+						qu.small_class_id,
+						qu.small_class_name,
+						qu.big_class_name,
+						qu.score_level,
+						qu.score_value AS score_value1 ,
+					    qu.score_target1 ,
+					    qu.score_value AS score_value2 ,
+					    qu.score_target2 ,
+						(qu.score_value+qu.score_value)AS score_value ,
+						qu.id AS question_id
+					    FROM 
+					     ct_qc_question qu,
+					     (SELECT MAX(id)AS qr_id ,qc_id,MAX(update_time) AS update_time FROM ct_qc_report WHERE del_flag =0 GROUP BY qc_id) qr,
+			    		ct_qc qt
+			    	WHERE
+		  			qu.report_id =qr.qr_id AND qt.id =qr.qc_id 
+		 			AND qu.del_flag=0
+		 		    AND qt.status =2 AND qt.del_flag =0
+		 			 <if test="qcPersonName!=null and qcPersonName!=''">
+			     	AND qt.qc_person_name =#{qcPersonName}
+			   		 </if>
+				    <if test="bigClassIds!=null ">
+				     AND qu.big_class_id in
+				     <foreach collection="bigClassIds" item="bigClassId"
+					      open="(" close=")" separator=",">
+					   #{bigClassId}
+					   </foreach>
+				    </if>
+				     <if test="scoreLevels!=null">
+				     AND qu.score_level in
+				     <foreach collection="scoreLevels" item="scoreLevel"
+					      open="(" close=")" separator=",">
+					   #{scoreLevel}
+					   </foreach>
+				    </if>
+				    <if test="improverName!=null and improverName!=''">
+				     AND qk.improver =#{improverName}
+				    </if>
+			  			ORDER BY qt.order_id, qu.big_class_id,qu.small_class_id) question 
+			 		 ON  
+			 		 cp.id=question.complaint_id AND cp.order_id =question.order_id
+			  		 LEFT JOIN  ct_share_solution ch 
+			  		 ON 
+			  		 ch.order_id =cp.order_id AND ch.complaint_id =cp.id  AND ch.del_flag =1
+			  		 left join ct_complaint_solution cl 
+			  		 on cl.complaint_id = cp.id and cl.order_id = cp.order_id and cl.del_flag =1
+				    WHERE  cp.del_flag = 0   
+				    <if test="finishBeginDate!=null and finishBeginDate!=''">
+				     AND question.finish_date &gt;= #{finishBeginDate}
+				    </if>
+				     <if test="finishEndDate!=null and finishEndDate!=''">
+				     AND question.finish_date &lt;= #{finishEndDate}
+				    </if>
+				    <if test="buildBeginDate!=null and buildBeginDate!=''">
+				     AND cp.build_date  &gt;= #{buildBeginDate}
+				    </if>
+				     <if test="buildEndDate!=null and buildEndDate!=''">
+				     AND cp.build_date &lt;= #{buildEndDate}
+				    </if>
+	</select>
+	
+	
+   <select id="queryCalendar" parameterType="java.util.Map" resultMap="detailMap">
+   
+      select id,
+      		 title,
+      		 DATE_FORMAT( starttime,'%Y/%m/%d %H:%i:%s ') AS starttime,
+      		 DATE_FORMAT( endtime,'%Y/%m/%d %H:%i:%s ') AS endtime,
+      		 allday,
+      		 personnum,
+      		 personname,
+      		 color
+      		 from  ct_calendar
+      		 where starttime  &gt;= #{startTime} 
+      		 and endtime &lt;=#{endTime}
+   
+   </select>
+   
+   <update id="savePlan" parameterType="java.util.Map">
+   
+       update ct_calendar set personname =#{personname} where id =#{id}
+   
+   </update>
+   
+   <!-- 查询前三年某年某月末日订单量 -->
+   <select id="queryhistoryData" parameterType="java.util.Map" resultMap="historyMap">
+   
+       SELECT  
+			a.compDay,
+			a.order_state,
+			a.compHour,
+			a.compEday,
+			SUM(a.compNum) AS compNum 
+			FROM (
+			
+			        SELECT DATE_FORMAT(add_time,'%Y-%m-%d-%H') AS compTime,
+					       DATE_FORMAT(add_time,'%Y') AS compYear, 
+					       DATE_FORMAT(add_time,'%m') AS compMon, 
+					       DATE_FORMAT(add_time,'%d') AS compEday, 
+					       DATE_FORMAT(add_time,'%Y-%m') AS compMonth, 
+					       DATE_FORMAT(add_time,'%Y-%m-%d') AS compDate, 
+					       DATE_FORMAT(add_time,'%m-%d-%H') AS compDay, 
+					       order_state,
+					       DATE_FORMAT(add_time,'%H') AS compHour, 
+					       COUNT(id) AS compNum 
+			               FROM ct_complaint WHERE 1=1 AND del_flag=0 
+			      
+			              AND DATE(add_time) &gt;= #{startDate1}
+					
+						  AND DATE(add_time) &lt;= #{endDate1}
+					
+						  AND order_state = #{order_state}
+					
+			              GROUP BY order_state,compTime 
+			        
+			    UNION ALL 
+			     
+			        SELECT DATE_FORMAT(add_time,'%Y-%m-%d-%H') AS compTime,
+					       DATE_FORMAT(add_time,'%Y') AS compYear, 
+					       DATE_FORMAT(add_time,'%m') AS compMon, 
+					       DATE_FORMAT(add_time,'%d') AS compEday, 
+					       DATE_FORMAT(add_time,'%Y-%m') AS compMonth, 
+					       DATE_FORMAT(add_time,'%Y-%m-%d') AS compDate, 
+					       DATE_FORMAT(add_time,'%m-%d-%H') AS compDay, 
+					       order_state,
+					       DATE_FORMAT(add_time,'%H') AS compHour, 
+					       COUNT(id) AS compNum 
+			          FROM ct_complaint WHERE 1=1 AND del_flag=0 
+			      
+			                    AND DATE(add_time) &gt;= #{startDate2}
+					
+								AND DATE(add_time) &lt;= #{endDate2}
+					
+								AND order_state = #{order_state}
+					
+			        			GROUP BY order_state,compTime 
+			        
+			       UNION ALL 
+			     
+			        SELECT DATE_FORMAT(add_time,'%Y-%m-%d-%H') AS compTime,
+					       DATE_FORMAT(add_time,'%Y') AS compYear, 
+					       DATE_FORMAT(add_time,'%m') AS compMon, 
+					       DATE_FORMAT(add_time,'%d') AS compEday, 
+					       DATE_FORMAT(add_time,'%Y-%m') AS compMonth, 
+					       DATE_FORMAT(add_time,'%Y-%m-%d') AS compDate, 
+					       DATE_FORMAT(add_time,'%m-%d-%H') AS compDay, 
+					       order_state,
+					       DATE_FORMAT(add_time,'%H') AS compHour, 
+					       COUNT(id) AS compNum 
+			        	   FROM ct_complaint WHERE 1=1 AND del_flag=0 
+			      
+			               AND DATE(add_time) &gt;= #{startDate3}
+					
+						   AND DATE(add_time) &lt;= #{endDate3}
+					
+						   AND order_state = #{order_state}
+					
+			        	   GROUP BY order_state,compTime 
+			        			
+			     )  a  GROUP BY a.compDay,a.compHour
+   
+   
+   </select>
+   
+   
+   <insert id="saveDetailPlan" parameterType="java.util.Map">
+   
+    insert into ct_calendar(
+    
+       title,
+       starttime,
+       endtime,
+       allday,
+       personnum,
+       month
+    
+    )values(
+    
+     	#{title},
+    	#{starttime},
+    	#{endtime},
+    	#{allday},
+     	#{personnum},
+     	#{month}
+    )
+   
+   </insert>
+   
+    <delete id="deleteDetail" parameterType="java.lang.String">
+    
+       delete  from  ct_calendar where month =#{month}
+    
+    </delete>
+	
+	<insert id="saveDeploy" parameterType="java.util.Map" >
+	
+	   insert into ct_calendar_deploy
+	   (
+	     pernum,
+	     titnum,
+	     updatetime
+	   )
+	   values(
+	   
+	    #{perNum},
+    	#{titNum},
+	    CURRENT_TIMESTAMP() 
+	   )
+	 
+	</insert>
+	
+	
+	<select id="queryDeploy" resultMap="deployMap">
+	
+	    select
+	    titnum,
+	    pernum
+	    from
+	    ct_calendar_deploy 
+				  WHERE 
+				   updatetime= (
+				  SELECT MAX(updatetime) 
+				  FROM ct_calendar_deploy ) 
+	
+	</select>
+	
+	
+	<select id="queryManagerList" parameterType="java.util.Map" resultMap="managerMap">
+	
+	   select user_name,user_id 
+	   from 
+	   ct_appoint_manager 
+	   WHERE type= #{type} 
+	   and user_name =#{userName}
+	   AND del_flag = #{flag}
+	
+	</select>
+	
+	 <select id="queryDescript" parameterType="java.util.Map" resultMap="complaintCollect">
+   
+         SELECT  complaint_id,
+         		 GROUP_CONCAT(type_descript SEPARATOR '|') AS type_descript
+         		 FROM ct_complaint_reason  WHERE  del_flag= #{flag}
+         		  AND complaint_id in
+			     <foreach collection="complaintIds" item="complaintId"
+				      open="(" close=")" separator=",">
+				   #{complaintId}
+				   </foreach>
+				 GROUP BY complaint_id	
+   
+    </select>
+    
+	 <select id="queryTracker" parameterType="java.util.Map" resultMap="complaintCollect">
+	 
+   		SELECT  
+		   		a.question_id,
+		       	a.position,
+				a.improver ,
+				a.responsible_person,
+		   		CONCAT(IFNULL(b.dep_name,''), IFNULL(c.dep_name,''), IFNULL(d.dep_name,'')) AS responsibility,
+		   		IFNULL(b.dep_name,'') AS responsibilityName,
+		   		IFNULL(c.dep_name,'') AS resp_secondName ,
+			    IFNULL(d.dep_name,'') AS resp_thirdName 
+			    FROM ct_qc_tracker a
+	     		LEFT JOIN uc_department b ON a.responsibility =b.id AND b.del_flag =0
+	      		LEFT JOIN uc_department c ON a.resp_second =c.id AND c.del_flag =0
+	      	    LEFT JOIN uc_department d ON a.resp_third =d.id AND d.del_flag =0 
+	      	    WHERE  a.del_flag= #{flag}
+         		    AND a.question_id in
+			     <foreach collection="questionIds" item="questionId"
+				      open="(" close=")" separator=",">
+				   #{questionId}
+				   </foreach>
+				   order by a.question_id,a.update_time
+   
+    </select>
+    
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<!-- 规则 中划线前为namespace -->	
+	<package name="frm" extends="apply-default" namespace="/frm/action">	 	
+		<action name="index" class="frm-index"> 
+			<result name="index">/WEB-INF/html/index.jsp</result> 
+		</action>
+		<action name="login-*" class="frm-login" method="{1}">  
+		</action>
+	</package>
+	
+	
+	<package name="frm-util" extends="frm-default" namespace="/frm/action/util"> 
+		<action name="*-*" class="frm_action_util-{1}" method="{2}"> 
+			<result name="success">/WEB-INF/html/success.jsp</result>  
+			<result name="*">/WEB-INF/html/frm/util/${jspTpl}.jsp</result> 
+		</action>
+	</package>
+	
+
+	<package name="frm-log" extends="apply-default" namespace="/frm/action/log">
+		<action name="log-*" class="frm_action_log-log" method="{1}">
+			<result name="list" type="freemarker">/WEB-INF/html/frm/log/log_list.ftl</result> 
+		</action>
+	
+		<action name="*-*" class="frm_action_log-{1}" method="{2}">
+			<result name="form">/WEB-INF/html/frm/log/{1}_form.jsp</result>  
+			<result name="list">/WEB-INF/html/frm/log/{1}_list.jsp</result> 
+			<!-- 支持用户自定义指定jsp页面 -->
+			<result name="*">/WEB-INF/html/frm/log/{1}_${jspTpl}.jsp</result>
+		</action>
+	</package>
+	
+	<package name="frm-privilege" extends="apply-default" namespace="/frm/action/privilege"> 
+		<action name="*-*" class="frm_action_privilege-{1}" method="{2}">
+			<result name="form">/WEB-INF/html/frm/privilege/{1}_form.jsp</result>  
+			<result name="list">/WEB-INF/html/frm/privilege/{1}_list.jsp</result> 
+			<!-- 支持用户自定义指定jsp页面 -->
+			<result name="*">/WEB-INF/html/frm/privilege/{1}_${jspTpl}.jsp</result> 
+		</action>
+	</package>
+
+	<package name="frm-system" extends="apply-default" namespace="/frm/action/system"> 
+		<action name="*-*" class="frm_action_system-{1}" method="{2}">
+			<result name="form">/WEB-INF/html/frm/system/{1}_form.jsp</result>  
+			<result name="list">/WEB-INF/html/frm/system/{1}_list.jsp</result> 
+			<!-- 支持用户自定义指定jsp页面 -->
+			<result name="*">/WEB-INF/html/frm/system/{1}_${jspTpl}.jsp</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.ClaimsAuditHistoryMap"> 
+	
+<insert id="insert"  parameterType="com.tuniu.gt.complaint.entity.ClaimAuditHistory" > 
+	<include refid="insert"/>
+</insert>
+
+<select id="fetchList" parameterType="Map"  resultType="com.tuniu.gt.complaint.entity.ClaimAuditHistory">
+		<include refid="list"/>
+</select>
+
+<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  claimType,
+		 
+		  foreignId,
+		 
+		  phrase,
+		 
+		  claimTime,
+		 
+		  assessor
+		 
+		) values  (
+		
+		  #{e.claimType}, 
+		 
+		  #{e.foreignId}, 
+		 
+		  #{e.phrase}, 
+		 
+		  #{e.claimTime}, 
+		 
+		  #{e.assessor}
+		)
+</sql>
+
+<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			delFlag = 0
+			<if test="claimType!=null">
+				and claimType=#{claimType}
+			</if>
+			<if test="foreignId !=null">
+				and foreignId=#{foreignId}
+			</if>
+		</where>
+		order by phrase
+	</sql>
+</mapper>

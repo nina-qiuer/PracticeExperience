@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IShareSolutionMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			del_flag = 1
+			<if test="complaintId != null and complaintId != ''">
+				and	complaint_id=#{complaintId}
+			</if>
+			<if test="orderId != null and orderId != ''">
+				and	order_id=#{orderId}
+			</if>
+			<if test="dealName != null and dealName != ''">
+				and	dealname=#{dealName}
+			</if>
+			<if test="confirm !='' and confirm != null">
+				<if test="confirm == 1">
+					and confirm=1
+				</if>
+				<if test="confirm != 1">
+					and confirm!=1
+				</if>
+			</if>
+			<if test="startUpdateTime != null and startUpdateTime != ''">
+				and update_time > #{startUpdateTime}
+			</if>
+			<if test="endUpdateTime != null and endUpdateTime != ''">
+			<![CDATA[
+				and update_time < #{endUpdateTime}
+				]]>
+			</if>
+			<if test="id != null and id !=''">
+				and id=#{id}
+			</if>
+			<if test="ids != null and ids !=''">
+				and id in (${ids})
+			</if>
+			<if test="submitFlag != null">
+				and	submit_flag=#{submitFlag}
+			</if>
+		</where>
+		order by update_time desc
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.ShareSolutionEntity">  
+		<result property="orderId" column="order_id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="total" column="total" />
+		<result property="orderGains" column="order_gains" />
+		<result property="special" column="special" />
+		<result property="supplierTotal" column="supplier_total" />
+		<result property="qualityToolTotal" column="quality_tool_total" />
+		<result property="employeeTotal" column="employee_total" />
+		<result property="refundToIndemnity" column="refund_to_indemnity" />
+		<result property="dealId" column="deal_id" />
+		<result property="dealName" column="dealname" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+		<result property="submitFlag" column="submit_flag" />
+		<result property="submitTime" column="submit_time" />
+		<result property="auditFlag" column="audit_flag" />
+		<result property="auditTime" column="audit_time" />
+	</resultMap>
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		<result property="orderId" column="order_id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="total" column="total" />
+		<result property="orderGains" column="order_gains" />
+		<result property="special" column="special" />
+		<result property="supplierTotal" column="supplier_total" />
+		<result property="qualityToolTotal" column="quality_tool_total" />
+		<result property="employeeTotal" column="employee_total" />
+		<result property="refundToIndemnity" column="refund_to_indemnity" />
+		<result property="dealId" column="deal_id" />
+		<result property="dealName" column="dealname" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+		<result property="submitFlag" column="submit_flag" />
+		<result property="submitTime" column="submit_time" />
+		<result property="auditFlag" column="audit_flag" />
+		<result property="auditTime" column="audit_time" />
+	</resultMap>
+	
+	<resultMap id="cmpMap" type="Map">
+		<result property="complaintId" column="complaint_id" />
+	</resultMap>
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  order_id,
+		  complaint_id,
+		  total,
+		  order_gains,
+		  special,
+		  supplier_total,
+		  quality_tool_total,
+		  employee_total,
+		  <if test="e.dealId != null">deal_id,</if>
+		  <if test="e.dealName != null">dealname,</if>
+		  <if test="e.submitFlag != null">submit_flag,</if>
+		  <if test="e.submitTime != null">submit_time,</if>
+		  <if test="e.auditFlag != null">audit_flag,</if>
+		  <if test="e.auditTime != null">audit_time,</if>
+		  refund_to_indemnity
+		) values (
+		  #{e.orderId},
+		  #{e.complaintId},
+		  #{e.total},
+		  #{e.orderGains},
+		  #{e.special},
+		  #{e.supplierTotal},
+		  #{e.qualityToolTotal},
+		  #{e.employeeTotal},
+		  <if test="e.dealId != null">#{e.dealId},</if>
+		  <if test="e.dealName != null">#{e.dealName},</if>
+		  <if test="e.submitFlag != null">#{e.submitFlag},</if>
+		  <if test="e.submitTime != null">#{e.submitTime},</if>
+		  <if test="e.auditFlag != null">#{e.auditFlag},</if>
+		  <if test="e.auditTime != null">#{e.auditTime},</if>
+		  #{e.refundToIndemnity} 
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED"> 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			<if test="e.total != null">total=#{e.total},</if>
+			<if test="e.orderGains != null">order_gains=#{e.orderGains},</if>
+			<if test="e.special != null">special=#{e.special},</if>
+			<if test="e.supplierTotal != null">supplier_total=#{e.supplierTotal},</if>
+			<if test="e.qualityToolTotal != null">quality_tool_total=#{e.qualityToolTotal},</if>
+			<if test="e.employeeTotal != null">employee_total=#{e.employeeTotal},</if>
+			<if test="e.refundToIndemnity != null">refund_to_indemnity=#{e.refundToIndemnity},</if>
+			<if test="e.dealId != null">deal_id=#{e.dealId},</if>
+			<if test="e.dealName != null">dealname=#{e.dealName},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			<if test="e.submitFlag != null">submit_flag=#{e.submitFlag},</if>
+			<if test="e.submitTime != null">submit_time=#{e.submitTime},</if>
+			<if test="e.auditFlag != null">audit_flag=#{e.auditFlag},</if>
+			<if test="e.auditTime != null">audit_time=#{e.auditTime},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<select id="getConfirmInfoNum" parameterType="Integer" resultType="Map">
+		SELECT COUNT(1) AS num,(CASE confirm_state WHEN 0 THEN 0 ELSE 1 END) AS processStatus 
+        FROM ct_support_share WHERE CODE=#{agencyId} AND del_flag=1 AND confirm_state in (0,1,2,3,4,6,8)
+        GROUP BY processStatus
+	</select>
+	
+	<select id="getAgencyPayoutNum" parameterType="Integer" resultType="Integer">
+		SELECT 	COUNT(1) AS totalRecords 
+		FROM ct_support_share t1 
+		INNER JOIN ct_complaint t2 ON t1.complaint_id=t2.id
+		INNER JOIN ct_share_solution css ON css.id=t1.share_id
+		WHERE 1=1 AND t1.del_flag=1 AND css.audit_flag=4 
+		<if test="requestFromRest != null">
+			AND t1.confirm_state IN (0,1,2,3,4,6,8) 
+		</if>
+		AND t2.del_flag=0 
+		AND t1.share_id=(SELECT MAX(t4.share_id) FROM ct_support_share t4 WHERE t1.complaint_id=t4.complaint_id AND t1.code=t4.code) 
+		<if test="agencyId != null and agencyId != 0">AND t1.code = #{agencyId}</if>
+		<if test="agencyName != null and agencyName != ''">AND t1.name like #{agencyName}</if>
+		<if test="orderId != null and orderId != 0">AND t2.order_id = #{orderId}</if>
+		<if test="complaintId != null and complaintId != 0">AND t1.complaint_id = #{complaintId}</if>
+		<if test="routeId != null and routeId != 0">AND t2.route_id = #{routeId}</if>
+		<if test="startCity != null and startCity != ''">AND t2.start_city like #{startCity}</if>
+		<choose>
+			<when test="dealDeparts != null">
+				AND t2.deal_depart IN 
+					<foreach collection="dealDeparts" item="deal_depart" open="(" close=")"
+						separator=",">
+						#{deal_depart}
+					</foreach>
+			</when>
+			<when test="userName != null and userName != ''">
+				AND (t2.product_leader = #{userName} OR t2.producter = #{userName} OR t2.product_manager = #{userName} OR t2.deal_name = #{userName}) 
+			</when>
+		</choose>
+		<if test="compTimeBgn != null and compTimeBgn != ''">
+		    <![CDATA[
+		    AND #{compTimeBgn} <= t2.build_date
+	        ]]>
+		</if>
+		<if test="compTimeEnd != null and compTimeEnd != ''">
+			<![CDATA[
+			AND t2.build_date <= #{compTimeEnd}
+			]]>
+		</if>
+		<if test="startTimeBgn != null and startTimeBgn != ''">
+			<![CDATA[
+			AND #{startTimeBgn} <= t2.start_time
+			]]>
+		</if>
+		<if test="startTimeEnd != null and startTimeEnd != ''">
+			<![CDATA[
+			AND t2.start_time <= #{startTimeEnd}
+			]]>
+		</if>
+		<choose>
+					<when test="requestFromRest == null">
+						<if test="confirmState > -2">AND t1.confirm_state =#{confirmState}</if>
+					</when>
+				    <otherwise> 
+				    	<if test="processStatus != null and processStatus == 0">AND t1.confirm_state =0</if>
+						<if test="processStatus != null and processStatus == 1">AND t1.confirm_state IN (${confirmStateStr})</if>
+				    </otherwise>
+		</choose>
+	</select>
+	
+	<select id="getAgencyPayInfoList" parameterType="Map" resultType="Map">
+		SELECT 	t1.id,t1.code AS agencyId,t1.name AS agencyName,t1.complaint_id AS complaintId,t2.order_id AS orderId,t2.route_id AS routeId,t2.route AS routeName,
+                t2.guest_name AS guestName,t2.start_city AS startCity,DATE_FORMAT(t2.start_time, '%Y-%m-%d') AS startDate,
+                DATE_FORMAT(t2.build_date, '%Y-%m-%d %H:%i:%s') AS complaintTime,
+                (CASE t2.level WHEN 1 THEN '一级' WHEN 2 THEN '二级' WHEN 3 THEN '三级' END) AS complaintLevelName,
+                t1.number AS localCurrencyAmount,t1.foreignCurrencyName AS foreignCurrencyName,t1.foreignCurrencyNumber AS foreignCurrencyAmount,t1.foreignCurrencyType AS foreignCurrencyType,
+                DATE_FORMAT(t1.confirm_time, '%Y-%m-%d %H:%i:%s') AS confirmTime,
+                <choose>
+					<when test="requestFromRest == null">
+						t1.confirm_state AS confirmStateId,
+		                (CASE t1.confirm_state 
+		                WHEN -1 THEN '未对接nb' WHEN 0 THEN '未确认' WHEN 1 THEN '已确认' WHEN 2 THEN '到期默认' WHEN 3 THEN '已申诉' WHEN 4 THEN '申诉审批中（对接NB）' WHEN 5 THEN '申诉审批中（未对接NB）' WHEN 6 THEN '申诉审批未通过（对接NB）' 
+		                 WHEN 7 THEN '申诉审批未通过（未对接NB）' WHEN 8 THEN '申诉审批成功（对接NB）' WHEN 9 THEN '申诉审批成功（未对接NB）'
+		                END) AS confirmState
+					</when>
+				    <otherwise> 
+				    	(CASE t1.confirm_state 
+		                WHEN 4 THEN 3 ELSE t1.confirm_state 
+		                END) AS confirmStateId,
+		                (CASE t1.confirm_state 
+		                WHEN 0 THEN '未确认' WHEN 1 THEN '已确认' WHEN 2 THEN '到期默认' WHEN 3 THEN '已申诉' WHEN 4 THEN '已申诉'  WHEN 6 THEN '已申诉' WHEN 8 THEN '已申诉'
+		                END) AS confirmState
+				    </otherwise>
+				</choose>
+		FROM ct_support_share t1 
+		INNER JOIN ct_complaint t2 ON t1.complaint_id=t2.id
+		INNER JOIN ct_share_solution css ON css.id=t1.share_id
+		WHERE 1=1 AND t1.del_flag=1 AND css.audit_flag=4 
+		<if test="requestFromRest != null">
+			AND t1.confirm_state IN (0,1,2,3,4,5,6) 
+		</if>
+		AND t2.del_flag=0 
+		AND t1.share_id=(SELECT MAX(t4.share_id) FROM ct_support_share t4 WHERE t1.complaint_id=t4.complaint_id AND t1.code=t4.code)
+		<if test="agencyId != null and agencyId != 0">AND t1.code = #{agencyId}</if>
+		<if test="agencyName != null and agencyName != ''">AND t1.name like #{agencyName}</if>
+		<if test="orderId != null and orderId != 0">AND t2.order_id = #{orderId}</if>
+		<if test="complaintId != null and complaintId != 0">AND t1.complaint_id = #{complaintId}</if>
+		<if test="routeId != null and routeId != 0">AND t2.route_id = #{routeId}</if>
+		<if test="startCity != null and startCity != ''">AND t2.start_city like #{startCity}</if>
+		<choose >
+			<when test="dealDeparts != null">
+				AND t2.deal_depart IN 
+					<foreach collection="dealDeparts" item="deal_depart" open="(" close=")"
+						separator=",">
+						#{deal_depart}
+					</foreach>
+			</when>
+			<when test="userName != null and userName != ''">
+				AND (t2.product_leader = #{userName} OR t2.producter = #{userName} OR t2.product_manager = #{userName} OR t2.deal_name = #{userName}) 
+			</when>
+		</choose>
+		<if test="compTimeBgn != null and compTimeBgn != ''">
+		    <![CDATA[
+		    AND #{compTimeBgn} <= t2.build_date
+	        ]]>
+		</if>
+		<if test="compTimeEnd != null and compTimeEnd != ''">
+			<![CDATA[
+			AND t2.build_date <= #{compTimeEnd}
+			]]>
+		</if>
+		<if test="startTimeBgn != null and startTimeBgn != ''">
+			<![CDATA[
+			AND #{startTimeBgn} <= t2.start_time
+			]]>
+		</if>
+		<if test="startTimeEnd != null and startTimeEnd != ''">
+			<![CDATA[
+			AND t2.start_time <= #{startTimeEnd}
+			]]>
+		</if>
+		 <choose>
+					<when test="requestFromRest == null">
+						<if test="confirmState > -2">AND t1.confirm_state =#{confirmState}</if>
+					</when>
+				    <otherwise> 
+				    	<if test="processStatus != null and processStatus == 0">AND t1.confirm_state=0</if>
+						<if test="processStatus != null and processStatus == 1">AND t1.confirm_state IN (${confirmStateStr})</if>
+				    </otherwise>
+		</choose>
+		ORDER BY t1.add_time DESC LIMIT #{start},#{limit}
+	</select>
+	
+	<select id="getAgencyPayInfoDetail" parameterType="Map" resultMap="agencyPIDResultMap">
+	    SELECT 	t2.order_id AS orderId,t2.guest_name AS guestName,t2.guest_num AS guestNum,DATE_FORMAT(t2.start_time, '%Y-%m-%d') AS startDate,
+                t2.customer AS customer,t2.product_leader AS productLeader,t2.product_manager AS productManager,t2.start_city AS startCity,
+                t2.route_id AS routeId,t2.route AS routeName,t1.name AS agencyName,t1.number AS localCurrencyAmount,t1.foreignCurrencyType AS foreignCurrencyType,
+                t1.foreignCurrencyName AS foreignCurrencyName,t1.foreignCurrencyNumber AS foreignCurrencyAmount,t2.deal_name AS dealName,t2.deal AS dealId,
+                DATE_FORMAT(t1.expire_time, '%Y-%m-%d %H:%i:%s') AS finishTime,
+                <choose>
+					<when test="requestFromRest == null">
+						t1.confirm_state AS confirmStateId,
+		                (CASE t1.confirm_state 
+		                WHEN -1 THEN '未对接nb' WHEN 0 THEN '未确认' WHEN 1 THEN '已确认' WHEN 2 THEN '到期默认' WHEN 3 THEN '已申诉' WHEN 4 THEN '申诉审批中（对接NB）' WHEN 5 THEN '申诉审批中（未对接NB）' WHEN 6 THEN '申诉审批未通过（对接NB）' 
+		                 WHEN 7 THEN '申诉审批未通过（未对接NB）' WHEN 8 THEN '申诉审批成功（对接NB）' WHEN 9 THEN '申诉审批成功（未对接NB）'
+		                END) AS confirmState,
+					</when>
+				    <otherwise> 
+				    	(CASE t1.confirm_state 
+		                WHEN 4 THEN 3 ELSE t1.confirm_state 
+		                END) AS confirmStateId,
+		                (CASE t1.confirm_state 
+		                WHEN 0 THEN '未确认' WHEN 1 THEN '已确认' WHEN 2 THEN '到期默认' WHEN 3 THEN '已申诉' WHEN 4 THEN '已申诉'  WHEN 6 THEN '已申诉' WHEN 8 THEN '已申诉'
+		                END) AS confirmState,
+				    </otherwise>
+				</choose>
+                t3.complaint_info AS complaintInfo,t3.payout_base AS payBase
+        FROM ct_support_share t1 LEFT JOIN ct_complaint t2 ON t1.complaint_id=t2.id LEFT JOIN ct_agency_payout t3 ON t1.id=t3.support_id 
+        WHERE 1=1 AND t1.del_flag=1 AND t2.del_flag=0 
+        AND t1.share_id=(SELECT MAX(t4.share_id) FROM ct_support_share t4 WHERE t1.complaint_id=t4.complaint_id AND t1.code=t4.code)
+	    <if test="agencyId != null and agencyId != 0">AND t1.code = #{agencyId}</if>
+		<if test="complaintId != null and complaintId != 0">AND t1.complaint_id = #{complaintId}</if>
+	</select>
+	<resultMap id="agencyPIDResultMap" type="Map">
+		<result property="orderId" column="orderId"/>
+		<result property="guestName" column="guestName"/>
+		<result property="guestNum" column="guestNum"/>
+		<result property="startDate" column="startDate"/>
+		<result property="customer" column="customer"/>
+		<result property="productLeader" column="productLeader"/>
+		<result property="productManager" column="productManager"/>
+		<result property="startCity" column="startCity"/>
+		<result property="routeId" column="routeId"/>
+		<result property="routeName" column="routeName"/>
+		<result property="agencyName" column="agencyName"/>
+		<result property="localCurrencyAmount" column="localCurrencyAmount"/>
+		<result property="foreignCurrencyType" column="foreignCurrencyType"/>
+		<result property="foreignCurrencyName" column="foreignCurrencyName"/>
+		<result property="foreignCurrencyAmount" column="foreignCurrencyAmount"/>
+		<result property="dealName" column="dealName"/>
+		<result property="finishTime" column="finishTime"/>
+		<result property="confirmStateId" column="confirmStateId"/>
+		<result property="confirmState" column="confirmState"/>
+		<collection property="cpList" javaType="ArrayList" ofType="Map">
+		    <result property="complaintInfo" column="complaintInfo"/>
+		    <result property="payBase" column="payBase"/>
+		</collection>
+	</resultMap>
+	
+	<update id="confirmPayout" parameterType="Map" flushCache="true" statementType="PREPARED">
+		UPDATE ct_support_share SET confirm_state=1,confirm_time=CURRENT_TIMESTAMP,confirmer=#{confirmer} 
+		WHERE CODE=#{agencyId} AND complaint_id=#{complaintId} AND number=#{localCurrencyAmount} AND del_flag=1 AND confirm_state=0
+	</update>
+	
+	<update id="appealPayout" parameterType="Map" flushCache="true" statementType="PREPARED">
+		UPDATE ct_support_share SET confirm_state=#{confirmState} 
+		WHERE CODE=#{agencyId} AND complaint_id=#{complaintId} AND number=#{localCurrencyAmount} AND del_flag=1 AND confirm_state=#{oldState}
+	</update>
+	
+	<select id="getDataForRepair" parameterType="Integer" resultMap="repairMap">
+		SELECT t1.state,t1.order_id,t1.contact_id,t2.id AS share_id,t2.phone,t2.username,t2.payment,t2.collection_unit,t2.bank,t2.account,t2.appointed_time,t2.dealname 
+		FROM ct_complaint t1 LEFT JOIN ct_share_solution t2 ON t1.id=t2.complaint_id AND t1.del_flag=0 AND t2.del_flag=1 WHERE t1.id=#{complaintId} LIMIT 1
+	</select>
+	<resultMap id="repairMap" type="Map">
+		<result property="state" column="state" />
+		<result property="order_id" column="order_id" />
+		<result property="contact_id" column="contact_id" />
+		<result property="share_id" column="share_id" />
+		<result property="phone" column="phone" />
+		<result property="username" column="username" />
+		<result property="payment" column="payment" javaType="Integer" />
+		<result property="collection_unit" column="collection_unit" />
+		<result property="bank" column="bank" />
+		<result property="account" column="account" />
+		<result property="appointed_time" column="appointed_time" />
+		<result property="dealname" column="dealname" />
+	</resultMap>
+	
+	<select id="getOrderIndemnityShareInfo" parameterType="Integer" resultType="Map">
+		SELECT SUM(order_gains) AS orderGainsTotal,SUM(special) AS companyTotal,SUM(supplier_total) AS supplierTotal,
+			   SUM(quality_tool_total) AS qualityToolTotal,SUM(employee_total) AS employeeTotal,
+			   SUM(refund_to_indemnity) AS refundToIndemnityTotal
+		FROM ct_share_solution WHERE order_id=#{orderId} AND del_flag=1
+	</select>
+	
+	<!-- 获得规定时间内有对客赔偿并且不全为质量工具赔款 和 存在理论赔付的投诉单 -->
+	<select id="getShareSolution" parameterType="java.util.Map" resultType="Integer">
+		SELECT DISTINCT cs.complaint_id FROM ct_share_solution  cs
+		WHERE cs.submit_flag = 1  AND cs.del_flag = 1
+			AND cs.submit_time  &gt;= #{submitTimeBgn} 
+			AND cs.submit_time  &lt;= #{submitTimeEnd}
+			AND cs.total>0  AND (cs.total - cs.quality_tool_total)>0
+		UNION
+		SELECT DISTINCT complaintId
+		FROM  ct_complaint_point
+		WHERE delFlag = 0
+			AND theoryPayoutLaw > 0
+			AND `addTime`  &gt;= #{submitTimeBgn} 
+			AND `addTime`  &lt;= #{submitTimeEnd} 	   
+	</select>
+	
+	<resultMap id="specialMap" type="Map">
+	
+		<result property="complaintId" column="complaintId" />
+		<result property="special" column="special" />
+	
+	</resultMap>
+	
+	<select id="getCmpSpecialByCmpId" parameterType="Map" resultMap="specialMap">
+	 
+	     SELECT DISTINCT complaint_id  as  complaintId, (special+order_gains) AS special FROM ct_share_solution WHERE 
+	      del_flag = 1 and 
+	     complaint_id IN 
+	      <foreach collection="cmpIds" item="cmpId"
+		      open="(" close=")" separator=",">
+		  		 #{cmpId}
+	  	 </foreach>
+	  
+	</select>
+	
+	<select id="getQualityToolCost" parameterType="String" resultType="Map">
+		SELECT t2.complaint_id AS cmpId,t4.product_line_id AS prdLineId,t2.deal_id AS dealPersonId,t2.dealname AS dealPersonName,
+			   '质量工具' AS firstCostAccount,t3.name AS twoCostAccount,t1.total AS qualityCost,t2.audit_time AS auditTime
+		FROM ct_complaint_quality_tool t1 LEFT JOIN ct_share_solution t2 ON t1.share_id=t2.id
+		LEFT JOIN ct_quality_tool t3 ON t1.tool_id=t3.id LEFT JOIN ct_complaint t4 ON t2.complaint_id=t4.id
+		WHERE CONCAT(#{dateStr}, ' 00:00:00')&lt;=t2.audit_time AND t2.audit_time&lt;=CONCAT(#{dateStr}, ' 23:59:59') 
+		AND t2.audit_flag=4
+	</select>
+	
+	<select id="getUnGroupCost" parameterType="String" resultType="Map">
+		SELECT t1.complaint_id AS cmpId,t3.product_line_id AS prdLineId,t1.deal_id AS dealPersonId,t1.deal_name AS dealPersonName,
+			   '不成团' AS firstCostAccount,'' AS twoCostAccount,(t2.special+t2.order_gains) AS qualityCost,t1.audit_time AS auditTime
+		FROM ct_complaint_solution t1 LEFT JOIN ct_share_solution t2 ON t1.complaint_id=t2.complaint_id
+		LEFT JOIN ct_complaint t3 ON t1.complaint_id=t3.id
+		WHERE (CONCAT(#{dateStr}, ' 00:00:00')&lt;=t1.audit_time AND t1.audit_time&lt;=CONCAT(#{dateStr}, ' 23:59:59') 
+		OR CONCAT(#{dateStr}, ' 00:00:00')&lt;=t2.audit_time AND t2.audit_time&lt;=CONCAT(#{dateStr}, ' 23:59:59'))
+		AND (t2.special+t2.order_gains)>0 AND t1.descript LIKE '%不成团%' AND t1.audit_flag=4 AND t2.audit_flag=4
+	</select>
+	
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.common.dao.MailTaskMapper">
+	<insert id="add" parameterType="com.tuniu.qms.common.model.MailTask" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into cm_mail_task (
+			<if test="reAddrs != null">reAddrs,</if>
+			<if test="ccAddrs != null">ccAddrs,</if>
+			<if test="subject != null">subject,</if>
+			<if test="content != null">content,</if>
+			<if test="addPersonRoleId != null">addPersonRoleId,</if>
+			<if test="addPerson != null">addPerson,</if>
+			delFlag
+		) VALUES (
+			<if test="reAddrs != null">#{reAddrs, typeHandler=com.tuniu.qms.common.util.mybatis.ArrayTypeHandler},</if>
+			<if test="ccAddrs != null">#{ccAddrs, typeHandler=com.tuniu.qms.common.util.mybatis.ArrayTypeHandler},</if>
+			<if test="subject != null">#{subject},</if>
+			<if test="content != null">#{content},</if>
+			<if test="addPersonRoleId != null">#{addPersonRoleId},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			0
+		)
+	</insert>
+
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM cm_mail_task WHERE id=#{id}
+	</delete>
+
+	<update id="update" parameterType="com.tuniu.qms.common.model.MailTask">
+		UPDATE cm_mail_task
+		<set>
+			<if test="reAddrs != null">reAddrs=#{reAddrs,typeHandler=com.tuniu.qms.common.util.mybatis.ArrayTypeHandler},</if>
+			<if test="ccAddrs != null">ccAddrs=#{ccAddrs,typeHandler=com.tuniu.qms.common.util.mybatis.ArrayTypeHandler},</if>
+			<if test="subject != null">subject=#{subject},</if>
+			<if test="content != null">content=#{content},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+
+	<resultMap type="com.tuniu.qms.common.model.MailTask" id="mailTaskMap">
+	    <result property="reAddrs" column="reAddrs" typeHandler="com.tuniu.qms.common.util.mybatis.ArrayTypeHandler"/>
+	    <result property="ccAddrs" column="ccAddrs" typeHandler="com.tuniu.qms.common.util.mybatis.ArrayTypeHandler"/>
+	</resultMap>
+	
+	<select id="get" parameterType="Integer" resultMap="mailTaskMap">
+		SELECT * FROM cm_mail_task WHERE id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.common.dto.MailTaskDto" resultMap="mailTaskMap">
+		SELECT * FROM cm_mail_task 
+		<where>
+			sendTimes&lt;3
+		</where>
+		LIMIT 20
+	</select>
+	
+	<update id="increSendTimes" parameterType="Integer">
+		UPDATE cm_mail_task set sendTimes=(sendTimes+1) WHERE id=#{id}
+	</update>
+
+</mapper>
+

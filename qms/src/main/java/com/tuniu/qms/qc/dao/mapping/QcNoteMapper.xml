@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qc.dao.QcNoteMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.QcNote" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO qc_qc_note (
+			<if test="qcBillId != null">qcBillId,</if>
+			<if test="addPerson != null">addPerson,</if>
+			<if test="addTime != null">addTime,</if>
+			<if test="dockingPeople != null">dockingPeople,</if>
+			<if test="dockingDep != null">dockingDep,</if>
+			<if test="content != null">content</if>
+		) VALUES (
+			<if test="qcBillId != null">#{qcBillId},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			<if test="addTime != null">#{addTime},</if>
+			<if test="dockingPeople != null">#{dockingPeople},</if>
+			<if test="dockingDep != null">#{dockingDep},</if>
+			<if test="content != null">#{content}</if>
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_qc_note WHERE id=#{id}
+	</delete>
+	
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.QcNote" flushCache="true" statementType="PREPARED">
+		UPDATE qc_qc_note 
+		<set>
+			<if test="content != null and content!=''">content=#{content},</if>
+			<if test="dockingPeople != null and dockingPeople!=''">dockingPeople=#{dockingPeople},</if>
+			<if test="dockingDep != null and dockingDep!=''">dockingDep=#{dockingDep},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.QcNote">
+		SELECT * FROM qc_qc_note WHERE id=#{id} and delFlag = 0
+	</select>
+
+	<sql id="listSql">
+		SELECT * FROM qc_qc_note WHERE qcBillId=#{qcBillId} and delFlag = 0
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.QcNoteDto" resultType="com.tuniu.qms.qc.model.QcNote">
+		<include refid="listSql"/>
+		order by addTime desc;
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.qc.dto.QcNoteDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+	</select>
+	
+</mapper>

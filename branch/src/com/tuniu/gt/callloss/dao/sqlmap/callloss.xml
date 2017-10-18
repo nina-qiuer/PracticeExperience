@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.callloss.dao.sqlmap.imap.CallLossMap">
+    <sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>
+			del_flag = 0
+			<if test="callingId != null and callingId != ''">
+				and calling_id = #{callingId}
+			</if>
+			<if test="status != null and status != ''">
+				and STATUS = #{status}
+			</if>
+				and answer_time >= 20
+		</where>
+		order by statistic_date, id
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map" resultMap="listResultEntity">
+		<include refid="list" />
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="insert" />
+	</insert>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic" />
+		(
+		vdn_log_id,
+		
+		vdn_id,
+
+		calling_id,
+
+		calling_city,
+		
+		statistic_date,
+
+		queued_time,
+
+		answer_time,
+
+		talk_time,
+
+		status,
+
+		created_time,
+
+		last_updated_by,
+
+		last_updated_time,
+		
+		del_flag
+
+		) values (
+		
+		#{e.vdnLogId},
+
+		#{e.vdnId},
+
+		#{e.callingId},
+		
+		#{e.callingCity},
+
+		#{e.statisticDate},
+
+		#{e.queuedTime},
+
+		#{e.answerTime},
+
+		#{e.talkTime},
+
+		#{e.status},
+
+		#{e.createdTime},
+
+		#{e.lastUpdatedBy},
+
+		#{e.lastUpdatedTime},
+		
+		#{e.delFlag}
+		
+		)
+	</sql>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.callloss.entity.CallLossEntity">
+
+		<result property="vdnLogId" column="vdn_log_id" />
+
+		<result property="vdnId" column="vdn_id" />
+
+		<result property="callingId" column="calling_id" />
+		
+		<result property="callingCity" column="calling_city" />
+
+		<result property="statisticDate" column="statistic_date" />
+
+		<result property="queuedTime" column="queued_time" />
+
+		<result property="answerTime" column="answer_time" />
+
+		<result property="talkTime" column="talk_time" />
+
+		<result property="status" column="STATUS" />
+
+		<result property="createdTime" column="created_time" />
+
+		<result property="lastUpdatedBy" column="last_updated_by" />
+
+		<result property="lastUpdatedTime" column="last_updated_time" />
+		
+		<result property="lastUpdatedNameBy" column="last_updated_name_by" />
+
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="callCount" column="call_count" />
+		
+		<result property="autoClose" column="auto_close" />
+		
+		<result property="callingCount" column="calling_count" />
+	</resultMap>
+	
+	<select id="fetchListMap" parameterType="Map" resultMap="listResultMap">
+		<include refid="list" />
+	</select>
+	<resultMap id="listResultMap" type="Map">
+
+		<result property="vdnLogId" column="vdn_log_id" />
+
+		<result property="vdnId" column="vdn_id" />
+
+		<result property="callingId" column="calling_id" />
+		
+		<result property="callingCity" column="calling_city" />
+
+		<result property="statisticDate" column="statistic_date" />
+
+		<result property="queuedTime" column="queued_time" />
+
+		<result property="answerTime" column="answer_time" />
+
+		<result property="talkTime" column="talk_time" />
+
+		<result property="status" column="STATUS" />
+
+		<result property="createdTime" column="created_time" />
+
+		<result property="lastUpdatedBy" column="last_updated_by" />
+		
+		<result property="lastUpdatedNameBy" column="last_updated_name_by" />
+
+		<result property="lastUpdatedTime" column="last_updated_time" />
+
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="callCount" column="call_count" />
+		
+		<result property="autoClose" column="auto_close" />
+		
+		<result property="callingCount" column="calling_count" />
+	</resultMap>
+	
+	<select id="getMaxId"  resultType="Integer">
+		SELECT max(vdn_log_id)  FROM call_loss;
+	</select>
+	
+	<update id="changeCallStatus">
+		UPDATE call_loss set 
+		status=#{status}
+		<if test="call_count != null and call_count != ''">
+				,call_count = #{call_count}
+		</if>
+		<if test="lastUpdatedBy != null and lastUpdatedBy != ''">
+				,last_updated_by = #{lastUpdatedBy}
+		</if>
+		<if test="lastUpdatedTime != null and lastUpdatedTime != ''">
+				,last_updated_time = #{lastUpdatedTime}
+		</if>
+		<if test="lastUpdatedName != null and lastUpdatedName != ''">
+				,last_updated_name_by = #{lastUpdatedName}
+		</if>
+		WHERE 1=1
+		<if test="callingId != null and callingId != ''">
+				and calling_id = #{callingId}
+		</if>
+		<if test="callId != null and callId != ''">
+				and id = #{callId}
+		</if>
+		<if test="oldStatus != null and oldStatus != ''">
+				and status = #{oldStatus}
+		</if>
+	</update>
+	
+	<insert id="addCallTetail" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.callloss.entity.CallLossTetailEntity">  
+    insert into call_loss_detail (
+			call_loss_calling_id, 
+			saler_id, 
+			saler_name,
+			create_time, 
+			content,
+			success
+		) values   (
+            #{callLossCallingId},
+			#{salerId},
+			#{salerName},
+			#{createTime},
+			#{content},
+			#{success}
+        )
+	</insert>
+	
+	<select id="queryDetailCount" parameterType="Map" resultType="Integer">
+		SELECT count(*) 
+			FROM call_loss_detail 
+			WHERE call_loss_calling_id=#{callingId}
+	</select>
+	<select id="queryDetail" parameterType="Map" resultMap="listResult">
+		SELECT *
+			FROM call_loss_detail 
+			WHERE call_loss_calling_id=#{callingId}
+			order by create_time desc
+			<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</select>
+	<resultMap id="listResult" type="Map">
+
+		<result property="callLossCallingId" column="call_loss_calling_id" />
+
+		<result property="salerId" column="saler_id" />
+		
+		<result property="salerName" column="saler_name" />
+		
+		<result property="createTime" column="create_time" />
+
+		<result property="ewPlan" column="ew_plan" />
+
+		<result property="content" column="content" />
+
+		<result property="success" column="success" />
+	</resultMap>
+	
+	<update id="update" parameterType="Map" flushCache="true"
+		statementType="PREPARED">
+		<include refid="update" />
+	</update>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic" />
+		<set>
+			<if test="e.status != null">status=#{e.status},</if>
+		
+			<if test="e.autoClose != null">auto_close=#{e.autoClose},</if>
+
+			<if test="e.callingCount != null">calling_count=#{e.callingCount},</if>
+			
+			calling_id=#{e.callingId}
+
+		</set>
+		where id=#{e.id}
+	</sql>
+	
+	<select id="getCount" parameterType="Map" resultType="Integer">
+		SELECT count(1) FROM call_loss 
+		<where>answer_time >= 20
+			<if test="status != null">
+				and STATUS = #{status}
+			</if>
+			<if test="delFlag != null">
+				and del_flag = #{delFlag}
+			</if>
+		</where>
+	</select>
+	
+</mapper>

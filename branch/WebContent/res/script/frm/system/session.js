@@ -1,0 +1,44 @@
+function session_check_form(){
+	var valid_obj = {
+		uid:{
+			title:"uid",
+			auto_func:{
+				type_func:"is_int"
+			}
+		},
+		id:{
+			title:"用户唯一sessionid",
+			max_len:"32",
+			auto_func:{
+				type_func:"check_length"
+			}
+		},
+		user_info:{
+			title:"user_info",
+			max_len:"2000",
+			auto_func:{
+				type_func:"check_length"
+			}
+		},
+		privileges:{
+			title:"privileges",
+			max_len:"10000",
+			auto_func:{
+				type_func:"check_length"
+			}
+		},
+		is_sa:{
+			title:"is_sa",
+			auto_func:{
+				type_func:"is_int"
+			}
+		},
+		need_update:{
+			title:"need_update",
+			auto_func:{
+				type_func:"is_int"
+			}
+		}
+	};
+	return check_form(valid_obj);
+}

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.frm.dao.sqlmap.imap.IDBConfigMap"> 
+	<sql id="list">
+		select * from frm_config
+		<where>
+			1 = 1
+			<if test="dataId != null and dataId !=''">
+				AND dataId like '${dataId}%'
+			</if>
+			<if test="config_level!=null">
+				AND config_level = ${config_level}
+			</if>
+		</where>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultType="com.tuniu.config.db.model.DbConfig">
+		<include refid="list"/>
+	</select>
+
+	<select id="get" parameterType="int"  resultType="com.tuniu.config.db.model.DbConfig">
+		select * from frm_config
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		insert into frm_config
+		(
+		  dataId,
+		 
+		  content,
+		  
+		  <if test="config_level != null">config_level,</if>
+		  
+		  description
+		 
+		) values  (
+		
+		  #{dataId}, 
+		 
+		  #{content},
+		  
+		  <if test="config_level != null">#{config_level},</if>
+		  
+		  #{description}
+
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.config.db.model.DbConfig" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		update frm_config
+		<set>  
+			
+				<if test="dataId != null">dataId=#{dataId},</if>
+			
+				<if test="content != null">content=#{content},</if>
+				
+				<if test="description != null">description=#{description}</if>
+
+		</set>
+	    where id=#{id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="com.tuniu.config.db.model.DbConfig" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		delete from frm_config where id=#{id}
+	</delete>
+	
+</mapper>

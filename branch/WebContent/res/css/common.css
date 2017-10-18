@@ -1,0 +1,42 @@
+#info_box
+{
+	position:relative;width:800px;margin:0 auto;
+}
+#info_tab
+{
+	list-style:none;position:relative;bottom:-1px;padding-top:11px;height:27px;overflow:hidden;width:750px;
+}
+#info_tab li
+{
+	float:left;width:100px;position:relative;height:25px;line-height:25px;background:#eee;
+	text-align:center;border:1px solid #333;-moz-border-radius:5px 5px 0 0;cursor:pointer;
+	/*margin-right:2px;*/
+}
+#info_tab li.tab-current
+{
+	background:red;color:#fff;font-weight:bold;border-bottom:1px solid red;
+}
+#info_tab .tab-close
+{
+	position:absolute;right:0;top:0;background:green;color:#fff;padding:3px;line-height:12px;display:none;
+}
+#info_tab li.tab-current .tab-close
+{
+	display:block;
+}
+#info_add
+{
+	display:none;position:absolute;right:0;top:0;background:green;color:#fff;cursor:pointer;z-index:1000;
+}
+.qianzheng-type-content
+{
+	border:1px solid #333;width:150px;height:25px;display:inline-block;
+}
+#info_content .content-box
+{
+	display:none;width:100%;min-height:500px;border:1px solid #333;padding:10px 0;
+}
+.remark_text
+{
+	height:45px;width:500px;
+}

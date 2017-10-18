@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="tuniu.frm.core.IMapBase"> 
+	<sql id="fetchListBasic">
+		  select 
+		  	<choose>
+		  		<when test="fields != null">
+	  				${fields} 
+	  			</when>
+          		<otherwise>
+          			* 
+          		</otherwise>
+           </choose>
+	       from ${table} a
+	</sql>
+	
+	
+	<sql id="insertBasic">
+		insert into ${table}
+	</sql>
+	
+	
+	<sql id="updateBasic">
+		update ${table}
+	</sql>
+	
+	<sql id="deleteBasic">
+		delete from ${table}
+	</sql>
+</mapper>

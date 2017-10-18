@@ -1,0 +1,5 @@
+USE quality;
+
+ALTER TABLE qc_qc_bill
+ADD COLUMN fault_happen_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '故障发生时间',
+ADD COLUMN fault_finish_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '故障完成时间';

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="tac" extends="apply-default" namespace="/tac/action"> 
+		<action name="*-*" class="tac_action-{1}" method="{2}">
+			<result name="product_procurement_issues_feedback_list">/WEB-INF/html/tac/product_procurement_issues_feedback_list.jsp</result>
+			<result name="product_procurement_issues_feedback_form">/WEB-INF/html/tac/product_procurement_issues_feedback_form.jsp</result>
+			<result name="concessional_bidding_against_rival_list">/WEB-INF/html/tac/concessional_bidding_against_rival_list.jsp</result>
+			<result name="concessional_bidding_against_rival_form">/WEB-INF/html/tac/concessional_bidding_against_rival_form.jsp</result>
+			<result name="cust_ask_concession_list">/WEB-INF/html/tac/cust_ask_concession_list.jsp</result>
+			<result name="cust_ask_concession_form">/WEB-INF/html/tac/cust_ask_concession_form.jsp</result>
+			<result name="issue_improvement_feedback_list">/WEB-INF/html/tac/issue_improvement_feedback_list.jsp</result>
+			<result name="issue_improvement_feedback_form">/WEB-INF/html/tac/issue_improvement_feedback_form.jsp</result>
+			<result name="commission_summary_list">/WEB-INF/html/tac/commission_summary_list.jsp</result>
+			<result name="commission_summary_form">/WEB-INF/html/tac/commission_summary_form.jsp</result>
+			<result name="commission_summary_attach">/WEB-INF/html/tac/commission_summary_attach.jsp</result>
+			<result name="section_commission_filing_list">/WEB-INF/html/tac/section_commission_filing_list.jsp</result>
+			<result name="section_commission_filing_form">/WEB-INF/html/tac/section_commission_filing_form.jsp</result>
+			<result name="section_commission_filing_attach">/WEB-INF/html/tac/section_commission_filing_attach.jsp</result>
+			<result name="new_employees_salary_adjustment_form">/WEB-INF/html/tac/new_employees_salary_adjustment_form.jsp</result>
+			<result name="new_employees_salary_adjustment_list">/WEB-INF/html/tac/new_employees_salary_adjustment_list.jsp</result>
+		</action>
+	</package>
+</struts>

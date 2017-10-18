@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.uc.dao.sqlmap.imap.IUcDepartmentDelMap"> 
+	
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			del_flag=0
+			and EXTRACT(YEAR_MONTH  FROM update_time)=EXTRACT(YEAR_MONTH  FROM NOW())
+		</where>
+		ORDER BY father_id
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	
+	<select id="fetchListOrg" parameterType="Map"  resultType="Map">
+		<include refid="list"/>
+	</select> 
+	
+	<select id="getSelectedInfo" parameterType="Map" resultMap="listResultEntity">
+		select a.*,b.* from uc_department_del a left join frm_user b on a.current_id=b.dep_id where a.del_flag=0
+			and EXTRACT(YEAR_MONTH  FROM a.update_time)=EXTRACT(YEAR_MONTH  FROM #{paramDate})
+			and EXTRACT(YEAR_MONTH  FROM b.update_time)=EXTRACT(YEAR_MONTH  FROM #{paramDate}) ORDER BY a.selected_dept_name
+	</select>
+	<select id="getSelectedInfoFromHis" parameterType="Map" resultMap="listResultEntity">
+		SELECT a.*,b.id AS person_id,b.dep_id,b.real_name,b.user_name,b.work_num,b.approval_number 
+		FROM uc_department_del a left join uc_user_del b on a.current_id=b.dep_id where a.del_flag=0
+			and DATE_FORMAT(a.update_time, '%Y-%m') = #{yearMonth}
+			and DATE_FORMAT(b.update_time, '%Y-%m') = #{yearMonth}
+			ORDER BY a.selected_dept_name
+	</select>
+	
+	<resultMap id="listResultEntity" type="com.tuniu.gt.uc.entity.UcDepartmentDelEntity">  
+		
+		<result property="currentId" column="current_id" />
+		
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="depth" column="depth" />
+		
+		<result property="fatherId" column="father_id" />
+		
+		<result property="depName" column="dep_name" />
+		
+		<result property="useDept" column="use_dept" />
+		
+		<result property="selectedDeptName" column="selected_dept_name" />
+		
+		<result property="updateTime" column="update_time" />
+		
+		<collection property="personList" javaType="ArrayList" ofType="com.tuniu.gt.satisfaction.entity.FrmUserDelEntity">
+			<result property="id" column="person_id" />
+			<result property="depId" column="dep_id" />
+			<result property="realName" column="real_name" />
+			<result property="userName" column="user_name" />
+			<result property="workNum" column="work_num" />
+			<result property="approvalNumber" column="approval_number" />
+		</collection>
+	</resultMap>
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where 
+		del_flag=0
+		and current_id=#{id}
+		and EXTRACT(YEAR_MONTH  FROM update_time)=EXTRACT(YEAR_MONTH  FROM NOW())
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		 <if test="e.currentId != null">
+			current_id,
+		  </if>
+		 
+		  father_id,
+		 
+		  dep_name,
+		  
+		  selected_dept_name
+		 
+		) values  (
+		  
+		  <if test="e.currentId != null">
+			 #{e.currentId}, 
+		  </if>
+		
+		  #{e.fatherId}, 
+		 
+		  #{e.depName},
+		 
+		  #{e.selectedDeptName} 
+		 
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<insert id="addSelectedDepartments" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.uc.entity.UcDepartmentDelEntity" flushCache="true" statementType="PREPARED" >
+		insert into uc_department_del(current_id,father_id,dep_name,selected_dept_name,update_time) values(#{currentId},#{fatherId},#{depName},#{selectedDeptName},#{updateTime})
+	</insert>
+	
+	<insert id="copyConstructsForNextMonth" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuniu.gt.uc.entity.UcDepartmentDelEntity" flushCache="true" statementType="PREPARED" >
+		insert into uc_department_del(current_id,father_id,dep_name,selected_dept_name,update_time) values(#{currentId},#{fatherId},#{depName},#{selectedDeptName},DATE_FORMAT(DATE_ADD(NOW(),INTERVAL 1 MONTH),'%Y-%m-%d'))
+	</insert>
+	
+	<insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List" 
+		flushCache="true" statementType="PREPARED">
+		insert into uc_department_del (
+			current_id,father_id,dep_name,selected_dept_name,update_time
+		) values 
+        <foreach collection="list" item="e" index="index" separator="," >
+        (
+            #{e.currentId},#{e.fatherId},#{e.depName},#{e.selectedDeptName},#{e.updateTime}
+        )
+        </foreach>
+    </insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+		</set>
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<update id="updateForColor" parameterType="Map" flushCache="true" statementType="PREPARED">
+		update uc_department_del
+		<if test="showColor == 1">set depth = 1 </if>
+		<if test="showColor == 0">set depth = 0 </if>
+		where current_id=#{depId}
+	</update>
+	
+	<sql id="delete">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+	</sql>
+	
+	<delete id="delete">
+		<include refid="delete"/>
+		 set del_flag = 1
+		  where id=#{id}
+	</delete>
+	<delete id="deleteExitDepartments">
+		delete from uc_department_del where EXTRACT(YEAR_MONTH  FROM update_time)=EXTRACT(YEAR_MONTH  FROM NOW())
+	</delete>
+	
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IGiftNoteMap"> 
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			del_flag = '1'<!-- 1表示未删除 -->
+			<if test="complaintId != null and complaintId!='' ">
+				and complaint_id = #{complaintId}
+			</if>
+			<if test="solutionId != null">
+				and solution_id=#{solutionId}
+			</if>
+		</where>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.GiftNoteEntity">
+		<result property="solutionId" column="solution_id" />
+		<result property="userName" column="user_name" />
+		<result property="userId" column="user_id" />
+		<result property="remark" column="remark" />
+		<result property="address" column="address" />
+		<result property="departmentId" column="department_id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="addTime" column="add_time" />
+		<result property="departmentName" column="department_name" />
+		<result property="phone" column="phone" />
+		<result property="delFlag" column="del_flag" />
+		<result property="zipCode" column="zip_code" />
+		<result property="updateTime" column="update_time" />
+		<result property="receiver" column="receiver" />
+		<result property="orderId" column="order_id" />
+		<result property="express" column="express" />
+	</resultMap>
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		<result property="solutionId" column="solution_id" />
+		<result property="userName" column="user_name" />
+		<result property="userId" column="user_id" />
+		<result property="remark" column="remark" />
+		<result property="address" column="address" />
+		<result property="departmentId" column="department_id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="addTime" column="add_time" />
+		<result property="departmentName" column="department_name" />
+		<result property="phone" column="phone" />
+		<result property="delFlag" column="del_flag" />
+		<result property="zipCode" column="zip_code" />
+		<result property="updateTime" column="update_time" />
+		<result property="receiver" column="receiver" />
+		<result property="orderId" column="order_id" />
+		<result property="express" column="express" />
+	</resultMap>
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  solution_id,
+		  receiver,
+		  phone,
+		  express,
+		  address
+		) values  (
+		  #{e.solutionId}, 
+		  #{e.receiver}, 
+		  #{e.phone}, 
+		  #{e.express}, 
+		  #{e.address}
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			<if test="e.userName != null">user_name=#{e.userName},</if>
+			<if test="e.userId != null">user_id=#{e.userId},</if>
+			<if test="e.remark != null">remark=#{e.remark},</if>
+			<if test="e.address != null">address=#{e.address},</if>
+			<if test="e.departmentId != null">department_id=#{e.departmentId},</if>
+			<if test="e.complaintId != null">complaint_id=#{e.complaintId},</if>
+			<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			<if test="e.departmentName != null">department_name=#{e.departmentName},</if>
+			<if test="e.phone != null">phone=#{e.phone},</if>
+			<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			<if test="e.zipCode != null">zip_code=#{e.zipCode},</if>
+			<if test="e.updateTime != null">update_time=#{e.updateTime},</if>
+			<if test="e.receiver != null">receiver=#{e.receiver},</if>
+			<if test="e.orderId != null">order_id=#{e.orderId},</if>
+			<if test="e.express != null">express=#{e.express},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<delete id="deleteBySolutionId" parameterType="Integer">
+		DELETE FROM ct_gift_note WHERE solution_id = #{solutionId}
+	</delete>
+	
+	<update id="updateSolutionId" parameterType="Map" flushCache="true" statementType="PREPARED">
+		UPDATE ct_gift_note SET solution_id=#{solutionId} WHERE complaint_id=#{complaint_id}
+	</update>
+	
+</mapper>

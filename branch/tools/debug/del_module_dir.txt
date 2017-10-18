@@ -1,0 +1,4 @@
+src\com\tuniu\gt\{app_name}\action\{module_root_dir}
+src\com\tuniu\gt\{app_name}\service\{module_root_dir}
+WebContent\WEB-INF\html\{app_name}\{module_root_dir}
+WebContent\res\script\{app_name}\{module_root_dir}

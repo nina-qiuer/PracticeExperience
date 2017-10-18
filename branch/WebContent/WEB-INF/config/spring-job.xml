@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    
+    <!-- 要调用的工作类 -->
+    <bean id="assignCompalintList" class="com.tuniu.gt.complaint.scheduling.AssignCompalintList"/>
+    <bean id="assignRecordTask" class="com.tuniu.gt.complaint.scheduling.AssignRecordTask"/>
+    <bean id="agencyConfirmTask" class="com.tuniu.gt.complaint.scheduling.AgencyPayoutConfirmTask"/>
+    <bean id="complaintRemind" class="com.tuniu.gt.complaint.scheduling.ComplaintRemind" />
+    <bean id="presatisfyDepSendTask" class="com.tuniu.gt.complaint.schedule.task.PresatisfyDepSendTask" />
+    <bean id="presatisfyForConstrutsSendTask" class="com.tuniu.gt.complaint.schedule.task.PresatisfyForConstrutsSendTask" />
+    <bean id="checkQcTimeoutTask" class="com.tuniu.gt.complaint.schedule.task.QcTimeoutTask"/>
+    <bean id="complaintScheduleSendTask" class="com.tuniu.gt.complaint.schedule.task.ComplaintScheduleSendTask"/>
+    <bean id="infoBirdScheduleSendTask" class="com.tuniu.infobird.vdnlog.action.VDNLogScheduleTaskAction"/>
+    <bean id="signSatisfactionDFScheduleSendTask" class="com.tuniu.gt.complaint.schedule.task.SignSatisfactionDFScheduleSendTask"/>
+    <bean id="earlyWarningTask" class="com.tuniu.gt.warning.task.EarlyWarningTask"/>
+    <bean id="repairDataTask" class="com.tuniu.gt.complaint.schedule.task.RepairDataTask"/>
+    <bean id="scanOfflineRouteTask" class="com.tuniu.gt.punishprd.task.ScanOfflineRouteTask"/>
+    <bean id="qualityCostTask" class="com.tuniu.gt.complaint.schedule.task.QualityCostTask"/>
+    <bean id="complaintReportTask" class="com.tuniu.gt.complaint.scheduling.ComplaintReportTask"/>
+    <bean id="synchSolutionCardIdTask" class="com.tuniu.gt.complaint.scheduling.SynchSolutionCardIdTask"/>
+    <bean id="complaintOvertimeTask" class="com.tuniu.gt.complaint.scheduling.ComplaintOvertimeTask"/>
+    <bean id="autoAuditofTimoutScheduledTask" class="com.tuniu.gt.complaint.schedule.task.AutoAuditofTimoutScheduledTask"/>
+</beans>

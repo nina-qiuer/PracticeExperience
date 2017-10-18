@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IComplaintFollowNoteMap">
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic" />
+		<where>1=1
+			<if test="complaintId!=null">
+				and complaint_id=#{complaintId}
+			</if>
+			<if test="flowName!=null">
+				and flow_name=#{flowName}
+			</if>
+			<if test="dealDepart!=null">
+				and deal_depart=#{dealDepart}
+			</if>
+			<if test="deal!=null">
+				and note_people=#{deal}
+			</if>
+			<if test="beforeTime!=null">
+				and add_time = (select max(add_time) from ct_complaint_follow_note where flow_name='首呼' and complaint_id=#{complaintId})
+			</if>
+			<if test="flowNameCon!=null">
+				and (flow_name='跟进记录' or flow_name='首呼')
+			</if>
+			<if test="flowNames != null">
+				AND flow_name IN (${flowNames})
+			</if>
+			<if test="addTime != null">
+				AND add_time BETWEEN #{addTime} and NOW()
+			</if>
+			AND del_flag=1
+		</where>
+		order by id 
+		<if test="orderBy != null and orderBy != ''">
+			${orderBy}
+		</if>
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart}
+			<if test="dataLimitEnd != null">
+				,#{dataLimitEnd}
+			</if>
+		</if>
+	</sql>
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.ComplaintFollowNoteEntity">  
+		
+		<result property="delFlag" column="del_flag" />
+		
+		<result property="peopleName" column="people_name" />
+		
+		<result property="content" column="content" />
+		
+		<result property="addTime" column="add_time" />
+		
+		<result property="updateTime" column="update_time" />
+		
+		<result property="complaintId" column="complaint_id" />
+		
+		<result property="dealDept" column="deal_depart" />
+		
+		<result property="flowName" column="flow_name" />
+		
+		<result property="isSys" column="is_sys" />
+		
+		<result property="notePeople" column="note_people" />
+		
+	</resultMap>
+	
+	
+	<select id="fetchListMap" parameterType="Map"  resultMap="listResultMap">
+		<include refid="list"/>
+	</select>
+	<resultMap id="listResultMap" type="Map">
+		
+		<result property="delFlag" column="del_flag"/>
+		
+		<result property="peopleName" column="people_name"/>
+		
+		<result property="content" column="content"/>
+		
+		<result property="addTime" column="add_time"/>
+		
+		<result property="updateTime" column="update_time"/>
+		
+		<result property="complaintId" column="complaint_id"/>
+		
+		<result property="dealDept" column="deal_depart" />
+		
+		<result property="flowName" column="flow_name" />
+		
+		<result property="isSys" column="is_sys" />
+		
+		<result property="notePeople" column="note_people"/>
+		
+	</resultMap>
+	
+	
+	<select id="get" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		where id=#{id} limit 1
+	</select>
+	
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  del_flag,
+		 
+		  people_name,
+		 
+		  content,
+		 
+		  add_time,
+		 
+		  update_time,
+		 
+		  complaint_id,
+		 
+		  note_people,
+		  
+		  deal_depart,
+		  
+		  flow_name,
+		  
+		  is_sys
+		 
+		) values  (
+		
+		  #{e.delFlag}, 
+		 
+		  #{e.peopleName}, 
+		 
+		  #{e.content}, 
+		 
+		  #{e.addTime},
+		 
+		  #{e.updateTime}, 
+		 
+		  #{e.complaintId}, 
+		 
+		  #{e.notePeople},
+		 
+		  #{e.dealDept},
+		  
+		  #{e.flowName},
+		  
+		  #{e.isSys}
+		  
+		)
+	</sql>
+		
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>  
+			
+				<if test="e.delFlag != null">del_flag=#{e.delFlag},</if>
+			
+				<if test="e.peopleName != null">people_name=#{e.peopleName},</if>
+			
+				<if test="e.content != null">content=#{e.content},</if>
+			
+				<if test="e.addTime != null">add_time=#{e.addTime},</if>
+			
+				<if test="e.updateTime != null">update_time=#{e.updateTime},</if>
+			
+				<if test="e.complaintId != null">complaint_id=#{e.complaintId},</if>
+				
+				<if test="e.dealDept != null">deal_depart=#{e.dealDept},</if>
+				
+				<if test="e.flowName != null">flow_name=#{e.flowName},</if>
+				
+				<if test="e.isSys != null">is_sys=#{e.isSys},</if>
+			
+				<if test="e.notePeople != null">note_people=#{e.notePeople}</if>
+			
+		</set>
+	    where id=#{e.id}
+	</sql>	
+	
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+	<select id="getHandOverCountData" parameterType="Map"
+		resultType="com.tuniu.gt.complaint.entity.FollowNoteCountEntity">
+		SELECT
+  		people_name,
+  		flow_name,
+  		COUNT(1)    AS countNum
+		FROM ct_complaint_follow_note
+		WHERE flow_name IN ('下班交接','不在班交接')
+	    AND add_time &gt;= #{finishTimeBgn}
+		AND add_time &lt;= #{finishTimeEnd}
+		GROUP BY people_name,flow_name
+	</select>
+	
+	<select id="getHandOverComplaintIds" parameterType="Map"
+		resultType="Integer">
+		SELECT
+  		complaint_id
+		FROM ct_complaint_follow_note
+		WHERE 
+		1=1
+		AND flow_name = #{flowName}
+	    AND people_name = #{dealName}
+	    AND add_time &gt;= #{finishTimeBgn}
+		AND add_time &lt;= #{finishTimeEnd}
+	</select>
+	
+	<insert id="insertList" parameterType="hashmap">
+		insert into 
+		ct_complaint_follow_note
+		(
+		  del_flag,
+		  people_name,
+		  content,
+		  complaint_id,
+		  note_people,
+		  deal_depart,
+		  flow_name,
+		  is_sys,
+		  update_time,
+		  add_time
+		)
+		values
+		<foreach collection="followNotList" item="e" index="index"
+			separator=",">
+			(
+				1, 
+				#{e.peopleName}, 
+				#{e.content}, 
+				#{e.complaintId}, 
+				#{e.notePeople},
+				#{e.dealDept},
+				#{e.flowName},
+				#{e.isSys},
+				CURRENT_TIMESTAMP(),
+				CURRENT_TIMESTAMP()
+			)
+		</foreach>
+	</insert>
+</mapper>

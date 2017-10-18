@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IQcPointMapper">
+   
+    <!-- 质检点-->
+	<resultMap type="com.tuniu.gt.complaint.entity.QcPointEntity" id="qcPoint">
+		<result property="complaintId" column="complaintId" />
+		<result property="addPersonId" column="add_person_id" />
+		<result property="addPerson" column="add_person" />
+		<result property="updatePersonId" column="update_person_id" />
+		<result property="updatePerson" column="update_person" />
+		<result property="qcPoint" column="qcPoint" />
+		<result property="evidence" column="evidence" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+		<result property="id" column="id" />
+	</resultMap>
+	
+	
+	<insert id="saveQcPoint" parameterType="com.tuniu.gt.complaint.entity.QcPointEntity"  useGeneratedKeys="true" keyProperty="id" flushCache="true" statementType="PREPARED" >
+	
+	   insert into ct_qc_point
+	   (
+		   complaintId,
+		   add_person_id,
+		   add_person,
+		   update_person_id,
+		   update_person,
+		   qcPoint,
+		  <if test="evidence != null">evidence,</if> 
+		   add_time,
+		   update_time,
+		   del_flag
+	   
+	   )values(
+	   
+	      #{complaintId},
+	      #{addPersonId},
+	      #{addPerson},
+	      #{updatePersonId},
+	      #{updatePerson},
+	      #{qcPoint},
+	     <if test="evidence != null">#{evidence},</if> 
+		  CURRENT_TIMESTAMP(),
+		  CURRENT_TIMESTAMP(),
+		 0
+	   )
+	
+	</insert>
+	
+	<select id="getQcPoint" parameterType="java.util.Map" resultMap="qcPoint">
+	
+	   select * from ct_qc_point where del_flag = 0
+	   <if test="id != null and id !=''"> and id =#{id}</if>
+	   <if test="complaintId != null and complaintId !=''"> and complaintId =#{complaintId}</if>
+	   limit 1
+	
+	</select>
+	
+	<update id="updateQcPoint" parameterType="com.tuniu.gt.complaint.entity.QcPointEntity">
+	
+	   update ct_qc_point  
+	   <set>
+	        <if test="addPersonId != null">add_person_id = #{addPersonId},</if>
+	 		<if test="addPerson != null">add_person = #{addPerson},</if>
+			<if test="updatePersonId != null">update_person_id = #{updatePersonId},</if>
+			<if test="updatePerson != null">update_person = #{updatePerson},</if>
+			<if test="qcPoint != null">qcPoint = #{qcPoint},</if>
+			<if test="evidence != null">evidence = #{evidence},</if>
+			<if test="delFlag != null">del_flag = #{delFlag},</if>
+			update_time = CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	
+	</update>
+	
+	<update id="updateAttach" parameterType="Integer">
+	
+	   update ct_qc_attach 
+	   set del_flag = 0 
+	   where complaint_id = #{complaintId}
+	   
+	</update>
+	
+	<delete id="deleteQcPoint" parameterType="Integer">
+	  
+	  delete from ct_qc_point where  id =#{id}
+	
+	</delete>
+	
+	<delete id="deleteAttach" parameterType="Integer">
+	  
+	  delete from ct_qc_attach where  complaint_id =#{complaint_id}
+	
+	</delete>
+	
+</mapper>

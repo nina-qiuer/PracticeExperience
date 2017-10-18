@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="com.tuniu.gt.complaint.dao.sqlmap.imap.IAgencyAppealMap"> 
+
+    <resultMap id="listResultEntity" type="com.tuniu.gt.complaint.entity.AgencyAppealEntity">
+		<result property="id" column="id" />
+		<result property="agencyId" column="agency_id" />
+		<result property="complaintId" column="complaint_id" />
+		<result property="orderId" column="order_id" />
+		<result property="amount" column="amount" />
+		<result property="appealer" column="appealer" />
+		<result property="contactPhone" column="contact_phone" />
+		<result property="contactEmail" column="contact_email" />
+		<result property="contactQQ" column="contact_qq" />
+		<result property="appealContent" column="appeal_content" />
+		<result property="processInfo" column="process_info" />
+		<result property="resultFlag" column="result_flag" />
+		<result property="addTime" column="add_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="delFlag" column="del_flag" />
+	</resultMap>
+	
+	<sql id="list">
+		<include refid="tuniu.frm.core.IMapBase.fetchListBasic"/>
+		<where>
+			<if test="agencyId != null and agencyId != 0">
+				and agency_id=#{agencyId}
+			</if>
+			<if test="complaintId != null and complaintId != 0">
+				and complaint_id=#{complaintId}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="fetchList" parameterType="Map"  resultMap="listResultEntity">
+		<include refid="list"/>
+	</select>
+	
+	<sql id="insert">
+		<include refid="tuniu.frm.core.IMapBase.insertBasic"/>
+		(
+		  agency_id,
+		  complaint_id,
+		  order_id,
+		  amount,
+		  appealer,
+		  contact_phone,
+		  contact_email,
+		  contact_qq,
+		  appeal_content
+		) values (
+		  #{e.agencyId}, 
+		  #{e.complaintId}, 
+		  #{e.orderId}, 
+		  #{e.amount},
+		  #{e.appealer},
+		  #{e.contactPhone},
+		  #{e.contactEmail},
+		  #{e.contactQQ},
+		  #{e.appealContent}
+		)
+	</sql>
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Map" flushCache="true" statementType="PREPARED" > 
+		<include refid="insert"/>
+	</insert>
+	
+	<select id="getAppealInfo" parameterType="Map"  resultMap="listResultEntity">
+		SELECT * FROM ct_agency_appeal WHERE complaint_id=#{complaintId} AND agency_id=#{agencyId} AND del_flag=0 limit 1
+	</select>
+	
+	<sql id="update">
+		<include refid="tuniu.frm.core.IMapBase.updateBasic"/>
+		<set>
+			<if test="e.processInfo != null">process_info=#{e.processInfo},</if>
+			<if test="e.resultFlag != null">result_flag=#{e.resultFlag},</if>
+			update_time=CURRENT_TIMESTAMP
+		</set>
+	    where id=#{e.id}
+	</sql>
+	
+	<update id="update" parameterType="Map" flushCache="true" statementType="PREPARED">
+		<include refid="update"/>
+	</update>
+	
+</mapper>

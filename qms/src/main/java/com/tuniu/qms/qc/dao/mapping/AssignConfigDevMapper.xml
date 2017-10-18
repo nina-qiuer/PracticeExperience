@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuniu.qms.qc.dao.AssignConfigDevMapper">
+	<insert id="add" parameterType="com.tuniu.qms.qc.model.AssignConfigDev">
+		INSERT INTO qc_assign_config_dev (
+			<if test="qcPersonId != null">qcPersonId,</if>
+			<if test="qcPersonName != null">qcPersonName,</if>
+			<if test="addPerson != null">addPerson,</if>
+			addTime,
+			delFlag
+		) VALUES (
+			<if test="qcPersonId != null">#{qcPersonId},</if>
+			<if test="qcPersonName != null">#{qcPersonName},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			 CURRENT_TIMESTAMP() ,
+			0
+		)
+	</insert>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM qc_assign_config_dev WHERE id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="com.tuniu.qms.qc.model.AssignConfigDev" >
+		UPDATE qc_assign_config_dev 
+		<set>
+			<if test="qcPersonId != null">qcPersonId=#{qcPersonId},</if>
+			<if test="qcPersonName != null">qcPersonName=#{qcPersonName},</if>
+			updateTime=CURRENT_TIMESTAMP
+		</set>
+		WHERE id=#{id}
+	</update>
+	
+	<select id="get" parameterType="Integer" resultType="com.tuniu.qms.qc.model.AssignConfigDev">
+		SELECT * FROM qc_assign_config_dev WHERE id=#{id}
+	</select>
+
+	<select id="list" parameterType="com.tuniu.qms.qc.dto.AssignConfigDevDto" resultType="com.tuniu.qms.qc.model.AssignConfigDev">
+		SELECT * FROM qc_assign_config_dev 
+		<where>delFlag=0
+			<if test="qcPersonName != null">AND qcPersonName=#{qcPersonName}</if>
+		</where>
+	</select>
+	
+	<select id="getUserIsExist" parameterType="java.lang.String" resultType="int">
+	
+	    select count(1) from qc_assign_config_dev where delFlag = 0  and qcPersonName = #{qcPersonName}
+	
+	</select>
+	
+	<select id="getProjectDeployList" resultType="com.tuniu.qms.qc.model.QcPersonProjectDev">
+		SELECT * from qc_person_project_dev WHERE delFlag=0 
+	</select>
+	
+	<delete id="deleteProDeploy" parameterType="Integer">
+		DELETE FROM qc_person_project_dev WHERE qcPersonId=#{qcPersonId}
+	</delete>
+	
+	<insert id="addProDeploy" useGeneratedKeys="true" parameterType="java.util.List" flushCache="true" statementType="PREPARED">
+		INSERT INTO qc_person_project_dev (qcPersonId, qcPersonName, projectId) VALUES 
+		<foreach collection="list" item="e" index="index" separator=",">
+        (
+			#{e.qcPersonId},
+			#{e.qcPersonName},
+			#{e.projectId}
+        )
+        </foreach>
+    </insert>
+	
+
+	
+</mapper>

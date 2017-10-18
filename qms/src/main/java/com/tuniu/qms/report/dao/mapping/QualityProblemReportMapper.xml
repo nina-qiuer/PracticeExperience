@@ -1,0 +1,941 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tuniu.qms.report.dao.QualityProblemReportMapper">
+
+
+	<insert id="add" parameterType="com.tuniu.qms.report.model.QualityProblemReport">
+		INSERT INTO qs_quality_problem_report (
+		
+		    <if test="qcId != null">qcId,</if>
+		    <if test="qpFlag != null">qpFlag,</if>
+		    <if test="touchRedFlag != null">touchRedFlag,</if>
+			<if test="firstQpTypeId != null">firstQpTypeId,</if>
+			<if test="firstQpTypeName != null">firstQpTypeName,</if>
+			<if test="secondQpTypeId != null">secondQpTypeId,</if>
+			<if test="secondQpTypeName != null">secondQpTypeName,</if>
+			<if test="thirdQpTypeId != null">thirdQpTypeId,</if>
+			<if test="thirdQpTypeName != null">thirdQpTypeName,</if>
+			<if test="firstDepId != null">firstDepId,</if>
+			<if test="firstDepName != null">firstDepName,</if>
+			<if test="twoDepId != null">twoDepId,</if>
+			<if test="twoDepName != null">twoDepName,</if>
+			<if test="threeDepId != null">threeDepId,</if>
+			<if test="threeDepName != null">threeDepName,</if>
+			<if test="jobId != null">jobId,</if>
+			<if test="jobName != null">jobName,</if>
+			<if test="respPersonId != null">respPersonId,</if>
+			<if test="respPersonName != null">respPersonName,</if>
+			<if test="agencyId != null">agencyId,</if>
+			<if test="agencyName != null">agencyName,</if>
+			<if test="year != null">year,</if>
+			<if test="yearQuarter != null">yearQuarter,</if>
+			<if test="yearMonth != null">yearMonth,</if>
+			<if test="yearWeek != null">yearWeek,</if>
+			<if test="addPerson != null">addPerson,</if>
+			delFlag
+			
+		) VALUES (
+		
+		    <if test="qcId != null">#{qcId},</if>
+		    <if test="qpFlag != null">#{qpFlag},</if>
+		    <if test="touchRedFlag != null">#{touchRedFlag},</if>
+			<if test="firstQpTypeId != null">#{firstQpTypeId},</if>
+			<if test="firstQpTypeName != null">#{firstQpTypeName},</if>
+			<if test="secondQpTypeId != null">#{secondQpTypeId},</if>
+			<if test="secondQpTypeName != null">#{secondQpTypeName},</if>
+			<if test="thirdQpTypeId != null">#{thirdQpTypeId},</if>
+			<if test="thirdQpTypeName != null">#{thirdQpTypeName},</if>
+			<if test="firstDepId != null">#{firstDepId},</if>
+			<if test="firstDepName != null">#{firstDepName},</if>
+			<if test="twoDepId != null">#{twoDepId},</if>
+			<if test="twoDepName != null">#{twoDepName},</if>
+			<if test="threeDepId != null">#{threeDepId},</if>
+			<if test="threeDepName != null">#{threeDepName},</if>
+			<if test="jobId != null">#{jobId},</if>
+			<if test="jobName != null">#{jobName},</if>
+			<if test="respPersonId != null">#{respPersonId},</if>
+			<if test="respPersonName != null">#{respPersonName},</if>
+			<if test="agencyId != null">#{agencyId},</if>
+			<if test="agencyName != null">#{agencyName},</if>
+			<if test="year != null">#{year},</if>
+			<if test="yearQuarter != null">#{yearQuarter},</if>
+			<if test="yearMonth != null">#{yearMonth},</if>
+			<if test="yearWeek != null">#{yearWeek},</if>
+			<if test="addPerson != null">#{addPerson},</if>
+			0
+		)
+	</insert>
+	
+	
+	<insert id="addBatch"  parameterType="java.util.List" >
+		insert into qs_quality_problem_report (
+		
+			qcId,
+		    qpFlag,
+		    touchRedFlag,
+			firstQpTypeId,
+			firstQpTypeName,
+			secondQpTypeId,
+			secondQpTypeName,
+			thirdQpTypeId,
+			thirdQpTypeName,
+			firstDepId,
+			firstDepName,
+			twoDepId,
+			twoDepName,
+			threeDepId,
+			threeDepName,
+			jobId,
+			jobName,
+			respPersonId,
+			respPersonName,
+			agencyId,
+		    agencyName,
+			year,
+			yearQuarter,
+			yearMonth,
+			yearWeek,
+			addPerson,
+			addTime,
+			delFlag
+			
+		) values 
+        <foreach collection="list" item="e" index="index" separator=",">
+        (
+            #{e.qcId},
+		    #{e.qpFlag},
+		    #{e.touchRedFlag},
+		    #{e.firstQpTypeId},
+			#{e.firstQpTypeName},
+			#{e.secondQpTypeId},
+			#{e.secondQpTypeName},
+			#{e.thirdQpTypeId},
+			#{e.thirdQpTypeName},
+			#{e.firstDepId},
+			#{e.firstDepName},
+			#{e.twoDepId},
+			#{e.twoDepName},
+			#{e.threeDepId},
+			#{e.threeDepName},
+			#{e.jobId},
+			#{e.jobName},
+			#{e.respPersonId},
+			#{e.respPersonName},
+			#{e.agencyId},
+			#{e.agencyName},
+			#{e.year},
+			#{e.yearQuarter},
+			#{e.yearMonth},
+			#{e.yearWeek},
+			#{e.addPerson},
+			#{e.addTime},
+			 0
+        )
+        </foreach>
+    </insert>
+	
+	<delete id="deleteByQcId" parameterType="Integer">
+	
+	   delete from qs_quality_problem_report where qcId = #{qcId}
+	
+	</delete>
+	
+	<sql id="listSql">
+		
+		select * from qs_quality_problem_report  
+		<where> 
+			1=1
+		    <if test="qcId !=null and qcId !=''">AND qcId =#{qcId}</if>
+		    <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+		    <if test="agencyName !=null and agencyName !=''">AND agencyName =#{agencyName}</if>
+		    <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+		  	<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+			<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+			<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			<if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+			<if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+			<if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+		</where>
+	</sql>
+	
+	<select id="list" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="com.tuniu.qms.report.model.QualityProblemReport">
+		<include refid="listSql"/>
+		 ORDER BY  qcId 
+		<if test="dataLimitStart != null">
+			limit #{dataLimitStart} 	
+			<if test="pageSize != null">
+				,#{pageSize}
+			</if>
+		</if>
+	</select>
+	
+	<select id="count" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Integer">
+		SELECT COUNT(1) FROM(
+			<include refid="listSql"></include>
+		) t
+		
+	</select>
+	
+	<sql id="timeSql">
+		 <if test="timeType == 1">
+			     	<if test="yearBgn != null and yearBgn !='' ">AND year &gt;=#{yearBgn}</if>
+					<if test="yearEnd != null and yearEnd !='' ">AND year &lt;=#{yearEnd}</if>	
+			     </if>
+			    <if test="timeType == 2">
+			     		
+			     		 AND yearQuarter &gt;=#{quarterStart} AND yearQuarter &lt;=#{quarterFinish}
+			     </if>
+			     <if test="timeType == 3">
+			          
+			          AND yearMonth &gt;=#{monthStart} AND yearMonth &lt;=#{monthFinish}
+			        
+			     </if>
+			     <if test="timeType ==4">
+			     
+			    	 AND yearWeek &gt;=#{weekStart} AND yearWeek &lt;=#{weekFinish}
+			     
+			     </if>
+			     <if test="timeType == 5">
+			     	<if test="addTimeBgn != null and addTimeBgn!='' ">AND addTime &gt;=#{addTimeBgn}</if>
+					<if test="addTimeEnd != null and addTimeEnd!='' ">AND addTime &lt;=concat(#{addTimeEnd},' 23:59:59')</if>	
+			     </if>
+	</sql>
+	
+	<select id="getGraphByQpType" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	   
+	   <if test="(firstQpTypeId == null or firstQpTypeId =='') and (secondQpTypeId ==null or secondQpTypeId =='') and (thirdQpTypeId ==null or thirdQpTypeId =='')">
+			
+				
+		SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+			 	SELECT firstQpTypeName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			    <include refid="timeSql"/>
+				   GROUP BY firstQpTypeName
+				   ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				   ORDER BY t.num
+	   </if>
+	   
+	   <if test="firstQpTypeId !=null and firstQpTypeId !=''">
+						
+		SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+				    SELECT secondQpTypeName as qpTypeName,COUNT(1)  AS num 
+					FROM qs_quality_problem_report  
+					where 1=1  
+					 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+					 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+					 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+				      <include refid="timeSql"/>
+				     AND secondQpTypeId>0
+				     AND firstQpTypeId =#{firstQpTypeId}  
+				     GROUP BY secondQpTypeName
+				     ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				     ORDER BY t.num
+	   </if>
+	   <if test="secondQpTypeId !=null and secondQpTypeId !=''">
+	      SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+			 	SELECT thirdQpTypeName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				 <include refid="timeSql"/>
+				   AND thirdQpTypeId>0
+				   AND secondQpTypeId = #{secondQpTypeId}  
+				   GROUP BY thirdQpTypeName
+				   ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				   ORDER BY t.num
+			</if>
+			
+		<if test="thirdQpTypeId !=null and thirdQpTypeId !=''">
+		
+		  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+			   SELECT thirdQpTypeName as qpTypeName,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				 <include refid="timeSql"/>
+				 AND  thirdQpTypeId >99999
+			     AND  thirdQpTypeId =#{thirdQpTypeId}  
+			     GROUP BY thirdQpTypeName
+			     ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				 ORDER BY t.num
+			</if>
+	
+	</select>
+	
+	
+	
+	<select id="getGraphByDep" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	   
+	   <if test="(firstDepId == null or firstDepId =='') and (twoDepId ==null or twoDepId =='') and (threeDepId ==null or threeDepId =='')">
+			  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+		     SELECT firstDepName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+			     <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			   	 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			     <include refid="timeSql"/>
+			       AND firstDepId>0
+				   GROUP BY firstDepName
+				 ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				 ORDER BY t.num
+	   </if>
+	   <if test="firstDepId !=null and firstDepId !=''">
+			  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+				    SELECT twoDepName as qpTypeName,COUNT(1)  AS num 
+					FROM qs_quality_problem_report  
+					where 1=1  
+					 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				     <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+					 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+				   	 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+				      <include refid="timeSql"/>
+				     AND firstDepId =#{firstDepId}  
+				     AND twoDepId>0
+				     GROUP BY twoDepName
+				     ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+					 ORDER BY t.num
+	   </if>
+	   <if test="twoDepId !=null and twoDepId !=''">
+			  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(
+			 	SELECT threeDepName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+			     <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			   	 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				  <include refid="timeSql"/>
+				   AND twoDepId = #{twoDepId}  
+				   AND threeDepId>0
+				   GROUP BY threeDepName
+				  ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+					 ORDER BY t.num
+			</if>
+			
+		<if test="threeDepId !=null and threeDepId !=''">
+		SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(	 
+			   SELECT threeDepName as qpTypeName,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+			     <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			   	 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				  <include refid="timeSql"/>
+				  AND threeDepId >99999
+			     AND  threeDepId =#{threeDepId}  
+			     GROUP BY threeDepName
+			      ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			    ORDER BY t.num
+			</if>
+	
+	</select>
+	
+	<select id="getGraphByJob" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	   
+	   <if test="jobId == null or jobId =='' ">
+			SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(	 
+			 SELECT jobName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			     <include refid="timeSql"/>
+			      AND jobId>0
+				   GROUP BY jobName
+				    ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			      ORDER BY t.num
+	   </if>
+	   <if test="jobId !=null and jobId !='' ">
+		SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(	 	 
+			 SELECT jobName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1 
+				<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			       <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			    <include refid="timeSql"/>
+			     AND jobId =#{jobId}
+				  ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			      ORDER BY t.num
+	   </if>
+	</select>
+	
+	<select id="getGraphByAgency" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	   
+	   <if test="agencyName == null or agencyName =='' ">
+		  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(	 
+			 SELECT agencyName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 AND agencyId>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			    <include refid="timeSql"/>
+				   GROUP BY agencyName
+				  ORDER BY num desc  )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			      ORDER BY t.num
+	   </if>
+	   <if test="agencyName !=null and  agencyName !='' ">
+			  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(	 
+				 SELECT agencyName as qpTypeName ,COUNT(1)  AS num 
+					FROM qs_quality_problem_report  
+					where 1=1 
+					 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+					 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+					 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+					 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+					 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+					 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+				     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+					 <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+				     <include refid="timeSql"/>
+				     AND agencyName =#{agencyName}
+					 ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				     ORDER BY t.num
+	   </if>
+	</select>
+	
+	<select id="getGraphByResp" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	   
+	   <if test="respPersonName == null or respPersonName =='' ">
+			 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(	 
+			 SELECT respPersonName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			    <include refid="timeSql"/>
+			       AND respPersonId>0
+				   GROUP BY respPersonName
+				   ORDER BY num desc  )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				   ORDER BY t.num
+	   </if>
+	   <if test="respPersonName !=null and  respPersonName !='' ">
+			 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM
+					(	 
+			 SELECT respPersonName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1 
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			      <include refid="timeSql"/>
+			     AND respPersonName =#{respPersonName}
+				 ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				 ORDER BY t.num
+	   </if>
+	</select>
+	
+	<select id="getTrendGraph" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	   
+	   <if test="timeType == 1 ">
+			 SELECT year as statisticDate ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				  <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     <if test="yearBgn != null and yearBgn !='' ">AND year &gt;=#{yearBgn}</if>
+				 <if test="yearEnd != null and yearEnd !='' ">AND year &lt;=#{yearEnd}</if>
+				  GROUP BY year
+				  ORDER BY statisticDate
+	   </if>
+	   <if test="timeType == 2 ">
+			 SELECT yearQuarter  as statisticDate ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     AND yearQuarter &gt;=#{quarterStart} AND yearQuarter &lt;=#{quarterFinish}	
+				   GROUP BY  yearQuarter
+				   ORDER BY statisticDate
+	   </if>
+	   <if test="timeType == 3 ">
+			 SELECT yearMonth  as statisticDate ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				  <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			       AND yearMonth &gt;=#{monthStart} AND yearMonth &lt;=#{monthFinish}
+				   GROUP BY yearMonth
+				   ORDER BY statisticDate
+	   </if>
+	    <if test="timeType == 4 ">
+			 SELECT yearWeek  as statisticDate ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     AND yearWeek &gt;=#{weekStart} AND yearWeek &lt;=#{weekFinish}
+				   GROUP BY yearWeek
+				   ORDER BY statisticDate
+	   </if>
+	    <if test="timeType == 5 ">
+			 SELECT DATE_FORMAT(addTime,'%Y-%m-%d') as statisticDate ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     <if test="addTimeBgn != null and addTimeBgn!='' ">AND addTime &gt;=#{addTimeBgn}</if>
+				 <if test="addTimeEnd != null and addTimeEnd!='' ">AND addTime &lt;=concat(#{addTimeEnd},' 23:59:59')</if>	
+				   GROUP BY DATE_FORMAT(addTime,'%Y-%m-%d')
+				   ORDER BY statisticDate
+	   </if>
+	</select>
+	
+	<select id="getRankGraphImplementQp" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+	     SELECT secondQpTypeName  as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     <include refid="timeSql"/>
+			     AND firstQpTypeName ='执行问题'
+			     AND secondQpTypeId>0
+			     GROUP BY secondQpTypeName
+			     ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			 	 ORDER BY t.num
+	
+	</select>
+	
+	<select id="getRankGraphAgencyQp" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	   SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+	       SELECT thirdQpTypeName  as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+			     <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName != null and respPersonName !=''">AND respPersonName=#{respPersonName}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     <include refid="timeSql"/>
+			     AND firstQpTypeName ='供应商问题'
+			     AND thirdQpTypeId>0
+			     GROUP BY thirdQpTypeName
+			     ORDER BY num  desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			 	 ORDER BY t.num
+	</select>
+	
+	<select id="getRankGraphDep" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	 
+	 
+	    <if test="(firstDepId == null or firstDepId =='') and (twoDepId ==null or twoDepId =='') and (threeDepId ==null or threeDepId =='')">
+			  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+					 SELECT firstDepName as qpTypeName ,COUNT(1)  AS num 
+						FROM qs_quality_problem_report  
+						where 1=1  
+						AND firstDepId>0
+						 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+						 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+						 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+						 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+					 	 <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+					     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+					     <include refid="timeSql"/>
+						   GROUP BY firstDepName
+						   ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+			 	 ORDER BY t.num
+	   </if>
+	   <if test="firstDepId !=null and firstDepId !=''">
+			  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+				    SELECT twoDepName as qpTypeName,COUNT(1)  AS num 
+					FROM qs_quality_problem_report  
+					where 1=1  
+					 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+					 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+					 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+					 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+				      <include refid="timeSql"/>
+				     AND twoDepId>0
+				     AND firstDepId =#{firstDepId}  
+				     GROUP BY twoDepName
+				     ORDER BY num desc  )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				 	 ORDER BY t.num
+	   </if>
+	   <if test="twoDepId !=null and twoDepId !=''">
+		  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			 	SELECT threeDepName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+				 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				  <include refid="timeSql"/>
+				   AND threeDepId>0
+				   AND twoDepId = #{twoDepId}  
+				   GROUP BY threeDepName
+				   ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				 	 ORDER BY t.num
+			</if>
+			
+		<if test="threeDepId !=null and threeDepId !=''">
+			 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			   SELECT threeDepName as qpTypeName,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+				 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				 <if test="respPersonName != null and respPersonName!=''">AND respPersonName=#{respPersonName}</if>
+				  <include refid="timeSql"/>
+				  AND  threeDepId >99999
+			     AND  threeDepId =#{threeDepId}  
+			      GROUP BY threeDepName
+			     ORDER BY num desc  )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				 	 ORDER BY t.num
+			</if>
+	    
+	</select>
+	
+	<select id="getRankGraphAgency" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	
+	        <if test="agencyName == null or agencyName =='' ">
+			 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+			 SELECT agencyName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				AND agencyId>0
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+				 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+			     <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+			     <include refid="timeSql"/>
+				   GROUP BY agencyName
+				   ORDER BY num desc  )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				   ORDER BY t.num
+	   </if>
+	   <if test="agencyName !=null and  agencyName !='' ">
+			  SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+				 SELECT agencyName as qpTypeName ,COUNT(1)  AS num 
+					FROM qs_quality_problem_report  
+					where 1=1 
+					AND agencyId>0
+					 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+					 <if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+					 <if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+					 <if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+					 <if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+					 <if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+					 <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+					 <if test="respPersonName !=null and respPersonName !=''">AND respPersonName =#{respPersonName}</if>
+				     <include refid="timeSql"/>
+				     AND agencyName =#{agencyName}
+					 ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				   ORDER BY t.num
+	   </if>
+	</select>
+	
+	<select id="getRankGraphInnerResp" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	
+	    <if test="respPersonName == null or respPersonName =='' ">
+			 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM (  
+				 SELECT respPersonName as qpTypeName ,COUNT(1)  AS num 
+					FROM qs_quality_problem_report  
+					where 1=1  
+					AND qpFlag =1
+					AND respPersonId>0
+					<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+					<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+					<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+					<if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+					<if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+					<if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+				    <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				    <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+				    <include refid="timeSql"/>
+					   GROUP BY respPersonName
+					   ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				   ORDER BY t.num
+	   </if>
+	   <if test="respPersonName !=null and  respPersonName !='' ">
+		 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM ( 
+			 SELECT respPersonName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1 
+				AND qpFlag =1
+					<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+					<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+					<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+					<if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+					<if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+					<if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+					<if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>
+				    <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     <include refid="timeSql"/>
+			     AND respPersonName =#{respPersonName}
+				 ORDER BY num desc	)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				   ORDER BY t.num
+	   </if>
+	</select>
+	
+	<select id="getRankGraphOutResp" parameterType="com.tuniu.qms.report.dto.QualityProblemReportDto" resultType="Map">
+	 
+	        <if test="respPersonName == null or respPersonName =='' ">
+			 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM ( 
+			 SELECT respPersonName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1  
+				AND qpFlag =2
+				AND respPersonId>0
+				<if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				<if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				<if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				<if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			    <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>			    
+			   <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			    <include refid="timeSql"/>
+				   GROUP BY respPersonName
+				    ORDER BY num desc )t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				   ORDER BY t.num
+	   </if>
+	   <if test="respPersonName !=null and  respPersonName !='' ">
+			 SELECT * FROM (
+					SELECT t.qpTypeName,t.num,
+					CASE WHEN @prevRank = t.num THEN @curRank
+					WHEN @prevRank :=t.num THEN @curRank :=@curRank+1 END AS rank
+					FROM ( 
+			 SELECT respPersonName as qpTypeName ,COUNT(1)  AS num 
+				FROM qs_quality_problem_report  
+				where 1=1 
+				AND qpFlag =2
+				 <if test="firstDepId != null and firstDepId !=''">AND firstDepId=#{firstDepId}</if>
+				<if test="twoDepId != null and twoDepId !=''">AND twoDepId=#{twoDepId}</if>
+				<if test="threeDepId != null and threeDepId !=''">AND threeDepId=#{threeDepId}</if>
+				<if test="firstQpTypeId != null and firstQpTypeId!=''">AND firstQpTypeId=#{firstQpTypeId}</if>
+				<if test="secondQpTypeId != null and secondQpTypeId!=''">AND secondQpTypeId=#{secondQpTypeId}</if>
+				<if test="thirdQpTypeId != null and thirdQpTypeId!=''">AND thirdQpTypeId=#{thirdQpTypeId}</if>
+			    <if test="jobId != null and jobId !=''">AND jobId=#{jobId}</if>			 
+			     <if test="agencyName != null and agencyName !=''">AND agencyName=#{agencyName}</if>
+			     <include refid="timeSql"/>
+			     AND respPersonName =#{respPersonName}
+				 ORDER BY num desc)t,(SELECT @curRank:=0,@prevRank:=NULL,@incRank:=1)r)t
+				 ORDER BY t.num
+	   </if>
+	</select>
+</mapper>
