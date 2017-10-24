@@ -1,0 +1,25 @@
+/* PDL doc-theme.css */
+.theme-documentation #header .aui-header{
+    float: none;
+}
+
+.theme-documentation #header br.clear {
+    display: none;
+}
+
+body.theme-documentation #footer {
+    background-image: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid #ccc;
+}
+
+body.theme-documentation #footer .footer-body {
+    padding: 5px 10px;
+}
+
+.theme-documentation .space-logo .logo {
+    width: 48px;
+    height: 48px;
+}
+/* End PDL doc-theme.css */
